@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:personal_safety/Auth/forgetPassword.dart';
 import 'package:personal_safety/componants/color.dart';
+import 'package:personal_safety/componants/constant.dart';
+import 'package:personal_safety/componants/mediaQuery.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -43,76 +45,68 @@ class _LoginState extends State<Login> {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      style: new TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.email,
-                          color: Accent1,
-                        ),
-                        labelText: "Email",
-                        labelStyle: TextStyle(
-                            fontFamily: 'Ropoto',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Accent1),
-                        ),
-                      ),
-                      onSaved: null,
-                      validator: (String value) {
-                        if (value.isEmpty) {
-                          return 'Please enter your email';
-                        }
+                    child: Container(
+                      height:  displaySize(context).height*.07,
+                      decoration: kBoxDecorationStyle,
+                      child: TextFormField(
+                        style: new TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
 
-                        return value.contains('@') ? null : 'Please use @ char .';
-                      },
+                          labelText: "   Email",
+                          errorBorder: InputBorder.none,
+                          border: InputBorder.none,
+                        ),
+                        onSaved: null,
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return '   Please enter your email';
+                          }
+
+                          return value.contains('@') ? null : '   Please use @ char .';
+                        },
+                      ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      style: new TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        icon: Icon(
-                          Icons.lock,
-                          color: Accent1,
-                        ),
-                        labelText: "Password",
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            // Based on passwordVisible state choose the icon
-                            passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Theme.of(context).primaryColorDark,
+                    child: Container(
+                      height:  displaySize(context).height*.07,
+                      decoration: kBoxDecorationStyle,
+                      child: TextFormField(
+                        style: new TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+
+
+                          labelText: "   Password",
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Theme.of(context).primaryColorDark,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                passwordVisible = !passwordVisible;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            // Update the state i.e. toogle the state of passwordVisible variable
-                            setState(() {
-                              passwordVisible = !passwordVisible;
-                            });
-                          },
+                          errorBorder: InputBorder.none,
+                          border: InputBorder.none,
                         ),
-                        labelStyle: TextStyle(
-                            fontFamily: 'Ropoto',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Accent1),
-                        ),
+
+                        obscureText: passwordVisible,
+                        onSaved: null,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return '   Please enter your password';
+                          }
+                          return null;
+                        },
+
                       ),
-
-                      obscureText: passwordVisible,
-                      onSaved: null,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
-
                     ),
 
                   ),
@@ -153,8 +147,7 @@ class _LoginState extends State<Login> {
                         // If the form is valid, display a snackbar. In the real world,
                         // you'd often call a server or save the information in a database.
 
-                        Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text('Processing Data')));
+
                       }
                     },
                     child: Center(

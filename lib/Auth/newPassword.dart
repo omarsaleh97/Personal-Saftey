@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/Auth/success.dart';
 import 'package:personal_safety/componants/color.dart';
+import 'package:personal_safety/componants/constant.dart';
+import 'package:personal_safety/componants/mediaQuery.dart';
 
 class NewPassword extends StatefulWidget {
   @override
@@ -39,86 +41,93 @@ class _NewPasswordState extends State<NewPassword> {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 155, left: 20.0, right: 20.0),
-            child: TextFormField(
-              style: new TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                icon: Icon(
-                  Icons.lock,
-                  color: primaryColor,
-                ),
-                labelText: "Password",
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    // Based on passwordVisible state choose the icon
-                    passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Theme.of(context).primaryColorDark,
+          Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 155, left: 20.0, right: 20.0),
+                  child: Container(
+                    height: displaySize(context).height * .07,
+                    decoration: kBoxDecorationStyle,
+                    child: TextFormField(
+                      style: new TextStyle(color: Colors.black),
+                      decoration: InputDecoration(
+                        errorBorder: InputBorder.none,
+                        border: InputBorder.none,
+                        labelText: "   Password",
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            // Based on passwordVisible state choose the icon
+                            passwordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Theme.of(context).primaryColorDark,
+                          ),
+                          onPressed: () {
+                            // Update the state i.e. toogle the state of passwordVisible variable
+                            setState(() {
+                              passwordVisible = !passwordVisible;
+                            });
+                          },
+                        ),
+                        labelStyle: TextStyle(
+                            fontFamily: 'Ropoto',
+                            fontWeight: FontWeight.bold,
+                            color: greyIcon),
+                      ),
+                      obscureText: passwordVisible,
+                      onSaved: null,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return '   Please enter your password';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  onPressed: () {
-                    // Update the state i.e. toogle the state of passwordVisible variable
-                    setState(() {
-                      passwordVisible = !passwordVisible;
-                    });
-                  },
                 ),
-                labelStyle: TextStyle(
-                    fontFamily: 'Ropoto',
-                    fontWeight: FontWeight.bold,
-                    color: greyIcon),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Accent1),
-                ),
-              ),
-              obscureText: passwordVisible,
-              onSaved: null,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter your password';
-                }
-                return null;
-              },
+              ],
             ),
           ),
           Padding(
             padding: EdgeInsets.only(top: 220.0, left: 20.0, right: 20.0),
-            child: TextFormField(
-              style: new TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                icon: Icon(
-                  Icons.lock,
-                  color: primaryColor,
-                ),
-                labelText: "Repeat password",
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    // Based on passwordVisible state choose the icon
-                    passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Theme.of(context).primaryColorDark,
+            child: Container(
+              height: displaySize(context).height * .07,
+              decoration: kBoxDecorationStyle,
+              child: TextFormField(
+                style: new TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  errorBorder: InputBorder.none,
+                  border: InputBorder.none,
+                  labelText: "   Repeat password",
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      // Based on passwordVisible state choose the icon
+                      passwordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
+                    onPressed: () {
+                      // Update the state i.e. toogle the state of passwordVisible variable
+                      setState(() {
+                        passwordVisible = !passwordVisible;
+                      });
+                    },
                   ),
-                  onPressed: () {
-                    // Update the state i.e. toogle the state of passwordVisible variable
-                    setState(() {
-                      passwordVisible = !passwordVisible;
-                    });
-                  },
+                  labelStyle: TextStyle(
+                      fontFamily: 'Ropoto',
+                      fontWeight: FontWeight.bold,
+                      color: greyIcon),
                 ),
-                labelStyle: TextStyle(
-                    fontFamily: 'Ropoto',
-                    fontWeight: FontWeight.bold,
-                    color: greyIcon),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Accent1),
-                ),
+                obscureText: passwordVisible,
+                onSaved: null,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return '   Please enter your password';
+                  }
+                  return null;
+                },
               ),
-              obscureText: passwordVisible,
-              onSaved: null,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter your password';
-                }
-                return null;
-              },
             ),
           ),
           Padding(
@@ -134,12 +143,10 @@ class _NewPasswordState extends State<NewPassword> {
                 elevation: 7.0,
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Success()));
                     // Validate returns true if the form is valid, otherwise false.
                     if (_formKey.currentState.validate()) {
-
-
-
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Success()));
                     }
                   },
                   child: Center(

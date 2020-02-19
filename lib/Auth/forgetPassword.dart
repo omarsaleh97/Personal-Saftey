@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/Auth/confirm.dart';
 import 'package:personal_safety/componants/color.dart';
+import 'package:personal_safety/componants/constant.dart';
+import 'package:personal_safety/componants/mediaQuery.dart';
 
 class ForgetPassword extends StatefulWidget {
   @override
@@ -47,31 +49,27 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             padding: const EdgeInsets.only(top: 185, left: 30),
             child: Form(
               key: _formKey,
-              child: TextFormField(
+              child: Container(
+                height:  displaySize(context).height*.07,
+                decoration: kBoxDecorationStyle,
+                child: TextFormField(
+                  style: new TextStyle(color: Colors.black),
+                  decoration: InputDecoration(
+                      errorBorder: InputBorder.none,
+                      border: InputBorder.none,
 
-                style: new TextStyle(color: Colors.black),
-                decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.email,
-                    color: primaryColor,
+                      labelText: "   Email",
+
                   ),
-                  labelText: "Email",
-                  labelStyle: TextStyle(
-                      fontFamily: 'Ropoto',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
-                  ),
+                  onSaved: null,
+                  validator: (String value) {
+                    if (value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+
+                    return value.contains('@') ? null : 'Please use @ char .';
+                  },
                 ),
-                onSaved: null,
-                validator: (String value) {
-                  if (value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-
-                  return value.contains('@') ? null : 'Please use @ char .';
-                },
               ),
             ),
           ),

@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:personal_safety/componants/color.dart';
+import 'package:personal_safety/componants/constant.dart';
+import 'package:personal_safety/componants/mediaQuery.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -9,6 +12,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+
   final _formKey = GlobalKey<FormState>();
   bool passwordVisible ;
   int nationalLength=14;
@@ -28,6 +32,7 @@ class _SignUpState extends State<SignUp> {
               padding: const EdgeInsets.only(top: 50),
               child: Container(
                 width: 250,
+                height: 250,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(250),
                     color: Colors.white),
@@ -44,182 +49,170 @@ class _SignUpState extends State<SignUp> {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      style: new TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.person,
-                          color: Accent1,
-                        ),
-                        labelText: "Full Name",
-                        labelStyle: TextStyle(
-                            fontFamily: 'Ropoto',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Accent1),
-                        ),
-                      ),
-                      onSaved: null,
-                      validator: (String value) {
-                        if (value.isEmpty) {
-                          return 'Please enter your Name';
-                        }
+                    child: Container(
+                      height:  displaySize(context).height*.07,
+                      decoration: kBoxDecorationStyle,
+                      child: TextFormField(
+                        style: new TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
 
-                        return  null ;
-                      },
+                          errorBorder: InputBorder.none,
+                          border: InputBorder.none,
+
+                             labelText: "    Full Name",
+
+                           hintStyle:  kHintStyle,
+
+                        ),
+                        onSaved: null,
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return '    Please enter your Name';
+                          }
+
+                          return  null ;
+                        },
+                      ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      style: new TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.email,
-                          color: Accent1,
-                        ),
-                        labelText: "Email",
-                        labelStyle: TextStyle(
-                            fontFamily: 'Ropoto',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Accent1),
-                        ),
-                      ),
-                      onSaved: null,
-                      autovalidate: true,
-                      validator: (String value) {
-                        if (value.isEmpty) {
-                          return 'Please enter your email';
-                        }
+                    child: Container(
+                      height:  displaySize(context).height*.07,
+                      decoration: kBoxDecorationStyle,
+                      child: TextFormField(
+                        style: new TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          errorBorder: InputBorder.none,
+                          border: InputBorder.none,
 
-                        return value.contains('@') ? null : 'Please use @ char .';
-                      },
+                          labelText: "   Email",
+
+                        ),
+                        onSaved: null,
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+
+                          return value.contains('@') ? null : 'Please use @ char .';
+                        },
+                      ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      style: new TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        icon: Icon(
-                          Icons.lock,
-                          color: Accent1,
-                        ),
-                        labelText: "Password",
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            // Based on passwordVisible state choose the icon
-                            passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Theme.of(context).primaryColorDark,
+                    child: Container(
+                      height:  displaySize(context).height*.07,
+                      decoration: kBoxDecorationStyle,
+                      child: TextFormField(
+                        style: new TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                            errorBorder: InputBorder.none,
+                            border: InputBorder.none,
+                             labelText: "    Password",
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Theme.of(context).primaryColorDark,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                passwordVisible = !passwordVisible;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            // Update the state i.e. toogle the state of passwordVisible variable
-                            setState(() {
-                              passwordVisible = !passwordVisible;
-                            });
-                          },
+                           hintStyle: kHintStyle
+
                         ),
-                        labelStyle: TextStyle(
-                            fontFamily: 'Ropoto',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Accent1),
-                        ),
+
+                        obscureText: passwordVisible,
+                        onSaved: null,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return '    Please enter your password';
+                          }
+                          return null;
+                        },
+
                       ),
-
-                      obscureText: passwordVisible,
-                      onSaved: null,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
-
                     ),
 
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      style: new TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        icon: Icon(
-                          Icons.person_pin,
-                          color: Accent1,
-                        ),
-                        labelText: "National ID",
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            // Based on passwordVisible state choose the icon
-                            passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Theme.of(context).primaryColorDark,
+                    child: Container(
+                      height:  displaySize(context).height*.07,
+                      decoration: kBoxDecorationStyle,
+                      child: TextFormField(
+
+                        style: new TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                            errorBorder: InputBorder.none,
+                            border: InputBorder.none,
+                             labelText: "    National ID",
+                          hintStyle:  kHintStyle,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Theme.of(context).primaryColorDark,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                passwordVisible = !passwordVisible;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            // Update the state i.e. toogle the state of passwordVisible variable
-                            setState(() {
-                              passwordVisible = !passwordVisible;
-                            });
-                          },
+
+
+
                         ),
-                        labelStyle: TextStyle(
-                            fontFamily: 'Ropoto',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Accent1),
-                        ),
+
+                        obscureText: passwordVisible,
+                        onSaved: null,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return '    Please enter your National ID number';
+                          }
+                          return value.length==14?null:'    Please make sure you entered 14 number !.';
+                        },
+
                       ),
-
-                      obscureText: passwordVisible,
-                      onSaved: null,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter your National ID number';
-                        }
-                        return value.length==14?null:'Please make sure you entered 14 number !.';
-                      },
-
                     ),
 
                   ),
 
                   Padding(
                     padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      style: new TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.phone,
-                          color: Accent1,
-                        ),
-                        labelText: "Email",
-                        labelStyle: TextStyle(
-                            fontFamily: 'Ropoto',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Accent1),
-                        ),
-                      ),
-                      onSaved: null,
-                      validator: (String value) {
-                        if (value.isEmpty) {
-                          return 'Please enter your Phone Number';
-                        }
+                    child: Container(
+                      height:  displaySize(context).height*.07,
+                      decoration: kBoxDecorationStyle,
+                      child: TextFormField(
+                        style: new TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                            errorBorder: InputBorder.none,
+                            border: InputBorder.none,
+                             labelText: "    Phone Number",
+                         hintStyle: kHintStyle
 
-                        return value.length==11 ? null : 'Please make sure you entered 11 number !.';
-                      },
+                        ),
+                        onSaved: null,
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return '    Please enter your Phone Number';
+                          }
+
+                          return value.length==11 ? null : '    Please make sure you entered 11 number !.';
+                        },
+                      ),
                     ),
                   ),
 
@@ -239,10 +232,9 @@ class _SignUpState extends State<SignUp> {
                   elevation: 7.0,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> SuccessCard()));
                       // Validate returns true if the form is valid, otherwise false.
                       if (_formKey.currentState.validate()) {
-
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> SuccessCard()));
                       }
                     },
                     child: Center(
@@ -264,4 +256,5 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
+
 }

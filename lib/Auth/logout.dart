@@ -3,6 +3,7 @@ import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/Auth/signup.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:personal_safety/componants/paint.dart';
 
 class Logout extends StatefulWidget {
   @override
@@ -19,6 +20,7 @@ class _LogoutState extends State<Logout> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+
             Container(
               child: Padding(
                 padding: const EdgeInsets.all(40),
@@ -52,7 +54,6 @@ class _LogoutState extends State<Logout> {
               ),
             ),
             SizedBox(height: 40.0),
-
             Padding(
               padding: const EdgeInsets.only(left: 40.0, bottom: 10, right: 40),
               child: Container(
@@ -65,7 +66,8 @@ class _LogoutState extends State<Logout> {
                   elevation: 7.0,
                   child: GestureDetector(
                     onTap: () {
-                     Navigator.push(context, MaterialPageRoute(builder: (context)=>Login()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Login()));
                     },
                     child: Center(
                       child: Text(
@@ -124,13 +126,17 @@ class _LogoutState extends State<Logout> {
               ),
             ),
             Center(
-
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text("New User ?",style: TextStyle(color: Colors.white),),
+                  Text(
+                    "New User ?",
+                    style: TextStyle(color: Colors.white),
+                  ),
                   FlatButton(
-                      onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp()));
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => SignUp()));
                       },
                       child: Text(
                         "SignUp",

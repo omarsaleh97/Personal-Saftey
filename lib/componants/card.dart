@@ -44,13 +44,14 @@ class _SuccessCardState extends State<SuccessCard> {
                   child: Container(
                     height: 50.0,
                     width: 250,
-                    child: Material(
-                      borderRadius: BorderRadius.circular(30.0),
-                      shadowColor: secondaryDark,
-                      color: Accent2,
-                      elevation: 7.0,
-                      child: GestureDetector(
-                        onTap: () {
+
+
+                      child: RaisedButton(
+                        color: Accent2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30),
+                        ),
+                        onPressed: () {
                            Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUpSuccessful()));
                         },
                         child: Center(
@@ -62,7 +63,7 @@ class _SuccessCardState extends State<SuccessCard> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
+
                       ),
                     ),
                   ),

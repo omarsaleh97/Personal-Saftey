@@ -33,7 +33,7 @@ class _NewPasswordState extends State<NewPassword> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 135, left: 30),
+            padding: const EdgeInsets.only(top: 145, left: 30),
             child: Container(
               child: Text(
                 "Choose a new password for your account.",
@@ -46,16 +46,18 @@ class _NewPasswordState extends State<NewPassword> {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(top: 155, left: 20.0, right: 20.0),
+                  padding: EdgeInsets.only(top: 175, left: 20.0, right: 20.0),
                   child: Container(
                     height: displaySize(context).height * .07,
-                    decoration: kBoxDecorationStyle,
+                    decoration: kBoxDecorationStyle2,
                     child: TextFormField(
                       style: new TextStyle(color: Colors.black),
                       decoration: InputDecoration(
                         errorBorder: InputBorder.none,
-                        border: InputBorder.none,
-                        labelText: "   Password",
+                        contentPadding: const EdgeInsets.all(20),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        hintText: "Password",
                         suffixIcon: IconButton(
                           icon: Icon(
                             // Based on passwordVisible state choose the icon
@@ -91,16 +93,18 @@ class _NewPasswordState extends State<NewPassword> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 220.0, left: 20.0, right: 20.0),
+            padding: EdgeInsets.only(top: 240.0, left: 20.0, right: 20.0),
             child: Container(
               height: displaySize(context).height * .07,
-              decoration: kBoxDecorationStyle,
+              decoration: kBoxDecorationStyle2,
               child: TextFormField(
                 style: new TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   errorBorder: InputBorder.none,
-                  border: InputBorder.none,
-                  labelText: "   Repeat password",
+                  contentPadding: const EdgeInsets.all(20),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  hintText: "Repeat password",
                   suffixIcon: IconButton(
                     icon: Icon(
                       // Based on passwordVisible state choose the icon
@@ -114,10 +118,6 @@ class _NewPasswordState extends State<NewPassword> {
                       });
                     },
                   ),
-                  labelStyle: TextStyle(
-                      fontFamily: 'Ropoto',
-                      fontWeight: FontWeight.bold,
-                      color: greyIcon),
                 ),
                 obscureText: passwordVisible,
                 onSaved: null,
@@ -132,17 +132,19 @@ class _NewPasswordState extends State<NewPassword> {
           ),
           Padding(
             padding: const EdgeInsets.only(
-                top: 300, left: 70.0, bottom: 10, right: 70),
+                top: 320, left: 70.0, bottom: 10, right: 70),
             child: Container(
               height: 50.0,
               width: 300,
               child: Material(
                 borderRadius: BorderRadius.circular(30.0),
-                shadowColor: secondaryDark,
                 color: primaryColor,
-                elevation: 7.0,
-                child: GestureDetector(
-                  onTap: () {
+                child: RaisedButton(
+                  color: primaryColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30),
+                     ),
+                  onPressed: () {
                     // Validate returns true if the form is valid, otherwise false.
                     if (_formKey.currentState.validate()) {
                       Navigator.push(context,

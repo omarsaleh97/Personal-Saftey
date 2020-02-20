@@ -41,7 +41,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
         child: Stack(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 100.0, left: 20),
+              padding: const EdgeInsets.only(top: 80.0, left: 20),
               child: Text(
                 "Complete your profile",
                 style: TextStyle(
@@ -76,16 +76,13 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                   children: <Widget>[
                     Container(
                       alignment: Alignment.centerLeft,
-                      decoration: kBoxDecorationStyle,
+                      decoration: kBoxDecorationStyle2,
                       child: TextField(
                         decoration: InputDecoration(
                           errorBorder: InputBorder.none,
-                          border: InputBorder.none,
-//                        icon: Icon(
-//                          Icons.location_on,
-//                          color: grey,
-//                        ),
-                          labelText: "   Address",
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          contentPadding: const EdgeInsets.all(20),
+                          hintText: "Address",
                         ),
                       ),
                     ),
@@ -94,17 +91,13 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     ),
                     Container(
                       alignment: Alignment.centerLeft,
-                      decoration: kBoxDecorationStyle,
+                      decoration: kBoxDecorationStyle2,
                       child: TextFormField(
                         decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(20),
                           errorBorder: InputBorder.none,
-                          border: InputBorder.none,
-//                        icon: Icon(
-//                          Icons.healing,
-//                          color: secondary,
-//                        ),
-
-                          labelText: "   Blood Type",
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          hintText: "Blood Type",
                         ),
                       ),
                     ),
@@ -112,7 +105,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
 //                  Container(
 //                    height: 60,
 //                    alignment: Alignment.centerLeft,
-//                    decoration: kBoxDecorationStyle,
+//                    decoration: kBoxDecorationStyle2,
 //
 //                    child: DropdownButtonFormField<String>(
 //                      decoration: InputDecoration.collapsed(hintText: ''),
@@ -137,30 +130,25 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     ),
 
                     Container(
-                      decoration: kBoxDecorationStyle,
-                      child: CheckboxListTile(
-                        value: value,
-                        onChanged: onChange,
-                        title: Text("Chronic Disease"),
+                      alignment: Alignment.centerLeft,
+                      decoration: kBoxDecorationStyle2,
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          suffixIcon: Icon(
+                            Icons.add,
+                            color: grey,
+                          ),
+                          errorBorder: InputBorder.none,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          contentPadding: const EdgeInsets.all(20),
+//                        icon: Icon(
+//                          Icons.contact_phone,
+//                          color: grey,
+//                        ),
+                          hintText: "Chronic Disease",
+                        ),
                       ),
                     ),
-
-//                    Container(
-//                      alignment: Alignment.centerLeft,
-//                      decoration: kBoxDecorationStyle,
-//                      child: TextFormField(
-//                        decoration: InputDecoration(
-//                            border: OutlineInputBorder(
-//                                borderRadius: BorderRadius.circular(15)),
-//
-////                        icon: Icon(
-////                          Icons.report_problem,
-////                          color: secondary,
-////                        ),
-//                            labelText: "Chronic Disease",
-//                            labelStyle: kLabelStyle),
-//                      ),
-//                    ),
 
                     SizedBox(
                       height: 10,
@@ -168,7 +156,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
 
                     Container(
                       alignment: Alignment.centerLeft,
-                      decoration: kBoxDecorationStyle,
+                      decoration: kBoxDecorationStyle2,
                       child: TextFormField(
                         decoration: InputDecoration(
                           suffixIcon: Icon(
@@ -176,13 +164,13 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                             color: grey,
                           ),
                           errorBorder: InputBorder.none,
-                          border: InputBorder.none,
-
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          contentPadding: const EdgeInsets.all(20),
 //                        icon: Icon(
 //                          Icons.contact_phone,
 //                          color: grey,
 //                        ),
-                          labelText: "   Edit Emergency Contacts",
+                          hintText: "Edit Emergency Contacts",
                         ),
                       ),
                     ),
@@ -192,13 +180,12 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                       child: Container(
                         height: 50.0,
                         width: 300,
-                        child: Material(
-                          borderRadius: BorderRadius.circular(30.0),
-                          shadowColor: secondary,
+                        child: RaisedButton(
                           color: primaryColor,
-                          elevation: 7.0,
-                          child: GestureDetector(
-                            onTap: () {
+                          shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30),
+                          ),
+                          onPressed: () {
                               // Validate returns true if the form is valid, otherwise false.
                               if (_formKey.currentState.validate()) {
                                 // If the form is valid, display a snackbar. In the real world,
@@ -216,7 +203,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                                 ),
                               ),
                             ),
-                          ),
+
                         ),
                       ),
                     ),

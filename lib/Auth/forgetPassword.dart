@@ -28,7 +28,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 135, left: 30),
+            padding: const EdgeInsets.only(top: 145, left: 30),
             child: Container(
               child: Text(
                 "Enter your email that you signed up with",
@@ -37,7 +37,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 155, left: 30),
+            padding: const EdgeInsets.only(top: 165, left: 30),
             child: Container(
               child: Text(
                 "then tap verify",
@@ -46,30 +46,38 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 185, left: 30),
+            padding: const EdgeInsets.only(top: 195),
             child: Form(
               key: _formKey,
-              child: Container(
-                height:  displaySize(context).height*.07,
-                decoration: kBoxDecorationStyle,
-                child: TextFormField(
-                  style: new TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                      errorBorder: InputBorder.none,
-                      border: InputBorder.none,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20,right: 20),
+                    child: Container(
+                      height:  displaySize(context).height*.07,
+                      decoration: kBoxDecorationStyle2,
+                      child: TextFormField(
+                        style: new TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                            errorBorder: InputBorder.none,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          contentPadding:
+                          const EdgeInsets.all(20),
+                            hintText: "Email",
 
-                      labelText: "   Email",
+                        ),
+                        onSaved: null,
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return 'Please enter your email';
+                          }
 
+                          return value.contains('@') ? null : 'Please use @ char .';
+                        },
+                      ),
+                    ),
                   ),
-                  onSaved: null,
-                  validator: (String value) {
-                    if (value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-
-                    return value.contains('@') ? null : 'Please use @ char .';
-                  },
-                ),
+                ],
               ),
             ),
           ),
@@ -79,13 +87,12 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             child: Container(
               height: 50.0,
               width: 300,
-              child: Material(
-                borderRadius: BorderRadius.circular(30.0),
-                shadowColor: secondaryDark,
+              child: RaisedButton(
                 color: primaryColor,
-                elevation: 7.0,
-                child: GestureDetector(
-                  onTap: () {
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30),
+                ),
+                onPressed: () {
                     // Validate returns true if the form is valid, otherwise false.
                     if (_formKey.currentState.validate()) {
 
@@ -104,7 +111,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     ),
                   ),
                 ),
-              ),
             ),
           ),
           Padding(

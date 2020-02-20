@@ -47,6 +47,8 @@ flutter:
       - assets/images/LOGO.png
       - assets/images/LOGO.svg
       - assets/images/photo.png
+      - assets/images/cloud.png
+
       - assets/images/shield.svg
       - assets/images/shine.svg
       - assets/images/night.svg

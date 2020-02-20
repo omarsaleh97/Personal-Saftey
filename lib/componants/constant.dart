@@ -26,3 +26,9 @@ final kBoxDecorationStyle = BoxDecoration(
     ),
   ],
 );
+
+final kBoxDecorationStyle2 = BoxDecoration(
+  color: Colors.white,
+
+  borderRadius: BorderRadius.circular(15.0),
+);

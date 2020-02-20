@@ -29,7 +29,7 @@ class _ConfirmState extends State<Confirm> {
 
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 135, left: 30),
+            padding: const EdgeInsets.only(top: 145, left: 30),
             child: Container(
               child: Text(
                 "We've sent a verification link to ",
@@ -40,7 +40,7 @@ class _ConfirmState extends State<Confirm> {
 
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 155, left: 30),
+            padding: const EdgeInsets.only(top: 165, left: 30),
             child: Container(
               child: Text(
                 "kkk@gmail.com",
@@ -51,22 +51,23 @@ class _ConfirmState extends State<Confirm> {
 
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 185, left: 30),
+            padding: const EdgeInsets.only(top: 195, left: 30),
             child: Text("Tap the link in the email then tap continue.",style: TextStyle(fontSize: 17, color: grey),)
           ),
           Padding(
             padding: const EdgeInsets.only(
-                top: 280, left: 70.0, bottom: 10, right: 70),
+                top: 260, left: 70.0, bottom: 10, right: 70),
             child: Container(
               height: 50.0,
               width: 300,
-              child: Material(
-                borderRadius: BorderRadius.circular(30.0),
-                shadowColor: secondaryDark,
-                color: primaryColor,
-                elevation: 7.0,
-                child: GestureDetector(
-                  onTap: () {
+
+                child: RaisedButton(
+                  color: primaryColor,
+
+                  shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30),
+                      ),
+                  onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>NewPassword()));
                     // Validate returns true if the form is valid, otherwise false.
                     if (_formKey.currentState.validate()) {
@@ -86,7 +87,7 @@ class _ConfirmState extends State<Confirm> {
                     ),
                   ),
                 ),
-              ),
+
             ),
           ),
 

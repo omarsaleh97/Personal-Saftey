@@ -36,6 +36,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Stack(
@@ -80,7 +82,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                       child: TextField(
                         decoration: InputDecoration(
                           errorBorder: InputBorder.none,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
                           contentPadding: const EdgeInsets.all(20),
                           hintText: "Address",
                         ),
@@ -96,7 +99,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.all(20),
                           errorBorder: InputBorder.none,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
                           hintText: "Blood Type",
                         ),
                       ),
@@ -139,7 +143,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                             color: grey,
                           ),
                           errorBorder: InputBorder.none,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
                           contentPadding: const EdgeInsets.all(20),
 //                        icon: Icon(
 //                          Icons.contact_phone,
@@ -164,7 +169,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                             color: grey,
                           ),
                           errorBorder: InputBorder.none,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
                           contentPadding: const EdgeInsets.all(20),
 //                        icon: Icon(
 //                          Icons.contact_phone,
@@ -186,24 +192,23 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                             borderRadius: new BorderRadius.circular(30),
                           ),
                           onPressed: () {
-                              // Validate returns true if the form is valid, otherwise false.
-                              if (_formKey.currentState.validate()) {
-                                // If the form is valid, display a snackbar. In the real world,
-                                // you'd often call a server or save the information in a database.
+                            // Validate returns true if the form is valid, otherwise false.
+                            if (_formKey.currentState.validate()) {
+                              // If the form is valid, display a snackbar. In the real world,
+                              // you'd often call a server or save the information in a database.
 
-                              }
-                            },
-                            child: Center(
-                              child: Text(
-                                'Continue',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            }
+                          },
+                          child: Center(
+                            child: Text(
+                              'Continue',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-
+                          ),
                         ),
                       ),
                     ),

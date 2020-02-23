@@ -25,9 +25,9 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       backgroundColor: primaryColor,
       resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: true,
       body: Container(
         child: SingleChildScrollView(
-
           child: Column(
             children: <Widget>[
               Padding(
@@ -53,7 +53,10 @@ class _SignUpState extends State<SignUp> {
                   child: Stack(
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(top:20,left: 20,),
+                        padding: const EdgeInsets.only(
+                          top: 20,
+                          left: 20,
+                        ),
                         child: Text(
                           "SignUp",
                           style: TextStyle(color: Colors.white, fontSize: 50),
@@ -86,8 +89,8 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(top: 155.0, left: 20.0, right: 20.0),
+                        padding: EdgeInsets.only(
+                            top: 155.0, left: 20.0, right: 20.0),
                         child: Container(
                           height: displaySize(context).height * .07,
                           decoration: kBoxDecorationStyle,
@@ -116,8 +119,8 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(top: 225.0, left: 20.0, right: 20.0),
+                        padding: EdgeInsets.only(
+                            top: 225.0, left: 20.0, right: 20.0),
                         child: Container(
                           height: displaySize(context).height * .07,
                           decoration: kBoxDecorationStyle,
@@ -156,8 +159,8 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(top: 295.0, left: 20.0, right: 20.0),
+                        padding: EdgeInsets.only(
+                            top: 295.0, left: 20.0, right: 20.0),
                         child: Container(
                           height: displaySize(context).height * .07,
                           decoration: kBoxDecorationStyle,
@@ -199,8 +202,8 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(top: 365.0, left: 20.0, right: 20.0),
+                        padding: EdgeInsets.only(
+                            top: 365.0, left: 20.0, right: 20.0),
                         child: Container(
                           height: displaySize(context).height * .07,
                           decoration: kBoxDecorationStyle,

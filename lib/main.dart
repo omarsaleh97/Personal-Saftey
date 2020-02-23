@@ -7,8 +7,16 @@ import 'package:personal_safety/Auth/newPassword.dart';
 import 'package:personal_safety/Auth/signup.dart';
 import 'package:personal_safety/Auth/signupSuccessful.dart';
 import 'package:personal_safety/componants/card.dart';
+import 'package:get_it/get_it.dart';
+import 'package:personal_safety/services/services.dart';
+
+void setupLocator() {
+  GetIt.instance.registerLazySingleton(() => UserService());
+}
 
 void main() {
+  setupLocator();
+
   runApp(new MaterialApp(
     debugShowCheckedModeBanner: false,
     home: new Logout(),
@@ -22,4 +30,3 @@ void main() {
 //    },
   ));
 }
-

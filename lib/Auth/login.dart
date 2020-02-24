@@ -7,6 +7,7 @@ import 'package:personal_safety/componants/mediaQuery.dart';
 import 'package:personal_safety/models/login.dart';
 import 'package:personal_safety/services/services.dart';
 import 'package:get_it/get_it.dart';
+import 'dart:developer';
 
 class Login extends StatefulWidget {
   @override
@@ -33,7 +34,6 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: primaryColor,
-        resizeToAvoidBottomPadding: false,
         resizeToAvoidBottomInset: true,
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -159,10 +159,13 @@ class _LoginState extends State<Login> {
                       password: _passwordController.text,
                     );
                     final result = await userService.Login(login);
-                    final title = result.error ? 'Error Occured' : 'Logged In!';
-                    final text = result.error
-                        ? (result.errorMessages) ?? 'An Error Occured.'
-                        : 'Bad Credentials';
+                    debugPrint("from login: " + result.status.toString());
+                    debugPrint("from login: " + result.result.toString());
+                    debugPrint("from login: " + result.hasErrors.toString());
+                    final title = result.status == 200 ? 'Logged In!' : 'Error';
+                    final text = result.status == 200
+                        ? 'Logged in'
+                        : "Wrong Username or Password";
                     showDialog(
                         context: context,
                         builder: (_) => AlertDialog(

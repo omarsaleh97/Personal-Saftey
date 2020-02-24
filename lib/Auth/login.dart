@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:personal_safety/Auth/forgetPassword.dart';
+import 'package:personal_safety/Auth/logout.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
+import 'package:personal_safety/componants/test.dart';
 import 'package:personal_safety/models/login.dart';
 import 'package:personal_safety/services/service_login.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:developer';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+const key = 'token';
+Future<bool> _saveTokenPreference(String token) async {
+  final prefs = await SharedPreferences.getInstance();
+  final value = token;
+  prefs.setString(key, value);
+}
+
+Future<String> getTokenPreference() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String token = prefs.getString(key);
+  return token;
+}
 
 class Login extends StatefulWidget {
   @override
@@ -15,6 +32,12 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  void saveToken(String resultToken) {
+    _saveTokenPreference(resultToken).then((bool committed) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Test()));
+    });
+  }
+
   LoginService get userService => GetIt.instance<LoginService>();
   final _formKey = GlobalKey<FormState>();
   bool passwordVisible;
@@ -174,11 +197,12 @@ class _LoginState extends State<Login> {
                                     child: Text('OK'),
                                     onPressed: () {
                                       Navigator.of(context).pop();
+                                      saveToken(result.result);
                                     })
                               ],
                             )).then((data) {
                       if (result.result) {
-                        Navigator.of(context).pop();
+                        saveToken(result.result);
                       }
                     });
                   },

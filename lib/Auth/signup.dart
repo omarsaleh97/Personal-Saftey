@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
@@ -248,7 +249,8 @@ class _SignUpState extends State<SignUp> {
                                 ],
                               )).then((data) {
                         if (result.result) {
-                          Navigator.of(context).pop();
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Login()));
                         }
                       });
                     },

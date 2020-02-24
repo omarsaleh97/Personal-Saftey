@@ -5,7 +5,7 @@ import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
 import 'package:personal_safety/models/login.dart';
-import 'package:personal_safety/services/services.dart';
+import 'package:personal_safety/services/service_login.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:developer';
 
@@ -15,15 +15,13 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  UserService get userService => GetIt.instance<UserService>();
+  LoginService get userService => GetIt.instance<LoginService>();
   final _formKey = GlobalKey<FormState>();
   bool passwordVisible;
   String errorMessages;
   LoginCredentials login;
   TextEditingController _loginController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -164,8 +162,8 @@ class _LoginState extends State<Login> {
                     debugPrint("from login: " + result.hasErrors.toString());
                     final title = result.status == 200 ? 'Logged In!' : 'Error';
                     final text = result.status == 200
-                        ? 'Logged in'
-                        : "Wrong Username or Password";
+                        ? 'You will be forwarded to the next page!'
+                        : "Wrong Username or Password.";
                     showDialog(
                         context: context,
                         builder: (_) => AlertDialog(

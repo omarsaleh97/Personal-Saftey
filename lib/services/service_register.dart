@@ -1,23 +1,25 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:personal_safety/models/api_response.dart';
-import 'package:personal_safety/models/login.dart';
+import 'package:personal_safety/models/register.dart';
 import 'dart:developer';
 
-class UserService {
+class RegisterService {
   static var token = '';
   static const API = 'https://personalsafety.azurewebsites.net/';
   static const headers = {'Content-Type': 'application/json'};
-
-  // Logging In
-  Future<APIResponse<dynamic>> Login(LoginCredentials item) {
+  // Register
+  Future<APIResponse<dynamic>> Register(RegisterCredentials item) {
     return http
-        .post(API + '/api/Account/Login',
+        .post(API + '/api/Account/Register',
             headers: headers, body: json.encode(item.toJson()))
         .then((data) {
       if (data.statusCode == 200) {
+        print("TEST TEST TEST --------------------------------- ");
         Map userMap = jsonDecode(data.body);
         var APIresult = APIResponse.fromJson(userMap);
+        //print(APIresult.toString());
+
         print(APIresult.status);
         print(APIresult.result);
         token = APIresult.result;
@@ -25,8 +27,12 @@ class UserService {
         return APIresult;
       }
       return APIResponse<dynamic>(
-          hasErrors: true, messages: 'An Error Occured.');
+          hasErrors: true,
+          messages:
+              "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits.");
     }).catchError((_) => APIResponse<dynamic>(
-            hasErrors: true, messages: 'An Error Occured.'));
+            hasErrors: true,
+            messages:
+                "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits."));
   }
 }

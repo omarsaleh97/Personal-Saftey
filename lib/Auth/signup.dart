@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get_it/get_it.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
+import 'package:personal_safety/models/register.dart';
+import 'package:personal_safety/services/service_register.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -12,8 +15,16 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  RegisterService get registerService => GetIt.instance<RegisterService>();
   final _formKey = GlobalKey<FormState>();
   bool passwordVisible;
+  String errorMessages;
+  RegisterCredentials register;
+  TextEditingController _fullNameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _nationalIdController = TextEditingController();
+  TextEditingController _phoneNumberController = TextEditingController();
   int nationalLength = 14;
   @override
   void initState() {
@@ -68,7 +79,8 @@ class _SignUpState extends State<SignUp> {
                         child: Container(
                           height: displaySize(context).height * .07,
                           decoration: kBoxDecorationStyle,
-                          child: TextFormField(
+                          child: TextField(
+                            controller: _fullNameController,
                             style: new TextStyle(color: Colors.black),
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.all(20),
@@ -77,14 +89,6 @@ class _SignUpState extends State<SignUp> {
                               hintText: "Full Name",
                               hintStyle: kHintStyle,
                             ),
-                            onSaved: null,
-                            validator: (String value) {
-                              if (value.isEmpty) {
-                                return 'Please enter your Name';
-                              }
-
-                              return null;
-                            },
                           ),
                         ),
                       ),
@@ -94,7 +98,8 @@ class _SignUpState extends State<SignUp> {
                         child: Container(
                           height: displaySize(context).height * .07,
                           decoration: kBoxDecorationStyle,
-                          child: TextFormField(
+                          child: TextField(
+                            controller: _emailController,
                             style: new TextStyle(color: Colors.black),
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.all(20),
@@ -103,18 +108,6 @@ class _SignUpState extends State<SignUp> {
                               hintText: "Email",
                               hintStyle: kHintStyle,
                             ),
-                            onSaved: null,
-                            validator: (String value) {
-                              if (value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              if (value.isNotEmpty) {
-                                return null;
-                              }
-                              return value.contains('@')
-                                  ? null
-                                  : 'Please use @ char .';
-                            },
                           ),
                         ),
                       ),
@@ -124,7 +117,8 @@ class _SignUpState extends State<SignUp> {
                         child: Container(
                           height: displaySize(context).height * .07,
                           decoration: kBoxDecorationStyle,
-                          child: TextFormField(
+                          child: TextField(
+                            controller: _passwordController,
                             style: new TextStyle(color: Colors.black),
                             decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.all(20),
@@ -148,13 +142,6 @@ class _SignUpState extends State<SignUp> {
                                 ),
                                 hintStyle: kHintStyle),
                             obscureText: passwordVisible,
-                            onSaved: null,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              return null;
-                            },
                           ),
                         ),
                       ),
@@ -164,7 +151,8 @@ class _SignUpState extends State<SignUp> {
                         child: Container(
                           height: displaySize(context).height * .07,
                           decoration: kBoxDecorationStyle,
-                          child: TextFormField(
+                          child: TextField(
+                            controller: _nationalIdController,
                             style: new TextStyle(color: Colors.black),
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.all(20),
@@ -189,15 +177,6 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                             obscureText: passwordVisible,
-                            onSaved: null,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter your National ID number';
-                              }
-                              return value.length == 14
-                                  ? null
-                                  : 'Please make sure you entered 14 number !.';
-                            },
                           ),
                         ),
                       ),
@@ -207,7 +186,8 @@ class _SignUpState extends State<SignUp> {
                         child: Container(
                           height: displaySize(context).height * .07,
                           decoration: kBoxDecorationStyle,
-                          child: TextFormField(
+                          child: TextField(
+                            controller: _phoneNumberController,
                             style: new TextStyle(color: Colors.black),
                             decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.all(20),
@@ -215,16 +195,6 @@ class _SignUpState extends State<SignUp> {
                                 border: InputBorder.none,
                                 hintText: "Phone Number",
                                 hintStyle: kHintStyle),
-                            onSaved: null,
-                            validator: (String value) {
-                              if (value.isEmpty) {
-                                return 'Please enter your Phone Number';
-                              }
-
-                              return value.length == 11
-                                  ? null
-                                  : 'Please make sure you entered 11 number !.';
-                            },
                           ),
                         ),
                       ),
@@ -243,14 +213,44 @@ class _SignUpState extends State<SignUp> {
                     shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(30),
                     ),
-                    onPressed: () {
-                      // Validate returns true if the form is valid, otherwise false.
-                      if (_formKey.currentState.validate()) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SuccessCard()));
-                      }
+                    onPressed: () async {
+                      final register = RegisterCredentials(
+                        fullName: _fullNameController.text,
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                        nationalId: _nationalIdController.text,
+                        phoneNumber: _phoneNumberController.text,
+                      );
+                      final result = await registerService.Register(register);
+                      debugPrint(
+                          "from REGISTER status: " + result.status.toString());
+                      debugPrint(
+                          "from REGISTER token : " + result.result.toString());
+                      debugPrint("from REGISTER error : " +
+                          result.hasErrors.toString());
+                      final title = result.hasErrors
+                          ? 'Error'
+                          : 'Registration Successful!';
+                      final text = result.hasErrors
+                          ? result.messages.toString()
+                          : 'You can now Login with your created account!';
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                title: Text(title),
+                                content: Text(text),
+                                actions: <Widget>[
+                                  FlatButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      })
+                                ],
+                              )).then((data) {
+                        if (result.result) {
+                          Navigator.of(context).pop();
+                        }
+                      });
                     },
                     child: Center(
                       child: Text(

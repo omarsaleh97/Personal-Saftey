@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:personal_safety/Auth/login.dart';
+import 'package:personal_safety/Auth/logout.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Test extends StatefulWidget {
   @override
@@ -9,10 +11,15 @@ class Test extends StatefulWidget {
 }
 
 class _State extends State<Test> {
-  String _token = "";
+  _save(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = token;
+    prefs.setString(key, value);
+  }
+
   @override
   void initState() {
-    getTokenPreference().then(_updateToken);
     super.initState();
   }
 
@@ -26,19 +33,17 @@ class _State extends State<Test> {
         padding: new EdgeInsets.all(32.0),
         child: new Column(
           children: <Widget>[
-            new Text(
-              _token,
-              style: TextStyle(fontSize: 20),
+            IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: () {
+                _save("0");
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Logout()));
+              },
             )
           ],
         ),
       ),
     );
-  }
-
-  void _updateToken(String token) {
-    setState(() {
-      this._token = token;
-    });
   }
 }

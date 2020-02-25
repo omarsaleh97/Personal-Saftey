@@ -5,6 +5,8 @@ import 'package:personal_safety/componants/color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
 import 'package:personal_safety/componants/paint.dart';
+import 'package:personal_safety/componants/test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Logout extends StatefulWidget {
   @override
@@ -12,6 +14,11 @@ class Logout extends StatefulWidget {
 }
 
 class _LogoutState extends State<Logout> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

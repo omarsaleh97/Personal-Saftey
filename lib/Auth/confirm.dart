@@ -51,8 +51,8 @@ class _ConfirmState extends State<Confirm> {
 
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 195, left: 30),
-            child: Text("Tap the link in the email then tap continue.",style: TextStyle(fontSize: 17, color: grey),)
+              padding: const EdgeInsets.only(top: 195, left: 30),
+              child: Text("Tap the link in the email then tap continue.",style: TextStyle(fontSize: 17, color: grey),)
           ),
           Padding(
             padding: const EdgeInsets.only(
@@ -61,32 +61,32 @@ class _ConfirmState extends State<Confirm> {
               height: 50.0,
               width: 300,
 
-                child: RaisedButton(
-                  color: primaryColor,
+              child: RaisedButton(
+                color: primaryColor,
 
-                  shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30),
-                      ),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>NewPassword()));
-                    // Validate returns true if the form is valid, otherwise false.
-                    if (_formKey.currentState.validate()) {
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30),
+                ),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>NewPassword()));
+                  // Validate returns true if the form is valid, otherwise false.
+                  if (_formKey.currentState.validate()) {
 
 
 
-                    }
-                  },
-                  child: Center(
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  }
+                },
+                child: Center(
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
+              ),
 
             ),
           ),

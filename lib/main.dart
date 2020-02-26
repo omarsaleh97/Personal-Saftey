@@ -11,6 +11,8 @@ import 'package:get_it/get_it.dart';
 import 'package:personal_safety/services/service_login.dart';
 import 'package:personal_safety/services/service_register.dart';
 
+import 'componants/test.dart';
+
 void setupLocator() {
   GetIt.instance.registerLazySingleton(() => LoginService());
   GetIt.instance.registerLazySingleton(() => RegisterService());

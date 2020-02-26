@@ -14,13 +14,14 @@ import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const key = 'token';
-Future<bool> _saveTokenPreference(String token) async {
+String value = '0';
+Future<bool> saveTokenPreference(String token) async {
   final prefs = await SharedPreferences.getInstance();
   final value = token;
   prefs.setString(key, value);
 }
 
-Future<String> getTokenPreference() async {
+getTokenPreference() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString(key);
   return token;
@@ -33,14 +34,22 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   void saveToken(String resultToken) {
-    _saveTokenPreference(resultToken).then((bool committed) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Test()));
-    });
+    saveTokenPreference(resultToken);
+  }
+
+  read() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.get(key);
+    if (value != '0' && value != null) {
+      Navigator.of(context).push(new MaterialPageRoute(
+        builder: (BuildContext context) => new Test(),
+      ));
+    }
   }
 
   LoginService get userService => GetIt.instance<LoginService>();
   final _formKey = GlobalKey<FormState>();
-  bool passwordVisible;
+  bool passwordVisible = false;
   String errorMessages;
   LoginCredentials login;
   TextEditingController _loginController = TextEditingController();
@@ -48,7 +57,8 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    passwordVisible = false;
+    read();
+    super.initState();
   }
 
   @override
@@ -174,36 +184,39 @@ class _LoginState extends State<Login> {
                   shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30),
                   ),
-                  onPressed: () async {
-                    final login = LoginCredentials(
-                      email: _loginController.text,
-                      password: _passwordController.text,
-                    );
-                    final result = await userService.Login(login);
-                    debugPrint("from login: " + result.status.toString());
-                    debugPrint("from login: " + result.result.toString());
-                    debugPrint("from login: " + result.hasErrors.toString());
-                    final title = result.status == 200 ? 'Logged In!' : 'Error';
-                    final text = result.status == 200
-                        ? 'You will be forwarded to the next page!'
-                        : "Wrong Username or Password.";
-                    showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                              title: Text(title),
-                              content: Text(text),
-                              actions: <Widget>[
-                                FlatButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      saveToken(result.result);
-                                    })
-                              ],
-                            )).then((data) {
-                      if (result.result) {
-                        saveToken(result.result);
-                      }
+                  onPressed: () {
+                    setState(() async {
+                      final login = LoginCredentials(
+                        email: _loginController.text,
+                        password: _passwordController.text,
+                      );
+                      final result = await userService.Login(login);
+                      debugPrint("from login: " + result.status.toString());
+                      debugPrint("from login: " + result.result.toString());
+                      debugPrint("from login: " + result.hasErrors.toString());
+                      final title = result.status == 0 ? 'Logged In!' : 'Error';
+                      final text = result.status == 0
+                          ? 'You will be forwarded to the next page!'
+                          : "Wrong Username or Password.";
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                title: Text(title),
+                                content: Text(text),
+                                actions: <Widget>[
+                                  FlatButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        saveToken(result.result);
+                                      })
+                                ],
+                              )).then((data) {
+                        if (result.status == 0) {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Test()));
+                        }
+                      });
                     });
                   },
                   child: Center(

@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:personal_safety/Auth/login.dart';
+import 'package:personal_safety/Auth/logout.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Test extends StatefulWidget {
   @override
@@ -9,36 +12,67 @@ class Test extends StatefulWidget {
 }
 
 class _State extends State<Test> {
-  String _token = "";
+  _save(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = token;
+    prefs.setString(key, value);
+  }
+
   @override
   void initState() {
-    getTokenPreference().then(_updateToken);
     super.initState();
+  }
+
+  Future<bool> _onBackPressed() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('You are going to exit the application.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('NO'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text('YES'),
+                onPressed: () async {
+                  SystemNavigator.pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Test Page'),
-      ),
-      body: new Container(
-        padding: new EdgeInsets.all(32.0),
-        child: new Column(
-          children: <Widget>[
-            new Text(
-              _token,
-              style: TextStyle(fontSize: 20),
-            )
-          ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: new Scaffold(
+        appBar: new AppBar(
+          title: new Text('Test Page'),
+        ),
+        body: new Container(
+          padding: new EdgeInsets.all(32.0),
+          child: new Column(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.cancel),
+                onPressed: () {
+                  _save("0");
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Logout()));
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  void _updateToken(String token) {
-    setState(() {
-      this._token = token;
-    });
   }
 }

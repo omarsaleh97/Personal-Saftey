@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/Auth/logout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,25 +24,53 @@ class _State extends State<Test> {
     super.initState();
   }
 
+  Future<bool> _onBackPressed() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('You are going to exit the application.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('NO'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text('YES'),
+                onPressed: () async {
+                  SystemNavigator.pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Test Page'),
-      ),
-      body: new Container(
-        padding: new EdgeInsets.all(32.0),
-        child: new Column(
-          children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.cancel),
-              onPressed: () {
-                _save("0");
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Logout()));
-              },
-            )
-          ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: new Scaffold(
+        appBar: new AppBar(
+          title: new Text('Test Page'),
+        ),
+        body: new Container(
+          padding: new EdgeInsets.all(32.0),
+          child: new Column(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.cancel),
+                onPressed: () {
+                  _save("0");
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Logout()));
+                },
+              )
+            ],
+          ),
         ),
       ),
     );

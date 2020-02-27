@@ -8,6 +8,7 @@ import 'package:personal_safety/Auth/signup.dart';
 import 'package:personal_safety/Auth/signupSuccessful.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:get_it/get_it.dart';
+import 'package:personal_safety/componants/krmTest.dart';
 import 'package:personal_safety/services/service_login.dart';
 import 'package:personal_safety/services/service_register.dart';
 

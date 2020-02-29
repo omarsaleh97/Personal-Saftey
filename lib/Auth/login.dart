@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:personal_safety/Auth/Confirm_newEmail.dart';
+import 'package:personal_safety/Auth/forget_password.dart';
 import 'package:personal_safety/Auth/logout.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
@@ -207,6 +208,7 @@ class _LoginState extends State<Login> {
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
             child: TextField(
+              keyboardType: TextInputType.emailAddress,
               style: new TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(20),
@@ -257,7 +259,7 @@ class _LoginState extends State<Login> {
           child: InkWell(
             onTap: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ConfirmEmail()));
+                  MaterialPageRoute(builder: (context) => ForgetPassword()));
             },
             child: Text(
               'Forgot Password',

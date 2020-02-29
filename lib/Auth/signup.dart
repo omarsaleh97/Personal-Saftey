@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:personal_safety/Auth/Confirm_newEmail.dart';
 import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:personal_safety/componants/color.dart';
@@ -30,6 +31,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController _nationalIdController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   int nationalLength = 14;
+
   @override
   void initState() {
     _isLoading = false;
@@ -56,7 +58,9 @@ class _SignUpState extends State<SignUp> {
   }
 
   nationalIDValidation() {
-    if (_nationalIdController.text.trim().length < 14) {
+    if (_nationalIdController.text
+        .trim()
+        .length < 14) {
       return "Natioal ID must be = 14 number";
     }
     if (_emailController.text.isEmpty) {
@@ -65,7 +69,9 @@ class _SignUpState extends State<SignUp> {
   }
 
   phoneValidation() {
-    if (_phoneNumberController.text.trim().length < 11) {
+    if (_phoneNumberController.text
+        .trim()
+        .length < 11) {
       return "Phone Number must be = 11 number";
     }
     if (_phoneNumberController.text.isEmpty) {
@@ -109,162 +115,8 @@ class _SignUpState extends State<SignUp> {
                     ),
                     SingleChildScrollView(
                       child: Form(
-                        key: _formKey,
-                        child: Stack(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 20,
-                                left: 20,
-                              ),
-                              child: Text(
-                                "SignUp",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 50),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 85.0, left: 20.0, right: 20.0),
-                              child: Container(
-                                height: displaySize(context).height * .07,
-                                decoration: kBoxDecorationStyle,
-                                child: TextField(
-                                  controller: _fullNameController,
-                                  style: new TextStyle(color: Colors.black),
-                                  decoration: InputDecoration(
-                                    errorText: _validate
-                                        ? 'Value Can\'t Be Empty'
-                                        : null,
-                                    contentPadding: const EdgeInsets.all(20),
-                                    errorBorder: InputBorder.none,
-                                    border: InputBorder.none,
-                                    hintText: "Full Name",
-                                    hintStyle: kHintStyle,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 155.0, left: 20.0, right: 20.0),
-                              child: Container(
-                                height: displaySize(context).height * .07,
-                                decoration: kBoxDecorationStyle,
-                                child: TextField(
-                                  controller: _emailController,
-                                  style: new TextStyle(color: Colors.black),
-                                  decoration: InputDecoration(
-                                    errorText:
-                                        _validate ? emailValidation() : null,
-                                    contentPadding: const EdgeInsets.all(20),
-                                    errorBorder: InputBorder.none,
-                                    border: InputBorder.none,
-                                    hintText: "Email",
-                                    hintStyle: kHintStyle,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 225.0, left: 20.0, right: 20.0),
-                              child: Container(
-                                height: displaySize(context).height * .07,
-                                decoration: kBoxDecorationStyle,
-                                child: TextField(
-                                  controller: _passwordController,
-                                  style: new TextStyle(color: Colors.black),
-                                  decoration: InputDecoration(
-                                      errorText: _validate
-                                          ? passwordValidation()
-                                          : null,
-                                      contentPadding: const EdgeInsets.all(20),
-                                      errorBorder: InputBorder.none,
-                                      border: InputBorder.none,
-                                      hintText: "Password",
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          // Based on passwordVisible state choose the icon
-                                          passwordVisible
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                          color: Theme.of(context)
-                                              .primaryColorDark,
-                                        ),
-                                        onPressed: () {
-                                          // Update the state i.e. toogle the state of passwordVisible variable
-                                          setState(() {
-                                            passwordVisible = !passwordVisible;
-                                          });
-                                        },
-                                      ),
-                                      hintStyle: kHintStyle),
-                                  obscureText: passwordVisible,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 295.0, left: 20.0, right: 20.0),
-                              child: Container(
-                                height: displaySize(context).height * .07,
-                                decoration: kBoxDecorationStyle,
-                                child: TextField(
-                                  controller: _nationalIdController,
-                                  style: new TextStyle(color: Colors.black),
-                                  decoration: InputDecoration(
-                                    errorText: _validate
-                                        ? nationalIDValidation()
-                                        : null,
-                                    contentPadding: const EdgeInsets.all(20),
-                                    errorBorder: InputBorder.none,
-                                    border: InputBorder.none,
-                                    hintText: "National ID",
-                                    hintStyle: kHintStyle,
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        // Based on passwordVisible state choose the icon
-                                        passwordVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color:
-                                            Theme.of(context).primaryColorDark,
-                                      ),
-                                      onPressed: () {
-                                        // Update the state i.e. toogle the state of passwordVisible variable
-                                        setState(() {
-                                          passwordVisible = !passwordVisible;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  obscureText: passwordVisible,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 365.0, left: 20.0, right: 20.0),
-                              child: Container(
-                                height: displaySize(context).height * .07,
-                                decoration: kBoxDecorationStyle,
-                                child: TextField(
-                                  controller: _phoneNumberController,
-                                  style: new TextStyle(color: Colors.black),
-                                  decoration: InputDecoration(
-                                      errorText:
-                                          _validate ? phoneValidation() : null,
-                                      contentPadding: const EdgeInsets.all(20),
-                                      errorBorder: InputBorder.none,
-                                      border: InputBorder.none,
-                                      hintText: "Phone Number",
-                                      hintStyle: kHintStyle),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          key: _formKey,
+                          child: SignupForm()
                       ),
                     ),
                     Padding(
@@ -310,7 +162,7 @@ class _SignUpState extends State<SignUp> {
                                 phoneNumber: _phoneNumberController.text,
                               );
                               final result =
-                                  await registerService.Register(register);
+                              await registerService.Register(register);
                               debugPrint("from REGISTER status: " +
                                   result.status.toString());
                               debugPrint("from REGISTER token : " +
@@ -325,7 +177,8 @@ class _SignUpState extends State<SignUp> {
                                   : 'You can now Login with your created account!';
                               showDialog(
                                   context: context,
-                                  builder: (_) => AlertDialog(
+                                  builder: (_) =>
+                                      AlertDialog(
                                         title: Text(title),
                                         content: Text(text),
                                         actions: <Widget>[
@@ -343,7 +196,8 @@ class _SignUpState extends State<SignUp> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => Login()));
+                                          builder: (context) =>
+                                              ConfirmEmail()));
                                 }
                               });
                             });
@@ -371,6 +225,154 @@ class _SignUpState extends State<SignUp> {
           },
         ),
       ),
+    );
+  }
+
+
+  SignupForm() {
+    return Stack(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 20,
+            left: 20,
+          ),
+          child: Text(
+            "SignUp",
+            style: TextStyle(color: Colors.white, fontSize: 50),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 85.0, left: 20.0, right: 20.0),
+          child: Container(
+            height: displaySize(context).height * .07,
+            decoration: kBoxDecorationStyle,
+            child: TextField(
+              keyboardType: TextInputType.text,
+              controller: _fullNameController,
+              style: new TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                contentPadding: const EdgeInsets.all(20),
+                errorBorder: InputBorder.none,
+                border: InputBorder.none,
+                hintText: "Full Name",
+                hintStyle: kHintStyle,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 155.0, left: 20.0, right: 20.0),
+          child: Container(
+            height: displaySize(context).height * .07,
+            decoration: kBoxDecorationStyle,
+            child: TextField(
+              keyboardType: TextInputType.emailAddress,
+              controller: _emailController,
+              style: new TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                errorText: _validate ? emailValidation() : null,
+                contentPadding: const EdgeInsets.all(20),
+                errorBorder: InputBorder.none,
+                border: InputBorder.none,
+                hintText: "Email",
+                hintStyle: kHintStyle,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 225.0, left: 20.0, right: 20.0),
+          child: Container(
+            height: displaySize(context).height * .07,
+            decoration: kBoxDecorationStyle,
+            child: TextField(
+              keyboardType: TextInputType.text,
+              controller: _passwordController,
+              style: new TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                  errorText: _validate ? passwordValidation() : null,
+                  contentPadding: const EdgeInsets.all(20),
+                  errorBorder: InputBorder.none,
+                  border: InputBorder.none,
+                  hintText: "Password",
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      // Based on passwordVisible state choose the icon
+                      passwordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: Theme
+                          .of(context)
+                          .primaryColorDark,
+                    ),
+                    onPressed: () {
+                      // Update the state i.e. toogle the state of passwordVisible variable
+                      setState(() {
+                        passwordVisible = !passwordVisible;
+                      });
+                    },
+                  ),
+                  hintStyle: kHintStyle),
+              obscureText: passwordVisible,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 295.0, left: 20.0, right: 20.0),
+          child: Container(
+            height: displaySize(context).height * .07,
+            decoration: kBoxDecorationStyle,
+            child: TextField(
+              keyboardType: TextInputType.number,
+              controller: _nationalIdController,
+              style: new TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                errorText: _validate ? nationalIDValidation() : null,
+                contentPadding: const EdgeInsets.all(20),
+                errorBorder: InputBorder.none,
+                border: InputBorder.none,
+                hintText: "National ID",
+                hintStyle: kHintStyle,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    // Based on passwordVisible state choose the icon
+                    passwordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Theme
+                        .of(context)
+                        .primaryColorDark,
+                  ),
+                  onPressed: () {
+                    // Update the state i.e. toogle the state of passwordVisible variable
+                    setState(() {
+                      passwordVisible = !passwordVisible;
+                    });
+                  },
+                ),
+              ),
+              obscureText: passwordVisible,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 365.0, left: 20.0, right: 20.0),
+          child: Container(
+            height: displaySize(context).height * .07,
+            decoration: kBoxDecorationStyle,
+            child: TextField(
+              keyboardType: TextInputType.number,
+              controller: _phoneNumberController,
+              style: new TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                  errorText: _validate ? phoneValidation() : null,
+                  contentPadding: const EdgeInsets.all(20),
+                  errorBorder: InputBorder.none,
+                  border: InputBorder.none,
+                  hintText: "Phone Number",
+                  hintStyle: kHintStyle),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

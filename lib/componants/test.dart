@@ -63,8 +63,10 @@ class _State extends State<Test> {
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.lock),
-                onPressed: () {
-                  _save("0");
+                onPressed: ()async {
+                  //_save("0");
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  prefs.remove('token');
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => Logout()));
                 },

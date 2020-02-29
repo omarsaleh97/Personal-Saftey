@@ -5,7 +5,7 @@ import 'package:personal_safety/models/register.dart';
 import 'dart:developer';
 
 class RegisterService {
-  static var token = '';
+  static bool result = false;
   static const API = 'https://personalsafety.azurewebsites.net/';
   static const headers = {'Content-Type': 'application/json'};
   // Register
@@ -22,7 +22,7 @@ class RegisterService {
 
         print(APIresult.status);
         print(APIresult.result);
-        token = APIresult.result;
+        //result = APIresult.result;
         print(APIresult.hasErrors);
         return APIresult;
       }

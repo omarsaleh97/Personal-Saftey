@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:personal_safety/Auth/forgetPassword.dart';
+import 'package:personal_safety/Auth/Confirm_newEmail.dart';
 import 'package:personal_safety/Auth/logout.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
@@ -33,8 +33,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
-
   void saveToken(String resultToken) {
     saveTokenPreference(resultToken);
   }
@@ -62,7 +60,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     read();
-    _isLoading=false;
+    _isLoading = false;
     super.initState();
   }
 
@@ -71,7 +69,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
         backgroundColor: primaryColor,
         resizeToAvoidBottomInset: true,
-        body:Center(
+        body: Center(
           child: Builder(builder: (_) {
             if (_isLoading) {
               return Center(child: CircularProgressIndicator());
@@ -85,13 +83,13 @@ class _LoginState extends State<Login> {
                     height: displaySize(context).height * .4,
                     width: displaySize(context).width * .8,
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            bottomLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
-                            bottomRight: Radius.circular(30),
-                        ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        bottomLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                        bottomRight: Radius.circular(30),
+                      ),
                     ),
                     child: SvgPicture.asset(
                       'assets/images/location.svg',
@@ -100,97 +98,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
-                Form(
-                  key: _formKey,
-                  child: Stack(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20, left: 20),
-                        child: Text(
-                          "Login",
-                          style: TextStyle(color: Colors.white, fontSize: 50),
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                        EdgeInsets.only(top: 85.0, left: 20.0, right: 20.0),
-                        child: Container(
-                          height: displaySize(context).height * .07,
-                          decoration: kBoxDecorationStyle,
-                          child: TextField(
-                            style: new TextStyle(color: Colors.black),
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.all(20),
-                              hintText: "Email",
-                              errorText: _validate ? 'Value Can\'t Be Empty' : null,
-                              errorBorder: InputBorder.none,
-                              border: InputBorder.none,
-                            ),
-                            controller: _loginController,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                        EdgeInsets.only(top: 155.0, left: 20.0, right: 20.0),
-                        child: Container(
-                          height: displaySize(context).height * .07,
-                          decoration: kBoxDecorationStyle,
-                          child: TextField(
-
-                            controller: _passwordController,
-                            style: new TextStyle(color: Colors.black),
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.all(20),
-                              hintText: "Password",
-                              errorText: _validate ? 'Value Can\'t Be Empty' : null,
-
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  // Based on passwordVisible state choose the icon
-                                  passwordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: Theme
-                                      .of(context)
-                                      .primaryColorDark,
-                                ),
-                                onPressed: () {
-                                  // Update the state i.e. toogle the state of passwordVisible variable
-                                  setState(() {
-                                    passwordVisible = !passwordVisible;
-                                  });
-                                },
-                              ),
-                              errorBorder: InputBorder.none,
-                              border: InputBorder.none,
-                            ),
-                            obscureText: passwordVisible,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment(.7, 0.0),
-                        padding: EdgeInsets.only(top: 220, left: 20.0),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ForgetPassword()));
-                          },
-                          child: Text(
-                            'Forgot Password',
-                            style: TextStyle(
-                                color: Accent1,
-                                fontFamily: 'Roboto',
-                                decoration: TextDecoration.underline),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                Form(key: _formKey, child: LoginForm()),
                 Padding(
                   padding: const EdgeInsets.only(
                       top: 20, left: 70.0, bottom: 10, right: 70),
@@ -202,16 +110,23 @@ class _LoginState extends State<Login> {
                       shape: RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(30),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.setString(key, value);
+                        //read();
                         setState(() {
-                          _loginController.text.isEmpty ? _validate = true : _validate = false;
-                          _passwordController.text.isEmpty ? _validate = true : _validate = false;
+                          _loginController.text.isEmpty
+                              ? _validate = true
+                              : _validate = false;
+                          _passwordController.text.isEmpty
+                              ? _validate = true
+                              : _validate = false;
                         });
 
                         setState(() async {
                           setState(() {
-                            _isLoading=true;
-
+                            _isLoading = true;
                           });
 
                           final login = LoginCredentials(
@@ -223,16 +138,14 @@ class _LoginState extends State<Login> {
                           debugPrint("from login: " + result.result.toString());
                           debugPrint(
                               "from login: " + result.hasErrors.toString());
-                          final title = result.status == 0
-                              ? 'Logged In!'
-                              : 'Error';
+                          final title =
+                              result.status == 0 ? 'Logged In!' : 'Error';
                           final text = result.status == 0
                               ? 'You will be forwarded to the next page!'
                               : "Wrong Username or Password.";
                           showDialog(
                               context: context,
-                              builder: (_) =>
-                                  AlertDialog(
+                              builder: (_) => AlertDialog(
                                     title: Text(title),
                                     content: Text(text),
                                     actions: <Widget>[
@@ -240,8 +153,7 @@ class _LoginState extends State<Login> {
                                           child: Text('OK'),
                                           onPressed: () {
                                             setState(() {
-                                              _isLoading=false;
-
+                                              _isLoading = false;
                                             });
                                             Navigator.of(context).pop();
                                             saveToken(result.result);
@@ -249,13 +161,13 @@ class _LoginState extends State<Login> {
                                     ],
                                   )).then((data) {
                             if (result.status == 0) {
-                              Navigator.push(context,
+                              Navigator.push(
+                                  context,
                                   MaterialPageRoute(
                                       builder: (context) => Test()));
                             }
                           });
-                        }
-                        );
+                        });
                         setState(() {
                           _isLoading = false;
                         });
@@ -275,9 +187,88 @@ class _LoginState extends State<Login> {
                 ),
               ]),
             );
-          }
-    ),
-        )
+          }),
+        ));
+  }
+
+  LoginForm() {
+    return Stack(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 20, left: 20),
+          child: Text(
+            "Login",
+            style: TextStyle(color: Colors.white, fontSize: 50),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 85.0, left: 20.0, right: 20.0),
+          child: Container(
+            height: displaySize(context).height * .07,
+            decoration: kBoxDecorationStyle,
+            child: TextField(
+              style: new TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(20),
+                hintText: "Email",
+                errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                errorBorder: InputBorder.none,
+                border: InputBorder.none,
+              ),
+              controller: _loginController,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 155.0, left: 20.0, right: 20.0),
+          child: Container(
+            height: displaySize(context).height * .07,
+            decoration: kBoxDecorationStyle,
+            child: TextField(
+              controller: _passwordController,
+              style: new TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(20),
+                hintText: "Password",
+                errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    // Based on passwordVisible state choose the icon
+                    passwordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Theme.of(context).primaryColorDark,
+                  ),
+                  onPressed: () {
+                    // Update the state i.e. toogle the state of passwordVisible variable
+                    setState(() {
+                      passwordVisible = !passwordVisible;
+                    });
+                  },
+                ),
+                errorBorder: InputBorder.none,
+                border: InputBorder.none,
+              ),
+              obscureText: passwordVisible,
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment(.7, 0.0),
+          padding: EdgeInsets.only(top: 220, left: 20.0),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ConfirmEmail()));
+            },
+            child: Text(
+              'Forgot Password',
+              style: TextStyle(
+                  color: Accent1,
+                  fontFamily: 'Roboto',
+                  decoration: TextDecoration.underline),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

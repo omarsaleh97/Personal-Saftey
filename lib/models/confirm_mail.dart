@@ -3,17 +3,14 @@ import 'package:flutter/foundation.dart';
 
 class ConfirmMailCredentials {
   String email;
-  //String otp;
+  String token;
 
-  ConfirmMailCredentials({
-    @required this.email,
-    /*@required this.otp*/
-  });
+  ConfirmMailCredentials({@required this.email, @required this.token});
 
   Map<String, dynamic> toJson() {
     return {
       "email": email,
-      //"token": otp,
+      "token": token,
     };
   }
 }

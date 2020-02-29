@@ -3,7 +3,7 @@ class APIResponse<T> {
   int status;
   T result;
   bool hasErrors;
-  String messages;
+ String messages;
 
   APIResponse(
       {this.status, this.result, this.messages, this.hasErrors = false});

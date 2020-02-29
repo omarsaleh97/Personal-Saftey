@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/models/confirm_mail.dart';
 
-class LoginService {
+class ConfirmService {
   static var token = '';
   static const API = 'https://personalsafety.azurewebsites.net/';
   static const headers = {'Content-Type': 'application/json'};

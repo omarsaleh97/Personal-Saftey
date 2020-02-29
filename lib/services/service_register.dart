@@ -29,10 +29,10 @@ class RegisterService {
       return APIResponse<dynamic>(
           hasErrors: true,
           messages:
-              "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits.");
+              "Please make sure that:\n \n \n-Email is not taken and is correct.\n- Password is Complex. \n ,- National ID is 14 digits. \n,- Phone Number is 11 digits.");
     }).catchError((_) => APIResponse<dynamic>(
             hasErrors: true,
             messages:
-                "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits."));
+            "Please make sure that:\n \n \n-Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits."));
   }
 }

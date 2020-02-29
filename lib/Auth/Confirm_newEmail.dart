@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:personal_safety/Auth/confirm.dart';
+import 'package:get_it/get_it.dart';
+import 'package:personal_safety/Auth/confirmCode.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
+import 'package:personal_safety/models/confirm_mail.dart';
+import 'package:personal_safety/services/service_confirm.dart';
 
-class ForgetPassword extends StatefulWidget {
+class ConfirmEmail extends StatefulWidget {
   @override
-  _ForgetPasswordState createState() => _ForgetPasswordState();
+  _ConfirmEmailState createState() => _ConfirmEmailState();
 }
 
-class _ForgetPasswordState extends State<ForgetPassword> {
-  final _formKey = GlobalKey<FormState>();
+class _ConfirmEmailState extends State<ConfirmEmail> {
+  ConfirmService get userService => GetIt.instance<ConfirmService>();
 
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  TextEditingController _loginController = TextEditingController();
+
+  @override
+  void initState() {
+    _isLoading = false;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +35,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             padding: const EdgeInsets.only(top: 100, left: 30),
             child: Container(
               child: Text(
-                "Forget Password",
+                "Confirm your Email",
                 style: TextStyle(fontSize: 30, color: primaryColor),
               ),
             ),
@@ -56,7 +69,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     child: Container(
                       height:  displaySize(context).height*.07,
                       decoration: kBoxDecorationStyle2,
-                      child: TextFormField(
+                      child: TextField(
+                        controller: _loginController,
                         style: new TextStyle(color: Colors.black),
                         decoration: InputDecoration(
                             errorBorder: InputBorder.none,
@@ -64,16 +78,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           contentPadding:
                           const EdgeInsets.all(20),
                             hintText: "Email",
-
                         ),
-                        onSaved: null,
-                        validator: (String value) {
-                          if (value.isEmpty) {
-                            return 'Please enter your email';
-                          }
-
-                          return value.contains('@') ? null : 'Please use @ char .';
-                        },
                       ),
                     ),
                   ),
@@ -93,12 +98,52 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   borderRadius: new BorderRadius.circular(30),
                 ),
                 onPressed: () {
-                    // Validate returns true if the form is valid, otherwise false.
-                    if (_formKey.currentState.validate()) {
 
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Confirm()));
-                    }
+                  setState(() async {
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+                    final confirm = ConfirmMailCredentials(
+                      email: _loginController.text,
+
+                    );
+                    final result = await userService.confirmMail(confirm);
+                    debugPrint("from confirm: " + result.status.toString());
+                    debugPrint("from confirm: " + result.result.toString());
+                    debugPrint(
+                        "from confirm: " + result.hasErrors.toString());
+                    final title = result.status == 0 ? 'Sending successfuly!' : 'Error';
+                    final text = result.status == 0
+                        ? 'You will be forwarded to the next page!'
+                        : "Wrong Email";
+                    showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text(title),
+                          content: Text(text),
+                          actions: <Widget>[
+                            FlatButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Navigator.of(context).pop();
+                                })
+                          ],
+                        )).then((data) {
+                      if (result.status == 0) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ConfirmCode()));
+                      }
+                    });
+                  });
+                  setState(() {
+                    _isLoading = false;
+                  });
                   },
                   child: Center(
                     child: Text(

@@ -115,7 +115,7 @@ class _SignUpState extends State<SignUp> {
                     SingleChildScrollView(
                       child: Form(
                         key: _formKey,
-                        child:SignupForm()
+                        child:SignupForm(),
                       ),
                     ),
                     Padding(
@@ -185,6 +185,7 @@ class _SignUpState extends State<SignUp> {
                                           FlatButton(
                                               child: Text('OK'),
                                               onPressed: () {
+
                                                 setState(() {
                                                   _isLoading = false;
                                                 });

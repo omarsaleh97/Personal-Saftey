@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
-class ConfirmMailCredentials {
-  String email;
+class ConfirmTokenCredentials {
+  String token;
 
-  ConfirmMailCredentials({@required this.email});
+  ConfirmTokenCredentials({ @required this.token});
 
   Map<String, dynamic> toJson() {
     return {
-      "email": email,
+      "token": token,
     };
   }
 }

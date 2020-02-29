@@ -11,10 +11,6 @@ import 'package:personal_safety/componants/mediaQuery.dart';
 import 'package:personal_safety/models/register.dart';
 import 'package:personal_safety/services/service_register.dart';
 
-
-
-
-
 class SignUp extends StatefulWidget {
   @override
   _SignUpState createState() => _SignUpState();
@@ -24,6 +20,7 @@ class _SignUpState extends State<SignUp> {
   RegisterService get registerService => GetIt.instance<RegisterService>();
   final _formKey = GlobalKey<FormState>();
   bool _validate = false;
+
   bool _isLoading = false;
   bool passwordVisible;
   String errorMessages;
@@ -34,6 +31,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController _nationalIdController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   int nationalLength = 14;
+
   @override
   void initState() {
     _isLoading = false;
@@ -52,16 +50,17 @@ class _SignUpState extends State<SignUp> {
   passwordValidation() {
     if (_passwordController.text.length < 6) {
       return "Password must more than 6 and complex (ex:Test@123)";
-    }if (_passwordController.text.isEmpty) {
+    } else if (_passwordController.text.isEmpty) {
+      _validate = true;
       return "Enter your password , please";
     }
-    if(_passwordController.text.isNotEmpty) {
-      return null;
-    }
+    _validate = true;
   }
 
   nationalIDValidation() {
-    if (_nationalIdController.text.trim().length < 14) {
+    if (_nationalIdController.text
+        .trim()
+        .length < 14) {
       return "Natioal ID must be = 14 number";
     }
     if (_emailController.text.isEmpty) {
@@ -70,7 +69,9 @@ class _SignUpState extends State<SignUp> {
   }
 
   phoneValidation() {
-    if (_phoneNumberController.text.trim().length < 11) {
+    if (_phoneNumberController.text
+        .trim()
+        .length < 11) {
       return "Phone Number must be = 11 number";
     }
     if (_phoneNumberController.text.isEmpty) {
@@ -114,8 +115,8 @@ class _SignUpState extends State<SignUp> {
                     ),
                     SingleChildScrollView(
                       child: Form(
-                        key: _formKey,
-                        child:SignupForm(),
+                          key: _formKey,
+                          child: SignupForm()
                       ),
                     ),
                     Padding(
@@ -129,7 +130,7 @@ class _SignUpState extends State<SignUp> {
                           shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30),
                           ),
-                          onPressed: (){
+                          onPressed: () {
                             setState(() {
                               _fullNameController.text.isEmpty
                                   ? _validate = true
@@ -148,8 +149,6 @@ class _SignUpState extends State<SignUp> {
                                   : _validate = false;
                             });
 
-
-
                             setState(() async {
                               setState(() {
                                 _isLoading = true;
@@ -163,7 +162,7 @@ class _SignUpState extends State<SignUp> {
                                 phoneNumber: _phoneNumberController.text,
                               );
                               final result =
-                                  await registerService.Register(register);
+                              await registerService.Register(register);
                               debugPrint("from REGISTER status: " +
                                   result.status.toString());
                               debugPrint("from REGISTER token : " +
@@ -175,17 +174,17 @@ class _SignUpState extends State<SignUp> {
                                   : 'Registration Successful!';
                               final text = result.hasErrors
                                   ? result.messages.toString()
-                                  : 'You can now Confirm your Email !';
+                                  : 'You can now Login with your created account!';
                               showDialog(
                                   context: context,
-                                  builder: (_) => AlertDialog(
+                                  builder: (_) =>
+                                      AlertDialog(
                                         title: Text(title),
                                         content: Text(text),
                                         actions: <Widget>[
                                           FlatButton(
                                               child: Text('OK'),
                                               onPressed: () {
-
                                                 setState(() {
                                                   _isLoading = false;
                                                 });
@@ -197,7 +196,8 @@ class _SignUpState extends State<SignUp> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ConfirmEmail()));
+                                          builder: (context) =>
+                                              ConfirmEmail()));
                                 }
                               });
                             });
@@ -227,8 +227,10 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
-   SignupForm() {
-  return  Stack(
+
+
+  SignupForm() {
+    return Stack(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(
@@ -237,13 +239,11 @@ class _SignUpState extends State<SignUp> {
           ),
           child: Text(
             "SignUp",
-            style: TextStyle(
-                color: Colors.white, fontSize: 50),
+            style: TextStyle(color: Colors.white, fontSize: 50),
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(
-              top: 85.0, left: 20.0, right: 20.0),
+          padding: EdgeInsets.only(top: 85.0, left: 20.0, right: 20.0),
           child: Container(
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
@@ -252,9 +252,7 @@ class _SignUpState extends State<SignUp> {
               controller: _fullNameController,
               style: new TextStyle(color: Colors.black),
               decoration: InputDecoration(
-                errorText: _validate
-                    ? 'Value Can\'t Be Empty'
-                    : null,
+                errorText: _validate ? 'Value Can\'t Be Empty' : null,
                 contentPadding: const EdgeInsets.all(20),
                 errorBorder: InputBorder.none,
                 border: InputBorder.none,
@@ -265,8 +263,7 @@ class _SignUpState extends State<SignUp> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(
-              top: 155.0, left: 20.0, right: 20.0),
+          padding: EdgeInsets.only(top: 155.0, left: 20.0, right: 20.0),
           child: Container(
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
@@ -275,8 +272,7 @@ class _SignUpState extends State<SignUp> {
               controller: _emailController,
               style: new TextStyle(color: Colors.black),
               decoration: InputDecoration(
-                errorText:
-                _validate ? emailValidation() : null,
+                errorText: _validate ? emailValidation() : null,
                 contentPadding: const EdgeInsets.all(20),
                 errorBorder: InputBorder.none,
                 border: InputBorder.none,
@@ -287,8 +283,7 @@ class _SignUpState extends State<SignUp> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(
-              top: 225.0, left: 20.0, right: 20.0),
+          padding: EdgeInsets.only(top: 225.0, left: 20.0, right: 20.0),
           child: Container(
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
@@ -297,9 +292,7 @@ class _SignUpState extends State<SignUp> {
               controller: _passwordController,
               style: new TextStyle(color: Colors.black),
               decoration: InputDecoration(
-                  errorText: _validate
-                      ? passwordValidation()
-                      : null,
+                  errorText: _validate ? passwordValidation() : null,
                   contentPadding: const EdgeInsets.all(20),
                   errorBorder: InputBorder.none,
                   border: InputBorder.none,
@@ -307,10 +300,9 @@ class _SignUpState extends State<SignUp> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       // Based on passwordVisible state choose the icon
-                      passwordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Theme.of(context)
+                      passwordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: Theme
+                          .of(context)
                           .primaryColorDark,
                     ),
                     onPressed: () {
@@ -326,8 +318,7 @@ class _SignUpState extends State<SignUp> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(
-              top: 295.0, left: 20.0, right: 20.0),
+          padding: EdgeInsets.only(top: 295.0, left: 20.0, right: 20.0),
           child: Container(
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
@@ -336,9 +327,7 @@ class _SignUpState extends State<SignUp> {
               controller: _nationalIdController,
               style: new TextStyle(color: Colors.black),
               decoration: InputDecoration(
-                errorText: _validate
-                    ? nationalIDValidation()
-                    : null,
+                errorText: _validate ? nationalIDValidation() : null,
                 contentPadding: const EdgeInsets.all(20),
                 errorBorder: InputBorder.none,
                 border: InputBorder.none,
@@ -347,11 +336,10 @@ class _SignUpState extends State<SignUp> {
                 suffixIcon: IconButton(
                   icon: Icon(
                     // Based on passwordVisible state choose the icon
-                    passwordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                    color:
-                    Theme.of(context).primaryColorDark,
+                    passwordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Theme
+                        .of(context)
+                        .primaryColorDark,
                   ),
                   onPressed: () {
                     // Update the state i.e. toogle the state of passwordVisible variable
@@ -366,8 +354,7 @@ class _SignUpState extends State<SignUp> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(
-              top: 365.0, left: 20.0, right: 20.0),
+          padding: EdgeInsets.only(top: 365.0, left: 20.0, right: 20.0),
           child: Container(
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
@@ -376,8 +363,7 @@ class _SignUpState extends State<SignUp> {
               controller: _phoneNumberController,
               style: new TextStyle(color: Colors.black),
               decoration: InputDecoration(
-                  errorText:
-                  _validate ? phoneValidation() : null,
+                  errorText: _validate ? phoneValidation() : null,
                   contentPadding: const EdgeInsets.all(20),
                   errorBorder: InputBorder.none,
                   border: InputBorder.none,
@@ -390,5 +376,3 @@ class _SignUpState extends State<SignUp> {
     );
   }
 }
-
-

@@ -142,7 +142,7 @@ class _LoginState extends State<Login> {
                               result.status == 0 ? 'Logged In!' : 'Error';
                           final text = result.status == 0
                               ? 'You will be forwarded to the next page!'
-                              : "Wrong Username or Password.";
+                              : "Wrong Username or Password.\n\nIf you haven't confirmed your email address, please check your inbox for a Confirmation email.";
                           showDialog(
                               context: context,
                               builder: (_) => AlertDialog(

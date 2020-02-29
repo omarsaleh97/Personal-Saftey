@@ -6,7 +6,9 @@ import 'package:personal_safety/componants/card.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/models/confirm_mail.dart';
+import 'package:personal_safety/models/confirm_token.dart';
 import 'package:personal_safety/services/service_confirm.dart';
+import 'package:personal_safety/services/service_confirmCode.dart';
 
 class ConfirmCode extends StatefulWidget {
   @override
@@ -17,7 +19,7 @@ class _ConfirmCodeState extends State<ConfirmCode> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _tokenController = TextEditingController();
   bool _isLoading = false;
-  ConfirmService get userService => GetIt.instance<ConfirmService>();
+  ConfirmTokenService get userService => GetIt.instance<ConfirmTokenService>();
 
   @override
   void initState() {
@@ -35,7 +37,7 @@ class _ConfirmCodeState extends State<ConfirmCode> {
               padding: const EdgeInsets.only(top: 100, left: 30),
               child: Container(
                 child: Text(
-                  "Forget Password",
+                  "Confirm Email",
                   style: TextStyle(fontSize: 30, color: primaryColor),
                 ),
               ),
@@ -90,10 +92,10 @@ class _ConfirmCodeState extends State<ConfirmCode> {
                         _isLoading = true;
                       });
 
-                      final confirm = ConfirmMailCredentials(
+                      final Token = ConfirmTokenCredentials(
                         token: _tokenController.text,
                       );
-                      final result = await userService.confirmMail(confirm);
+                      final result = await userService.confirmToken(Token);
                       debugPrint("from confirm: " + result.status.toString());
                       debugPrint("from confirm: " + result.result.toString());
                       debugPrint(

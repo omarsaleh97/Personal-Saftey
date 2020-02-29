@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_safety/Auth/confirmCode.dart';
+import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
@@ -26,6 +27,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
     _isLoading = false;
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,19 +67,19 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
               child: Column(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(left: 20,right: 20),
+                    padding: const EdgeInsets.only(left: 20, right: 20),
                     child: Container(
-                      height:  displaySize(context).height*.07,
+                      height: displaySize(context).height * .07,
                       decoration: kBoxDecorationStyle2,
                       child: TextField(
                         controller: _loginController,
                         style: new TextStyle(color: Colors.black),
                         decoration: InputDecoration(
-                            errorBorder: InputBorder.none,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                          contentPadding:
-                          const EdgeInsets.all(20),
-                            hintText: "Email",
+                          errorBorder: InputBorder.none,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          contentPadding: const EdgeInsets.all(20),
+                          hintText: "Email",
                         ),
                       ),
                     ),
@@ -98,7 +100,6 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                   borderRadius: new BorderRadius.circular(30),
                 ),
                 onPressed: () {
-
                   setState(() async {
                     setState(() {
                       _isLoading = true;
@@ -106,56 +107,55 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
 
                     final confirm = ConfirmMailCredentials(
                       email: _loginController.text,
-
                     );
                     final result = await userService.confirmMail(confirm);
                     debugPrint("from confirm: " + result.status.toString());
                     debugPrint("from confirm: " + result.result.toString());
-                    debugPrint(
-                        "from confirm: " + result.hasErrors.toString());
-                    final title = result.status == 0 ? 'Sending successfuly!' : 'Error';
+                    debugPrint("from confirm: " + result.hasErrors.toString());
+                    final title =
+                        result.status == 0 ? 'Sending successfuly!' : 'Error';
                     final text = result.status == 0
                         ? 'You will be forwarded to the next page!'
                         : "Wrong Email";
                     showDialog(
                         context: context,
                         builder: (_) => AlertDialog(
-                          title: Text(title),
-                          content: Text(text),
-                          actions: <Widget>[
-                            FlatButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  Navigator.of(context).pop();
-                                })
-                          ],
-                        )).then((data) {
+                              title: Text(title),
+                              content: Text(text),
+                              actions: <Widget>[
+                                FlatButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      Navigator.of(context).pop();
+                                    })
+                              ],
+                            )).then((data) {
                       if (result.status == 0) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ConfirmCode()));
+                                builder: (context) => Login()));
                       }
                     });
                   });
                   setState(() {
                     _isLoading = false;
                   });
-                  },
-                  child: Center(
-                    child: Text(
-                      'Verify',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                },
+                child: Center(
+                  child: Text(
+                    'Verify',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
+              ),
             ),
           ),
           Padding(

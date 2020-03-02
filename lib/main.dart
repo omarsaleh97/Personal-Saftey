@@ -10,6 +10,7 @@ import 'package:personal_safety/Auth/signupSuccessful.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_safety/services/service_confirm.dart';
+import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/services/service_forgetpassword.dart';
 import 'package:personal_safety/services/service_login.dart';
 import 'package:personal_safety/services/service_register.dart';
@@ -22,6 +23,7 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => RegisterService());
   GetIt.instance.registerLazySingleton(() => ConfirmService());
   GetIt.instance.registerLazySingleton(() => ForgetPasswordService());
+  GetIt.instance.registerLazySingleton(() => FirstLoginService());
 }
 
 Future<void> main() async {
@@ -31,6 +33,9 @@ Future<void> main() async {
   var token = prefs.getString('token');
   print(token);
   runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: token == null ? Logout() : Test()));
+    debugShowCheckedModeBanner: false,
+    //    home: token == null ? Logout() : Test()
+
+    home: Login(),
+  ));
 }

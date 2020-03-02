@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:personal_safety/Auth/Confirm_newEmail.dart';
 import 'package:personal_safety/Auth/forget_password.dart';
 import 'package:personal_safety/Auth/logout.dart';
+import 'package:personal_safety/Auth/signupSuccessful.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
@@ -115,6 +116,7 @@ class _LoginState extends State<Login> {
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         prefs.setString(key, value);
+                        print("TOKEN IS SET! TOKEN IS SET!");
                         //read();
                         setState(() {
                           _loginController.text.isEmpty
@@ -165,7 +167,8 @@ class _LoginState extends State<Login> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Test()));
+                                      builder: (context) =>
+                                          SignUpSuccessful()));
                             }
                           });
                         });

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
+import 'package:personal_safety/models/first_login.dart';
+import 'package:personal_safety/services/service_firstLogin.dart';
+import 'package:personal_safety/models/emergency_contact.dart';
+import 'dart:core';
 
 class SignUpSuccessful extends StatefulWidget {
   @override
@@ -9,30 +14,16 @@ class SignUpSuccessful extends StatefulWidget {
 
 class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   bool value = false;
-  var _chronicDisease = [
-    'Chronic Disease',
-    'Chronic kidney disease',
-    'Diabetes',
-    'Cancer',
-    'Heart Condition',
-    'Virus C',
-    'Alzheimer\'s'
-  ];
+  TextEditingController _currentAddressController = TextEditingController();
+  TextEditingController _medicalHistory = TextEditingController();
+  TextEditingController _bloodType = TextEditingController();
 
-  Map<String, bool> values = {
-    'Chronic Disease': false,
-    'Chronic kidney disease': false,
-    'Diabetes': false,
-    'Cancer': false,
-    'Heart Condition': false,
-    'Virus C': false,
-    'Alzheimer\'s': false,
-  };
-
-  var _currentItemSelected = 'Chronic Disease';
+  FirstLoginService get userService => GetIt.instance<FirstLoginService>();
+  FirstLoginCredentials firstLogin;
+  EmergencyContacts contacts;
+  List<EmergencyContacts> contactList;
 
   final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,24 +43,24 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     color: primaryColor),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 150, left: 120),
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                    color: grey, borderRadius: BorderRadius.circular(150)),
-                child: CircleAvatar(
-                  radius: 50,
-                  child: IconButton(
-                      icon: Icon(Icons.camera_enhance),
-                      iconSize: 70,
-                      color: Colors.white,
-                      onPressed: null),
-                  backgroundColor: Colors.transparent,
-                ),
-              ),
-            ),
+//            Padding(
+//              padding: const EdgeInsets.only(top: 150, left: 120),
+//              child: Container(
+//                width: 150,
+//                height: 150,
+//                decoration: BoxDecoration(
+//                    color: grey, borderRadius: BorderRadius.circular(150)),
+//                child: CircleAvatar(
+//                  radius: 50,
+//                  child: IconButton(
+//                      icon: Icon(Icons.camera_enhance),
+//                      iconSize: 70,
+//                      color: Colors.white,
+//                      onPressed: null),
+//                  backgroundColor: Colors.transparent,
+//                ),
+//              ),
+//            ),
             Padding(
               padding: const EdgeInsets.only(top: 330.0, left: 20, right: 20),
               child: Form(
@@ -80,6 +71,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
                       child: TextField(
+                        controller: _currentAddressController,
                         decoration: InputDecoration(
                           errorBorder: InputBorder.none,
                           border: OutlineInputBorder(
@@ -95,7 +87,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     Container(
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
-                      child: TextFormField(
+                      child: TextField(
+                        controller: _bloodType,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.all(20),
                           errorBorder: InputBorder.none,
@@ -105,43 +98,15 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                         ),
                       ),
                     ),
-//                  SizedBox(height: 10,),
-//                  Container(
-//                    height: 60,
-//                    alignment: Alignment.centerLeft,
-//                    decoration: kBoxDecorationStyle2,
-//
-//                    child: DropdownButtonFormField<String>(
-//                      decoration: InputDecoration.collapsed(hintText: ''),
-//                      items: _chronicDisease.map((String dropDownStringItem) {
-//
-//                        return DropdownMenuItem<String>(
-//                          value: dropDownStringItem,
-//                          child: Text(dropDownStringItem),
-//                        );
-//                      }).toList(),
-//                      onChanged: (String newValueSelected){
-//
-//                        setState(() {
-//                          this._currentItemSelected=newValueSelected;
-//                        });
-//                      },
-//                      value: _currentItemSelected,
-//                    ),
-//                  ),
                     SizedBox(
                       height: 10,
                     ),
-
                     Container(
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
-                      child: TextFormField(
+                      child: TextField(
+                        controller: _medicalHistory,
                         decoration: InputDecoration(
-                          suffixIcon: Icon(
-                            Icons.add,
-                            color: grey,
-                          ),
                           errorBorder: InputBorder.none,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15)),
@@ -150,19 +115,17 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
 //                          Icons.contact_phone,
 //                          color: grey,
 //                        ),
-                          hintText: "Chronic Disease",
+                          hintText: "Medical History",
                         ),
                       ),
                     ),
-
                     SizedBox(
                       height: 10,
                     ),
-
                     Container(
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
-                      child: TextFormField(
+                      child: TextField(
                         decoration: InputDecoration(
                           suffixIcon: Icon(
                             Icons.contact_phone,
@@ -191,13 +154,54 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                           shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30),
                           ),
-                          onPressed: () {
-                            // Validate returns true if the form is valid, otherwise false.
-                            if (_formKey.currentState.validate()) {
-                              // If the form is valid, display a snackbar. In the real world,
-                              // you'd often call a server or save the information in a database.
+                          onPressed: () async {
+                            setState(() async {
+                              final contacts = EmergencyContacts(
+                                  name: "Bola", phoneNumber: "01402650060");
+                              final firstLogin = FirstLoginCredentials(
+                                  currentAddress:
+                                      _currentAddressController.text,
+                                  bloodType: int.parse(_bloodType.text),
+                                  medicalHistoryNotes: _medicalHistory.text,
+                                  emergencyContacts: contactList);
 
-                            }
+                              final result =
+                                  await userService.firstLogin(firstLogin);
+                              debugPrint("from FIRST STATUS LOGIN: " +
+                                  result.status.toString());
+                              debugPrint("from FIRST RESULT LOGIN: " +
+                                  result.result.toString());
+                              debugPrint("from FIRST ERROR LOGIN: " +
+                                  result.hasErrors.toString());
+                              final title = result.status == 0
+                                  ? 'Your Information is saved!'
+                                  : 'Error';
+                              final text = result.status == 0
+                                  ? 'You will be forwarded to the next page!'
+                                  : "Make sure the Phone numbers are 11 digits and that the rest of your information is correct.";
+                              showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                        title: Text(title),
+                                        content: Text(text),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                              child: Text('OK'),
+                                              onPressed: () {
+                                                setState(() {});
+                                                Navigator.of(context).pop();
+                                              })
+                                        ],
+                                      )).then((data) {
+                                if (result.status == 0) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SignUpSuccessful()));
+                                }
+                              });
+                            });
                           },
                           child: Center(
                             child: Text(
@@ -219,31 +223,6 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
           ],
         ),
       ),
-    );
-  }
-
-  void onChange(bool newVal) {
-    setState(() {
-      value = newVal;
-    });
-    if (newVal == true) {
-      ChoronicDisease(true);
-    }
-  }
-
-  Widget ChoronicDisease(bool val) {
-    ListView(
-      children: values.keys.map((String key) {
-        return CheckboxListTile(
-          title: Text("ChoronicDisease"),
-          value: values[key],
-          onChanged: (bool value) {
-            setState(() {
-              values[key] = value;
-            });
-          },
-        );
-      }).toList(),
     );
   }
 }

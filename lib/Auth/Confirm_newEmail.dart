@@ -31,8 +31,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
     return Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-        body: Center(
-        child: Builder(builder: (_) {
+        body: Center(child: Builder(builder: (_) {
           if (_isLoading) {
             return Center(child: CircularProgressIndicator());
           }
@@ -107,7 +106,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                       shape: RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(30),
                       ),
-                      onPressed: () async{
+                      onPressed: () async {
                         setState(() async {
                           setState(() {
                             _isLoading = true;
@@ -123,15 +122,15 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                               "from confirm: " + result.result.toString());
                           debugPrint(
                               "from confirm: " + result.hasErrors.toString());
-                          final title =
-                          result.status == 0 ? 'Sending successfuly!' : 'Error';
+                          final title = result.status == 0
+                              ? 'Confirmation Mail has been sent!'
+                              : 'Error';
                           final text = result.status == 0
-                              ? 'You will be forwarded to the next page!'
+                              ? 'Make sure to click on the Link in the email sent to you, then Login!'
                               : "Wrong Email";
                           showDialog(
                               context: context,
-                              builder: (_) =>
-                                  AlertDialog(
+                              builder: (_) => AlertDialog(
                                     title: Text(title),
                                     content: Text(text),
                                     actions: <Widget>[
@@ -183,9 +182,6 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
               ],
             ),
           );
-        }
-    )
-    )
-    );
+        })));
   }
 }

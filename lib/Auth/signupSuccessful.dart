@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
+import 'package:personal_safety/componants/test.dart';
 import 'package:personal_safety/models/first_login.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/models/emergency_contact.dart';
@@ -17,6 +18,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   TextEditingController _currentAddressController = TextEditingController();
   TextEditingController _medicalHistory = TextEditingController();
   TextEditingController _bloodType = TextEditingController();
+  TextEditingController _emergencyName = TextEditingController();
+  TextEditingController _emergencyPhone = TextEditingController();
 
   FirstLoginService get userService => GetIt.instance<FirstLoginService>();
   FirstLoginCredentials firstLogin;
@@ -126,11 +129,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
                       child: TextField(
+                        controller: _emergencyName,
                         decoration: InputDecoration(
-                          suffixIcon: Icon(
-                            Icons.contact_phone,
-                            color: grey,
-                          ),
                           errorBorder: InputBorder.none,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15)),
@@ -139,7 +139,28 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
 //                          Icons.contact_phone,
 //                          color: grey,
 //                        ),
-                          hintText: "Edit Emergency Contacts",
+                          hintText: "Emergency Contact (Optional)",
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      decoration: kBoxDecorationStyle2,
+                      child: TextField(
+                        controller: _emergencyPhone,
+                        decoration: InputDecoration(
+                          errorBorder: InputBorder.none,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          contentPadding: const EdgeInsets.all(20),
+//                        icon: Icon(
+//                          Icons.contact_phone,
+//                          color: grey,
+//                        ),
+                          hintText: "Phone Number (Optional)",
                         ),
                       ),
                     ),
@@ -155,15 +176,19 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                             borderRadius: new BorderRadius.circular(30),
                           ),
                           onPressed: () async {
+                            print("PRESSED");
                             setState(() async {
                               final contacts = EmergencyContacts(
-                                  name: "Bola", phoneNumber: "01402650060");
+                                  name: _emergencyName.text,
+                                  phoneNumber: _emergencyPhone.text);
                               final firstLogin = FirstLoginCredentials(
                                   currentAddress:
                                       _currentAddressController.text,
                                   bloodType: int.parse(_bloodType.text),
                                   medicalHistoryNotes: _medicalHistory.text,
-                                  emergencyContacts: contactList);
+                                  emergencyContacts: [
+                                    contacts,
+                                  ]);
 
                               final result =
                                   await userService.firstLogin(firstLogin);
@@ -197,8 +222,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              SignUpSuccessful()));
+                                          builder: (context) => Test()));
                                 }
                               });
                             });

@@ -33,9 +33,6 @@ Future<void> main() async {
   var token = prefs.getString('token');
   print(token);
   runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    //    home: token == null ? Logout() : Test()
-
-    home: Login(),
-  ));
+      debugShowCheckedModeBanner: false,
+      home: token == null ? Logout() : Test()));
 }

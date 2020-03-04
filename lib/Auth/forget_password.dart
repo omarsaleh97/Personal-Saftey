@@ -127,7 +127,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           final title =
                               result.status == 0 ? 'Email Sent!' : 'Error';
                           final text = result.status == 0
-                              ? 'Check your email for a token needed for the reset!'
+                              ? 'Click the link in the mail sent to you to be able to reset your password!'
                               : "Wrong Email";
                           showDialog(
                               context: context,

@@ -9,27 +9,10 @@ class SignUpSuccessful extends StatefulWidget {
 
 class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   bool value = false;
-  var _chronicDisease = [
-    'Chronic Disease',
-    'Chronic kidney disease',
-    'Diabetes',
-    'Cancer',
-    'Heart Condition',
-    'Virus C',
-    'Alzheimer\'s'
-  ];
+  TextEditingController _currentAddressController = TextEditingController();
+  TextEditingController _medicalHistory = TextEditingController();
+  TextEditingController _bloodType = TextEditingController();
 
-  Map<String, bool> values = {
-    'Chronic Disease': false,
-    'Chronic kidney disease': false,
-    'Diabetes': false,
-    'Cancer': false,
-    'Heart Condition': false,
-    'Virus C': false,
-    'Alzheimer\'s': false,
-  };
-
-  var _currentItemSelected = 'Chronic Disease';
 
   final _formKey = GlobalKey<FormState>();
 
@@ -52,24 +35,24 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     color: primaryColor),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 150, left: 120),
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                    color: grey, borderRadius: BorderRadius.circular(150)),
-                child: CircleAvatar(
-                  radius: 50,
-                  child: IconButton(
-                      icon: Icon(Icons.camera_enhance),
-                      iconSize: 70,
-                      color: Colors.white,
-                      onPressed: null),
-                  backgroundColor: Colors.transparent,
-                ),
-              ),
-            ),
+//            Padding(
+//              padding: const EdgeInsets.only(top: 150, left: 120),
+//              child: Container(
+//                width: 150,
+//                height: 150,
+//                decoration: BoxDecoration(
+//                    color: grey, borderRadius: BorderRadius.circular(150)),
+//                child: CircleAvatar(
+//                  radius: 50,
+//                  child: IconButton(
+//                      icon: Icon(Icons.camera_enhance),
+//                      iconSize: 70,
+//                      color: Colors.white,
+//                      onPressed: null),
+//                  backgroundColor: Colors.transparent,
+//                ),
+//              ),
+//            ),
             Padding(
               padding: const EdgeInsets.only(top: 330.0, left: 20, right: 20),
               child: Form(
@@ -80,6 +63,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
                       child: TextField(
+                        controller: _currentAddressController,
                         decoration: InputDecoration(
                           errorBorder: InputBorder.none,
                           border: OutlineInputBorder(
@@ -95,7 +79,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     Container(
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
-                      child: TextFormField(
+                      child: TextField(
+                        controller: _bloodType,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.all(20),
                           errorBorder: InputBorder.none,
@@ -105,30 +90,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                         ),
                       ),
                     ),
-//                  SizedBox(height: 10,),
-//                  Container(
-//                    height: 60,
-//                    alignment: Alignment.centerLeft,
-//                    decoration: kBoxDecorationStyle2,
-//
-//                    child: DropdownButtonFormField<String>(
-//                      decoration: InputDecoration.collapsed(hintText: ''),
-//                      items: _chronicDisease.map((String dropDownStringItem) {
-//
-//                        return DropdownMenuItem<String>(
-//                          value: dropDownStringItem,
-//                          child: Text(dropDownStringItem),
-//                        );
-//                      }).toList(),
-//                      onChanged: (String newValueSelected){
-//
-//                        setState(() {
-//                          this._currentItemSelected=newValueSelected;
-//                        });
-//                      },
-//                      value: _currentItemSelected,
-//                    ),
-//                  ),
+
                     SizedBox(
                       height: 10,
                     ),
@@ -136,7 +98,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     Container(
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
-                      child: TextFormField(
+                      child: TextField(
+                        controller: _medicalHistory,
                         decoration: InputDecoration(
                           suffixIcon: Icon(
                             Icons.add,
@@ -162,7 +125,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     Container(
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
-                      child: TextFormField(
+                      child: TextField(
                         decoration: InputDecoration(
                           suffixIcon: Icon(
                             Icons.contact_phone,
@@ -222,28 +185,5 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
     );
   }
 
-  void onChange(bool newVal) {
-    setState(() {
-      value = newVal;
-    });
-    if (newVal == true) {
-      ChoronicDisease(true);
-    }
-  }
 
-  Widget ChoronicDisease(bool val) {
-    ListView(
-      children: values.keys.map((String key) {
-        return CheckboxListTile(
-          title: Text("ChoronicDisease"),
-          value: values[key],
-          onChanged: (bool value) {
-            setState(() {
-              values[key] = value;
-            });
-          },
-        );
-      }).toList(),
-    );
-  }
 }

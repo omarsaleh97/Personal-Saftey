@@ -7,6 +7,7 @@ import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
 import 'package:personal_safety/componants/test.dart';
 import 'package:personal_safety/models/login.dart';
+import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/services/service_login.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:developer';
@@ -164,7 +165,7 @@ class _LoginState extends State<Login> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Test()));
+                                      builder: (context) => MainPage()));
                             }
                           });
                         });

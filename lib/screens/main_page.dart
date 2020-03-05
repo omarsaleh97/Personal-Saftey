@@ -199,7 +199,7 @@ class _MainPageState extends State<MainPage> {
                                 ? Home()
                                 : Align(
                                     alignment: Alignment.topCenter,
-                                    child: ActiveRequest(),
+                                    child: Logout(),
                                   )))
                   ],
                 ),

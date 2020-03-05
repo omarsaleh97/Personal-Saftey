@@ -54,6 +54,23 @@ class SocketHandler
 
     print("Got from server: " + serverMessage);
 
+    Map<String, dynamic> serverMap = jsonDecode(serverMessage);
+
+    print("Server call type: " + serverMap["type"]);
+
+    switch (serverMap["type"])
+    {
+
+      case "SHARELOCATION":
+
+        print("Show on map the following: ");
+        print("Longitude: " + serverMap["parameters"]["longitude"]);
+        print("Latitude: " + serverMap["parameters"]["latitude"]);
+
+        break;
+
+    }
+
   }
 
 }

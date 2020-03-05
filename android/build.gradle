@@ -7,7 +7,69 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
     }
+
+    subprojects {
+        project.configurations.all {
+            resolutionStrategy.eachDependency { details ->
+                if (details.requested.group == 'com.android.support'
+                        && !details.requested.name.contains('multidex') ) {
+                    details.useVersion "27.1.1"
+                }
+                if (details.requested.group == 'androidx.core'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.1"
+                }
+                if (details.requested.group == 'androidx.drawerlayout:drawerlayout'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+                if (details.requested.group == 'androidx.interpolator:interpolator'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+                if (details.requested.group == 'androidx.asynclayoutinflater:asynclayoutinflater'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+                if (details.requested.group == 'androidx.customview:customview'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+                if (details.requested.group == 'androidx.legacy:legacy-support-core-utils'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+                if (details.requested.group == 'androidx.cursoradapter:cursoradapter'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+                if (details.requested.group == 'androidx.legacy:legacy-support-core-ui'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+                if (details.requested.group == 'androidx.loader:loader'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+                if (details.requested.group == 'androidx.slidingpanelayout:slidingpanelayout'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0"
+                }
+                if (details.requested.group == 'androidx.print:print'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+                if (details.requested.group == 'androidx.fragment:fragment'
+                        && !details.requested.name.contains('androidx') ) {
+                    details.useVersion "1.0.0-rc01"
+                }
+            }
+        }
+    }
+
 }
+
+
 
 allprojects {
     repositories {

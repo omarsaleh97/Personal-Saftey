@@ -15,11 +15,12 @@ import 'package:personal_safety/services/service_login.dart';
 import 'package:personal_safety/services/service_register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 import 'componants/test.dart';
 import 'services/SocketHandler.dart';
 
 void setupLocator() {
-  SocketHandler.ConnectSocket(4466);
+  SocketHandler.ConnectSocket();
   GetIt.instance.registerLazySingleton(() => LoginService());
   GetIt.instance.registerLazySingleton(() => RegisterService());
   GetIt.instance.registerLazySingleton(() => ConfirmService());

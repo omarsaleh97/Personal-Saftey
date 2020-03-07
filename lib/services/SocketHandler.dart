@@ -1,22 +1,44 @@
-import 'dart:io';
 import 'dart:convert';
+import 'package:signalr_client/signalr_client.dart';
 
 class SocketHandler
 {
 
-  static Socket socket;
+  static const kChatServerUrl = "http://192.168.1.5:5566/Realtime";
 
-  static void ConnectSocket(int port) async
+  static bool connectionIsOpen = false;
+  static HubConnection _hubConnection;
+
+  static Future<void> ConnectSocket() async
   {
 
-    socket = await Socket.connect('192.168.1.5', port); //Replace with server IP
-    print('Connected to server!');
+    print("Trying to connect to server..");
 
-    socket.listen((List<int> event) {
-      HandleServerMessage(utf8.decode(event));
-    });
+    if (_hubConnection == null) {
+      _hubConnection = HubConnectionBuilder().withUrl(kChatServerUrl).build();
+      _hubConnection.onclose((error) => connectionIsOpen = false);
+      _hubConnection.on("LOCATION_GROUP_NAME", LOCATION_GROUP_NAME);
+    }
 
-    SendServerRequest("SHARELOCATION", GetFormattedMap("33", "34"));
+    if (_hubConnection.state != HubConnectionState.Connected) {
+      await _hubConnection.start();
+      print("Connected!");
+      connectionIsOpen = true;
+      StartSharingLocation("START_LOCATION_SHARING", 11, 15);
+    }
+
+  }
+
+  static void LOCATION_GROUP_NAME(List<Object> args)
+  {
+
+    print("Joined a location group! group name is " + args[0]);
+
+  }
+
+  static void StartSharingLocation(String functionName, int longitude, int latitude) {
+
+    _hubConnection.invoke(functionName, args: <Object>["0101", "1010", longitude, latitude] );
 
   }
 
@@ -29,47 +51,6 @@ class SocketHandler
     mapString.putIfAbsent("latitude", () => lat);
 
     return mapString;
-
-  }
-
-  static void SendServerRequest(String type, Object map)
-  {
-
-    Map<String, String> mapObject = map as Map<String, String>;
-
-    String jsonString = "";
-
-    jsonString = "{\"type\": \"" + type + "\", \"parameters\": ";
-
-    jsonString += json.encode(mapObject) + "}";
-
-    print("Sending to server: " + jsonString);
-
-    socket.add(utf8.encode(jsonString));
-
-  }
-
-  static void HandleServerMessage(String serverMessage)
-  {
-
-    print("Got from server: " + serverMessage);
-
-    Map<String, dynamic> serverMap = jsonDecode(serverMessage);
-
-    print("Server call type: " + serverMap["type"]);
-
-    switch (serverMap["type"])
-    {
-
-      case "SHARELOCATION":
-
-        print("Show on map the following: ");
-        print("Longitude: " + serverMap["parameters"]["longitude"]);
-        print("Latitude: " + serverMap["parameters"]["latitude"]);
-
-        break;
-
-    }
 
   }
 

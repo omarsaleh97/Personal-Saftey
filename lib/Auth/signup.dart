@@ -58,9 +58,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   nationalIDValidation() {
-    if (_nationalIdController.text
-        .trim()
-        .length < 14) {
+    if (_nationalIdController.text.trim().length < 14) {
       return "Natioal ID must be = 14 number";
     }
     if (_emailController.text.isEmpty) {
@@ -69,9 +67,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   phoneValidation() {
-    if (_phoneNumberController.text
-        .trim()
-        .length < 11) {
+    if (_phoneNumberController.text.trim().length < 11) {
       return "Phone Number must be = 11 number";
     }
     if (_phoneNumberController.text.isEmpty) {
@@ -114,10 +110,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
                     SingleChildScrollView(
-                      child: Form(
-                          key: _formKey,
-                          child: SignupForm()
-                      ),
+                      child: Form(key: _formKey, child: SignupForm()),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -162,7 +155,7 @@ class _SignUpState extends State<SignUp> {
                                 phoneNumber: _phoneNumberController.text,
                               );
                               final result =
-                              await registerService.Register(register);
+                                  await registerService.Register(register);
                               debugPrint("from REGISTER status: " +
                                   result.status.toString());
                               debugPrint("from REGISTER token : " +
@@ -177,8 +170,7 @@ class _SignUpState extends State<SignUp> {
                                   : 'You can now Login with your created account!';
                               showDialog(
                                   context: context,
-                                  builder: (_) =>
-                                      AlertDialog(
+                                  builder: (_) => AlertDialog(
                                         title: Text(title),
                                         content: Text(text),
                                         actions: <Widget>[
@@ -227,7 +219,6 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
-
 
   SignupForm() {
     return Stack(
@@ -301,9 +292,7 @@ class _SignUpState extends State<SignUp> {
                     icon: Icon(
                       // Based on passwordVisible state choose the icon
                       passwordVisible ? Icons.visibility : Icons.visibility_off,
-                      color: Theme
-                          .of(context)
-                          .primaryColorDark,
+                      color: Theme.of(context).primaryColorDark,
                     ),
                     onPressed: () {
                       // Update the state i.e. toogle the state of passwordVisible variable
@@ -337,9 +326,7 @@ class _SignUpState extends State<SignUp> {
                   icon: Icon(
                     // Based on passwordVisible state choose the icon
                     passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Theme
-                        .of(context)
-                        .primaryColorDark,
+                    color: Theme.of(context).primaryColorDark,
                   ),
                   onPressed: () {
                     // Update the state i.e. toogle the state of passwordVisible variable

@@ -96,24 +96,24 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     color: primaryColor),
               ),
             ),
-//            Padding(
-////              padding: const EdgeInsets.only(top: 150, left: 120),
-////              child: Container(
-////                width: 150,
-////                height: 150,
-////                decoration: BoxDecoration(
-////                    color: grey, borderRadius: BorderRadius.circular(150)),
-////                child: CircleAvatar(
-////                  radius: 50,
-////                  child: IconButton(
-////                      icon: Icon(Icons.camera_enhance),
-////                      iconSize: 70,
-////                      color: Colors.white,
-////                      onPressed: null),
-////                  backgroundColor: Colors.transparent,
-////                ),
-////              ),
-////            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 150, left: 120),
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                    color: grey, borderRadius: BorderRadius.circular(150)),
+                child: CircleAvatar(
+                  radius: 50,
+                  child: IconButton(
+                      icon: Icon(Icons.camera_enhance),
+                      iconSize: 70,
+                      color: Colors.white,
+                      onPressed: null),
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 330.0, left: 20, right: 20),
               child: Form(
@@ -205,7 +205,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                         child: Row(
                           children: <Widget>[
                             Text(
-                              "Blood Type (Default is O): ",
+                              "Select Blood Type: ",
                               style: kLabelStyle,
                             ),
                             SizedBox(
@@ -253,6 +253,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
 
                                 final result =
                                     await userService.firstLogin(firstLogin);
+                                debugPrint("BLOOD TYPE IS " +
+                                    _selectedBloodType.id.toString());
                                 debugPrint("from FIRST STATUS LOGIN: " +
                                     result.status.toString());
                                 debugPrint("from FIRST RESULT LOGIN: " +

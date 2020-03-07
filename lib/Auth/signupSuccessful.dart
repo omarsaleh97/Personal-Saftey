@@ -205,7 +205,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                         child: Row(
                           children: <Widget>[
                             Text(
-                              "Select your blood type: ",
+                              "Blood Type (Default is O): ",
                               style: kLabelStyle,
                             ),
                             SizedBox(

@@ -33,7 +33,7 @@ class FirstLoginService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     return http
-        .put(API + '/api/User/CompleteProfile',
+        .put(API + '/api/Client/CompleteProfile',
             headers: headers, body: json.encode(item.toJson()))
         .then((data) {
       if (data.statusCode == 200) {

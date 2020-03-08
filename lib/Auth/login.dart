@@ -52,6 +52,8 @@ class _LoginState extends State<Login> {
   LoginService get userService => GetIt.instance<LoginService>();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool emailFlag = false;
+  bool passwordFlag = false;
   bool _validate = false;
   bool passwordVisible = false;
   String errorMessages;
@@ -59,11 +61,44 @@ class _LoginState extends State<Login> {
   TextEditingController _loginController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
+  emailValidation() {
+    if (_loginController.text.isEmpty) {
+      emailFlag = false;
+    } else
+      emailFlag = true;
+  }
+
+  passwordValidation() {
+    if (_passwordController.text.isEmpty) {
+      passwordFlag = false;
+    } else
+      passwordFlag = true;
+  }
+
   @override
   void initState() {
     read();
     _isLoading = false;
     super.initState();
+  }
+
+  ShowDialog(String title, String text) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text(title),
+              content: Text(text),
+              actions: <Widget>[
+                FlatButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      Navigator.of(context).pop();
+                    })
+              ],
+            ));
   }
 
   @override
@@ -113,68 +148,69 @@ class _LoginState extends State<Login> {
                         borderRadius: new BorderRadius.circular(30),
                       ),
                       onPressed: () async {
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        prefs.setString(key, value);
-                        print("TOKEN IS SET! TOKEN IS SET!");
-                        //read();
-                        setState(() {
-                          _loginController.text.isEmpty
-                              ? _validate = true
-                              : _validate = false;
-                          _passwordController.text.isEmpty
-                              ? _validate = true
-                              : _validate = false;
-                        });
+                        emailValidation();
+                        passwordValidation();
+                        if (emailFlag == true && passwordFlag == true) {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs.setString(key, value);
+                          print("TOKEN IS SET! TOKEN IS SET!");
+                          //read();
 
-                        setState(() async {
+                          setState(() async {
+                            setState(() {
+                              _isLoading = true;
+                            });
+
+                            final login = LoginCredentials(
+                              email: _loginController.text,
+                              password: _passwordController.text,
+                            );
+                            final result = await userService.Login(login);
+                            debugPrint(
+                                "from login: " + result.status.toString());
+                            debugPrint(
+                                "from login: " + result.result.toString());
+                            debugPrint(
+                                "from login: " + result.hasErrors.toString());
+                            final title =
+                                result.status == 0 ? 'Logged In!' : 'Error';
+                            final text = result.status == 0
+                                ? 'You will be forwarded to the next page!'
+                                : "Wrong Username or Password.\n\nIf you haven't confirmed your email address, please check your inbox for a Confirmation email.";
+                            showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      title: Text(title),
+                                      content: Text(text),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                            child: Text('OK'),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              Navigator.of(context).pop();
+                                              saveToken(result.result);
+                                            })
+                                      ],
+                                    )).then((data) {
+                              if (result.status == 0) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SignUpSuccessful()));
+                              }
+                            });
+                          });
                           setState(() {
-                            _isLoading = true;
+                            _isLoading = false;
                           });
-
-                          final login = LoginCredentials(
-                            email: _loginController.text,
-                            password: _passwordController.text,
-                          );
-                          final result = await userService.Login(login);
-                          debugPrint("from login: " + result.status.toString());
-                          debugPrint("from login: " + result.result.toString());
-                          debugPrint(
-                              "from login: " + result.hasErrors.toString());
-                          final title =
-                              result.status == 0 ? 'Logged In!' : 'Error';
-                          final text = result.status == 0
-                              ? 'You will be forwarded to the next page!'
-                              : "Wrong Username or Password.\n\nIf you haven't confirmed your email address, please check your inbox for a Confirmation email.";
-                          showDialog(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                    title: Text(title),
-                                    content: Text(text),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                          child: Text('OK'),
-                                          onPressed: () {
-                                            setState(() {
-                                              _isLoading = false;
-                                            });
-                                            Navigator.of(context).pop();
-                                            saveToken(result.result);
-                                          })
-                                    ],
-                                  )).then((data) {
-                            if (result.status == 0) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SignUpSuccessful()));
-                            }
-                          });
-                        });
-                        setState(() {
-                          _isLoading = false;
-                        });
+                        } else {
+                          ShowDialog(
+                              "Error", "Email and Password cannot be empty.");
+                        }
                       },
                       child: Center(
                         child: Text(
@@ -256,22 +292,48 @@ class _LoginState extends State<Login> {
             ),
           ),
         ),
-        Container(
-          alignment: Alignment(.7, 0.0),
-          padding: EdgeInsets.only(top: 220, left: 20.0),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ForgetPassword()));
-            },
-            child: Text(
-              'Forgot Password',
-              style: TextStyle(
-                  color: Accent1,
-                  fontFamily: 'Roboto',
-                  decoration: TextDecoration.underline),
+        Row(
+          children: <Widget>[
+            Container(
+              alignment: Alignment(.7, 0.0),
+              padding: EdgeInsets.only(top: 220, left: 20.0),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ForgetPassword()));
+                },
+                child: Text(
+                  'Forgot Password?',
+                  style: TextStyle(
+                      color: Accent1,
+                      fontFamily: 'Roboto',
+                      decoration: TextDecoration.underline),
+                ),
+              ),
             ),
-          ),
+            SizedBox(
+              width: 65,
+            ),
+            Container(
+              alignment: Alignment(.7, 0.0),
+              padding: EdgeInsets.only(top: 220, left: 20.0),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ConfirmEmail()));
+                },
+                child: Text(
+                  "Resend Confirmation mail",
+                  style: TextStyle(
+                      color: Accent1,
+                      fontFamily: 'Roboto',
+                      decoration: TextDecoration.underline),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

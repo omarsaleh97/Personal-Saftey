@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:personal_safety/Auth/Confirm_newEmail.dart';
+import 'package:personal_safety/Auth/forget_password.dart';
 import 'package:personal_safety/Auth/logout.dart';
+import 'package:personal_safety/Auth/signupSuccessful.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
 import 'package:personal_safety/componants/test.dart';
 import 'package:personal_safety/models/login.dart';
-import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/services/service_login.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:developer';
@@ -113,8 +114,9 @@ class _LoginState extends State<Login> {
                       ),
                       onPressed: () async {
                         SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
+                        await SharedPreferences.getInstance();
                         prefs.setString(key, value);
+                        print("TOKEN IS SET! TOKEN IS SET!");
                         //read();
                         setState(() {
                           _loginController.text.isEmpty
@@ -140,32 +142,33 @@ class _LoginState extends State<Login> {
                           debugPrint(
                               "from login: " + result.hasErrors.toString());
                           final title =
-                              result.status == 0 ? 'Logged In!' : 'Error';
+                          result.status == 0 ? 'Logged In!' : 'Error';
                           final text = result.status == 0
                               ? 'You will be forwarded to the next page!'
                               : "Wrong Username or Password.\n\nIf you haven't confirmed your email address, please check your inbox for a Confirmation email.";
                           showDialog(
                               context: context,
                               builder: (_) => AlertDialog(
-                                    title: Text(title),
-                                    content: Text(text),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                          child: Text('OK'),
-                                          onPressed: () {
-                                            setState(() {
-                                              _isLoading = false;
-                                            });
-                                            Navigator.of(context).pop();
-                                            saveToken(result.result);
-                                          })
-                                    ],
-                                  )).then((data) {
+                                title: Text(title),
+                                content: Text(text),
+                                actions: <Widget>[
+                                  FlatButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Navigator.of(context).pop();
+                                        saveToken(result.result);
+                                      })
+                                ],
+                              )).then((data) {
                             if (result.status == 0) {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => MainPage()));
+                                      builder: (context) =>
+                                          SignUpSuccessful()));
                             }
                           });
                         });
@@ -208,6 +211,7 @@ class _LoginState extends State<Login> {
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
             child: TextField(
+              keyboardType: TextInputType.emailAddress,
               style: new TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(20),
@@ -258,7 +262,7 @@ class _LoginState extends State<Login> {
           child: InkWell(
             onTap: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ConfirmEmail()));
+                  MaterialPageRoute(builder: (context) => ForgetPassword()));
             },
             child: Text(
               'Forgot Password',

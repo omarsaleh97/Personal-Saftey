@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
+import 'package:personal_safety/componants/test.dart';
+import 'package:personal_safety/models/first_login.dart';
+import 'package:personal_safety/services/service_firstLogin.dart';
+import 'package:personal_safety/models/emergency_contact.dart';
+import 'dart:core';
 
 class SignUpSuccessful extends StatefulWidget {
   @override
@@ -13,9 +19,44 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   TextEditingController _medicalHistory = TextEditingController();
   TextEditingController _bloodType = TextEditingController();
 
+  TextEditingController _emergencyName = TextEditingController();
+  TextEditingController _emergencyPhone = TextEditingController();
+
+  FirstLoginService get userService => GetIt.instance<FirstLoginService>();
+  FirstLoginCredentials firstLogin;
+  EmergencyContacts contacts;
+  List<EmergencyContacts> contactList;
+
+  List<BloodType> _bloodtype=BloodType.getBloodType();
+  List<DropdownMenuItem<BloodType>>_dropdownMenuItem;
+  BloodType _selectedBloodType ;
+
+  @override
+  void initState() {
+    _dropdownMenuItem = buildDropdownMenuItems(_bloodtype);
+    _selectedBloodType =_dropdownMenuItem[0].value;
+    super.initState();
+  }
+
+  List <DropdownMenuItem<BloodType>> buildDropdownMenuItems (List types ){
+    List<DropdownMenuItem<BloodType>> items = List();
+    for (BloodType bloodtype in types) {
+      items.add(
+        DropdownMenuItem(
+          value: bloodtype,
+          child: Text(bloodtype.type),
+        ),
+      );
+    }
+    return items;
+  }
+  onChangeDropdownItem(BloodType selectedCompany) {
+    setState(() {
+      _selectedBloodType = selectedCompany;
+    });
+  }
 
   final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,35 +117,33 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     SizedBox(
                       height: 10,
                     ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      decoration: kBoxDecorationStyle2,
-                      child: TextField(
-                        controller: _bloodType,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(20),
-                          errorBorder: InputBorder.none,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          hintText: "Blood Type",
-                        ),
-                      ),
-                    ),
+//                    Container(
+//                      alignment: Alignment.centerLeft,
+//                      decoration: kBoxDecorationStyle2,
+//                      child: TextField(
+//                        controller: _bloodType,
+//                        decoration: InputDecoration(
+//                          contentPadding: const EdgeInsets.all(20),
+//                          errorBorder: InputBorder.none,
+//                          border: OutlineInputBorder(
+//                              borderRadius: BorderRadius.circular(15)),
+//                          hintText: "Blood Type",
+//                        ),
+//                      ),
+//                    ),
+                  DropdownButton(
+
+                    items: _dropdownMenuItem, onChanged: onChangeDropdownItem,value: _selectedBloodType,),
 
                     SizedBox(
                       height: 10,
                     ),
-
                     Container(
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
                       child: TextField(
                         controller: _medicalHistory,
                         decoration: InputDecoration(
-                          suffixIcon: Icon(
-                            Icons.add,
-                            color: grey,
-                          ),
                           errorBorder: InputBorder.none,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15)),
@@ -113,24 +152,19 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
 //                          Icons.contact_phone,
 //                          color: grey,
 //                        ),
-                          hintText: "Chronic Disease",
+                          hintText: "Medical History",
                         ),
                       ),
                     ),
-
                     SizedBox(
                       height: 10,
                     ),
-
                     Container(
                       alignment: Alignment.centerLeft,
                       decoration: kBoxDecorationStyle2,
                       child: TextField(
+                        controller: _emergencyName,
                         decoration: InputDecoration(
-                          suffixIcon: Icon(
-                            Icons.contact_phone,
-                            color: grey,
-                          ),
                           errorBorder: InputBorder.none,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15)),
@@ -139,7 +173,25 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
 //                          Icons.contact_phone,
 //                          color: grey,
 //                        ),
-                          hintText: "Edit Emergency Contacts",
+                          hintText: "Emergency Contact (Optional)",
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      decoration: kBoxDecorationStyle2,
+                      child: TextField(
+                        controller: _emergencyPhone,
+                        decoration: InputDecoration(
+                          errorBorder: InputBorder.none,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          contentPadding: const EdgeInsets.all(20),
+
+                          hintText: "Phone Number (Optional)",
                         ),
                       ),
                     ),
@@ -154,13 +206,57 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                           shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30),
                           ),
-                          onPressed: () {
-                            // Validate returns true if the form is valid, otherwise false.
-                            if (_formKey.currentState.validate()) {
-                              // If the form is valid, display a snackbar. In the real world,
-                              // you'd often call a server or save the information in a database.
+                          onPressed: () async {
+                            print("PRESSED");
+                            setState(() async {
+                              final contacts = EmergencyContacts(
+                                  name: _emergencyName.text,
+                                  phoneNumber: _emergencyPhone.text);
+                              final firstLogin = FirstLoginCredentials(
+                                  currentAddress:
+                                      _currentAddressController.text,
+                                  bloodType: _selectedBloodType.id,
+                                  medicalHistoryNotes: _medicalHistory.text,
+                                  emergencyContacts: [
+                                    contacts,
+                                  ]);
 
-                            }
+                              final result =
+                                  await userService.firstLogin(firstLogin);
+                              debugPrint("from FIRST STATUS LOGIN: " +
+                                  result.status.toString());
+                              debugPrint("from FIRST RESULT LOGIN: " +
+                                  result.result.toString());
+                              debugPrint("from FIRST ERROR LOGIN: " +
+                                  result.hasErrors.toString());
+                              final title = result.status == 0
+                                  ? 'Your Information is saved!'
+                                  : 'Error';
+                              final text = result.status == 0
+                                  ? 'You will be forwarded to the next page!'
+                                  : "Make sure the Phone numbers are 11 digits and that the rest of your information is correct.";
+                              showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                        title: Text(title),
+                                        content: Text(text),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                              child: Text('OK'),
+                                              onPressed: () {
+                                                setState(() {});
+                                                Navigator.of(context).pop();
+                                              })
+                                        ],
+                                      )).then((data) {
+                                if (result.status == 0) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Test()));
+                                }
+                              });
+                            });
                           },
                           child: Center(
                             child: Text(
@@ -184,6 +280,19 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
       ),
     );
   }
+}
 
+class BloodType {
+  int id;
+  String type;
+  BloodType(this.id, this.type);
 
+  static List<BloodType> getBloodType() {
+    return <BloodType>[
+      BloodType(1, 'O'),
+      BloodType(2, 'A'),
+      BloodType(3, 'B'),
+      BloodType(4, 'AB'),
+    ];
+  }
 }

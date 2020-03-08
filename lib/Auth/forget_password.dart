@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
-import 'package:personal_safety/Auth/confirmCode.dart';
 import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
-import 'package:personal_safety/models/confirm_mail.dart';
-import 'package:personal_safety/services/service_confirm.dart';
+import 'package:personal_safety/models/forget_password.dart';
+import 'package:personal_safety/services/service_forgetpassword.dart';
 
-class ConfirmEmail extends StatefulWidget {
+class ForgetPassword extends StatefulWidget {
   @override
-  _ConfirmEmailState createState() => _ConfirmEmailState();
+  _ForgetPasswordState createState() => _ForgetPasswordState();
 }
 
-class _ConfirmEmailState extends State<ConfirmEmail> {
-  ConfirmService get userService => GetIt.instance<ConfirmService>();
+class _ForgetPasswordState extends State<ForgetPassword> {
+  ForgetPasswordService get userService =>
+      GetIt.instance<ForgetPasswordService>();
+
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  TextEditingController _loginController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                   padding: const EdgeInsets.only(top: 100, left: 30),
                   child: Container(
                     child: Text(
-                      "Confirm your Email",
+                      "Forgot Password?",
                       style: TextStyle(fontSize: 30, color: primaryColor),
                     ),
                   ),
@@ -52,7 +53,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                   padding: const EdgeInsets.only(top: 145, left: 30),
                   child: Container(
                     child: Text(
-                      "Enter your email that you signed up with",
+                      "Enter the email you registered with",
                       style: TextStyle(fontSize: 17, color: grey),
                     ),
                   ),
@@ -61,7 +62,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                   padding: const EdgeInsets.only(top: 165, left: 30),
                   child: Container(
                     child: Text(
-                      "then tap verify",
+                      "then tap Send.",
                       style: TextStyle(fontSize: 17, color: Accent1),
                     ),
                   ),
@@ -79,7 +80,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                             decoration: kBoxDecorationStyle2,
                             child: TextField(
                               keyboardType: TextInputType.emailAddress,
-                              controller: _loginController,
+                              controller: _emailController,
                               style: new TextStyle(color: Colors.black),
                               decoration: InputDecoration(
                                 errorBorder: InputBorder.none,
@@ -112,21 +113,21 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                             _isLoading = true;
                           });
 
-                          final confirm = ConfirmMailCredentials(
-                            email: _loginController.text,
+                          final forget_Password = ForgetPasswordCredentials(
+                            email: _emailController.text,
                           );
-                          final result = await userService.confirmMail(confirm);
+                          final result =
+                              await userService.forgetPassword(forget_Password);
                           debugPrint(
-                              "from confirm: " + result.status.toString());
+                              "from forget: " + result.status.toString());
                           debugPrint(
-                              "from confirm: " + result.result.toString());
+                              "from forget: " + result.result.toString());
                           debugPrint(
-                              "from confirm: " + result.hasErrors.toString());
-                          final title = result.status == 0
-                              ? 'Confirmation Mail has been sent!'
-                              : 'Error';
+                              "from forget: " + result.hasErrors.toString());
+                          final title =
+                              result.status == 0 ? 'Email Sent!' : 'Error';
                           final text = result.status == 0
-                              ? 'Make sure to click on the Link in the email sent to you, then Login!'
+                              ? 'Click the link in the mail sent to you to be able to reset your password!'
                               : "Wrong Email";
                           showDialog(
                               context: context,
@@ -158,7 +159,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                       },
                       child: Center(
                         child: Text(
-                          'Verify',
+                          'Send',
                           style: TextStyle(
                             fontSize: 20,
                             color: Colors.white,

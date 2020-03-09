@@ -35,6 +35,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   bool medicalHistoryFlag = false;
   bool contactNeedsPhone = false;
   bool phoneValid = false;
+  bool bloodTypeValid = false;
 
   adressValidation() {
     if (_currentAddressController.text.isEmpty) {
@@ -66,6 +67,13 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
         phoneValid = true;
     } else
       phoneValid = true;
+  }
+
+  bloodTypeValidation() {
+    if (_selectedBloodType.id == 0)
+      bloodTypeValid = false;
+    else
+      bloodTypeValid = true;
   }
 
   @override
@@ -279,10 +287,12 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                                   medicalHistoryValidation();
                                   contactWithPhoneValidation();
                                   phoneValidation();
+                                  bloodTypeValidation();
                                   if (medicalHistoryFlag == true &&
                                       addressFlag == true &&
                                       contactNeedsPhone == true &&
-                                      phoneValid == true) {
+                                      phoneValid == true &&
+                                      bloodTypeValid == true) {
                                     print("PRESSED");
                                     setState(() {
                                       _isLoading = true;
@@ -356,7 +366,9 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                                   } else if (phoneValid == false) {
                                     ShowDialog("Error",
                                         "Phone Number must be 11 digits.");
-                                  }
+                                  } else if (bloodTypeValid == false)
+                                    ShowDialog(
+                                        "Error", "Must select a blood type.");
                                 },
                                 child: Center(
                                   child: Text(

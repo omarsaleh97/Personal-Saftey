@@ -62,12 +62,10 @@ class _SignUpState extends State<SignUp> {
   }
 
   passwordValidation() {
-    if (_passwordController.text.length < 6) {
-      passwordFlag = false;
-    } else if (_passwordController.text.isEmpty) {
-      passwordFlag = false;
-    } else
-      passwordFlag = true;
+    String pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regExp = new RegExp(pattern);
+    passwordFlag = regExp.hasMatch(_passwordController.text);
   }
 
   nationalIDValidation() {

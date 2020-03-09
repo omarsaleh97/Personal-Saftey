@@ -4,6 +4,7 @@ import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/test.dart';
 import 'package:personal_safety/models/first_login.dart';
+import 'package:personal_safety/screens/home.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/models/emergency_contact.dart';
 import 'dart:core';
@@ -27,18 +28,37 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   EmergencyContacts contacts;
   List<EmergencyContacts> contactList;
 
-  List<BloodType> _bloodtype=BloodType.getBloodType();
-  List<DropdownMenuItem<BloodType>>_dropdownMenuItem;
-  BloodType _selectedBloodType ;
+  List<BloodType> _bloodtype = BloodType.getBloodType();
+  List<DropdownMenuItem<BloodType>> _dropdownMenuItem;
+  BloodType _selectedBloodType;
+
+  bool addressFlag = false;
+  bool medicalHistoryFlag = false;
+
+  adressValidation() {
+    if (_currentAddressController.text.isEmpty) {
+      addressFlag = false;
+      return "Please enter your address.";
+    } else
+      addressFlag = true;
+  }
+
+  medicalHistoryValidation() {
+    if (_medicalHistory.text.isEmpty) {
+      medicalHistoryFlag = false;
+      return "Tell us about your medical history, please.";
+    } else
+      medicalHistoryFlag = true;
+  }
 
   @override
   void initState() {
     _dropdownMenuItem = buildDropdownMenuItems(_bloodtype);
-    _selectedBloodType =_dropdownMenuItem[0].value;
+    _selectedBloodType = _dropdownMenuItem[0].value;
     super.initState();
   }
 
-  List <DropdownMenuItem<BloodType>> buildDropdownMenuItems (List types ){
+  List<DropdownMenuItem<BloodType>> buildDropdownMenuItems(List types) {
     List<DropdownMenuItem<BloodType>> items = List();
     for (BloodType bloodtype in types) {
       items.add(
@@ -50,6 +70,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
     }
     return items;
   }
+
   onChangeDropdownItem(BloodType selectedCompany) {
     setState(() {
       _selectedBloodType = selectedCompany;
@@ -76,24 +97,24 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                     color: primaryColor),
               ),
             ),
-//            Padding(
-//              padding: const EdgeInsets.only(top: 150, left: 120),
-//              child: Container(
-//                width: 150,
-//                height: 150,
-//                decoration: BoxDecoration(
-//                    color: grey, borderRadius: BorderRadius.circular(150)),
-//                child: CircleAvatar(
-//                  radius: 50,
-//                  child: IconButton(
-//                      icon: Icon(Icons.camera_enhance),
-//                      iconSize: 70,
-//                      color: Colors.white,
-//                      onPressed: null),
-//                  backgroundColor: Colors.transparent,
-//                ),
-//              ),
-//            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 150, left: 120),
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                    color: grey, borderRadius: BorderRadius.circular(150)),
+                child: CircleAvatar(
+                  radius: 50,
+                  child: IconButton(
+                      icon: Icon(Icons.camera_enhance),
+                      iconSize: 70,
+                      color: Colors.white,
+                      onPressed: null),
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 330.0, left: 20, right: 20),
               child: Form(
@@ -114,27 +135,6 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-//                    Container(
-//                      alignment: Alignment.centerLeft,
-//                      decoration: kBoxDecorationStyle2,
-//                      child: TextField(
-//                        controller: _bloodType,
-//                        decoration: InputDecoration(
-//                          contentPadding: const EdgeInsets.all(20),
-//                          errorBorder: InputBorder.none,
-//                          border: OutlineInputBorder(
-//                              borderRadius: BorderRadius.circular(15)),
-//                          hintText: "Blood Type",
-//                        ),
-//                      ),
-//                    ),
-                  DropdownButton(
-
-                    items: _dropdownMenuItem, onChanged: onChangeDropdownItem,value: _selectedBloodType,),
-
                     SizedBox(
                       height: 10,
                     ),
@@ -190,8 +190,35 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15)),
                           contentPadding: const EdgeInsets.all(20),
-
+//                        icon: Icon(
+//                          Icons.contact_phone,
+//                          color: grey,
+//                        ),
                           hintText: "Phone Number (Optional)",
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Container(
+                        decoration: kBoxDecorationStyle,
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              "Select Blood Type: ",
+                              style: kLabelStyle,
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            DropdownButton(
+                              itemHeight: 50,
+                              items: _dropdownMenuItem,
+                              onChanged: onChangeDropdownItem,
+                              value: _selectedBloodType,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -207,56 +234,80 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                             borderRadius: new BorderRadius.circular(30),
                           ),
                           onPressed: () async {
-                            print("PRESSED");
-                            setState(() async {
-                              final contacts = EmergencyContacts(
-                                  name: _emergencyName.text,
-                                  phoneNumber: _emergencyPhone.text);
-                              final firstLogin = FirstLoginCredentials(
-                                  currentAddress:
-                                      _currentAddressController.text,
-                                  bloodType: _selectedBloodType.id,
-                                  medicalHistoryNotes: _medicalHistory.text,
-                                  emergencyContacts: [
-                                    contacts,
-                                  ]);
+                            adressValidation();
+                            medicalHistoryValidation();
+                            if (medicalHistoryFlag == true &&
+                                addressFlag == true) {
+                              print("PRESSED");
+                              setState(() async {
+                                final contacts = EmergencyContacts(
+                                    name: _emergencyName.text,
+                                    phoneNumber: _emergencyPhone.text);
+                                final firstLogin = FirstLoginCredentials(
+                                    currentAddress:
+                                    _currentAddressController.text,
+                                    bloodType: _selectedBloodType.id,
+                                    medicalHistoryNotes: _medicalHistory.text,
+                                    emergencyContacts: [
+                                      contacts,
+                                    ]);
 
-                              final result =
-                                  await userService.firstLogin(firstLogin);
-                              debugPrint("from FIRST STATUS LOGIN: " +
-                                  result.status.toString());
-                              debugPrint("from FIRST RESULT LOGIN: " +
-                                  result.result.toString());
-                              debugPrint("from FIRST ERROR LOGIN: " +
-                                  result.hasErrors.toString());
-                              final title = result.status == 0
-                                  ? 'Your Information is saved!'
-                                  : 'Error';
-                              final text = result.status == 0
-                                  ? 'You will be forwarded to the next page!'
-                                  : "Make sure the Phone numbers are 11 digits and that the rest of your information is correct.";
+                                final result =
+                                await userService.firstLogin(firstLogin);
+                                debugPrint("BLOOD TYPE IS " +
+                                    _selectedBloodType.id.toString());
+                                debugPrint("from FIRST STATUS LOGIN: " +
+                                    result.status.toString());
+                                debugPrint("from FIRST RESULT LOGIN: " +
+                                    result.result.toString());
+                                debugPrint("from FIRST ERROR LOGIN: " +
+                                    result.hasErrors.toString());
+                                final title = result.status == 0
+                                    ? 'Your Information is saved!'
+                                    : 'Error';
+                                final text = result.status == 0
+                                    ? 'You will be forwarded to the next page!'
+                                    : "Make sure the Phone number is 11 digits.";
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                      title: Text(title),
+                                      content: Text(text),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                            child: Text('OK'),
+                                            onPressed: () {
+                                              setState(() {});
+                                              Navigator.of(context).pop();
+                                            })
+                                      ],
+                                    )).then((data) {
+                                  if (result.status == 0) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Home()));
+                                  }
+                                });
+                              });
+                            } else {
                               showDialog(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                        title: Text(title),
-                                        content: Text(text),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                              child: Text('OK'),
-                                              onPressed: () {
-                                                setState(() {});
-                                                Navigator.of(context).pop();
-                                              })
-                                        ],
-                                      )).then((data) {
-                                if (result.status == 0) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Test()));
-                                }
-                              });
-                            });
+                                    title: Text(
+                                        "Your Address and Medical history cannot be empty"),
+                                    content: Text(
+                                        "Please make sure to fill out your Adress and Medical History."),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                          child: Text('OK'),
+                                          onPressed: () {
+                                            setState(() {});
+                                            Navigator.of(context).pop();
+                                          })
+                                    ],
+                                  ));
+                            }
                           },
                           child: Center(
                             child: Text(
@@ -289,6 +340,7 @@ class BloodType {
 
   static List<BloodType> getBloodType() {
     return <BloodType>[
+      BloodType(0, 'Type'),
       BloodType(1, 'O'),
       BloodType(2, 'A'),
       BloodType(3, 'B'),

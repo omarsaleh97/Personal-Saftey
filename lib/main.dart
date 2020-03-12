@@ -9,6 +9,7 @@ import 'package:personal_safety/Auth/signup.dart';
 import 'package:personal_safety/Auth/signupSuccessful.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:get_it/get_it.dart';
+import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/services/service_confirm.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/services/service_forgetpassword.dart';
@@ -34,5 +35,9 @@ Future<void> main() async {
   print(token);
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: token == null ? Logout() : Test()));
+
+    home: token == null ? Logout() : MainPage()
+ //home: MainPage(),
+//  home: ConfirmCode(),
+      ));
 }

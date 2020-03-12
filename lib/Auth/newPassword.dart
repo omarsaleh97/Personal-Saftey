@@ -72,7 +72,7 @@ class _NewPasswordState extends State<NewPassword> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsets.only(top: 250.0, left: 20.0, right: 20.0),
+                    EdgeInsets.only(top: 250.0, left: 20.0, right: 20.0),
                     child: Container(
                       decoration: kBoxDecorationStyle2,
                       child: TextField(

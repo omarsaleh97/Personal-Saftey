@@ -266,23 +266,7 @@ class _SignUpState extends State<SignUp> {
         ),
         Padding(
           padding: EdgeInsets.only(top: 85.0, left: 20.0, right: 20.0),
-          child: Container(
-            height: displaySize(context).height * .07,
-            decoration: kBoxDecorationStyle,
-            child: TextField(
-              keyboardType: TextInputType.text,
-              controller: _fullNameController,
-              style: new TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                errorText: _validate ? 'Value Can\'t Be Empty' : null,
-                contentPadding: const EdgeInsets.all(20),
-                errorBorder: InputBorder.none,
-                border: InputBorder.none,
-                hintText: "Full Name",
-                hintStyle: kHintStyle,
-              ),
-            ),
-          ),
+          child: TextFieldWidget(context: context, fullNameController: _fullNameController, validate: _validate),
         ),
         Padding(
           padding: EdgeInsets.only(top: 155.0, left: 20.0, right: 20.0),
@@ -394,3 +378,5 @@ class _SignUpState extends State<SignUp> {
     );
   }
 }
+
+

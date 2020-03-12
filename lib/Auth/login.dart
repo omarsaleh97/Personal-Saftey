@@ -151,16 +151,16 @@ class _LoginState extends State<Login> {
                         emailValidation();
                         passwordValidation();
                         if (emailFlag == true && passwordFlag == true) {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          prefs.setString(key, value);
-                          print("TOKEN IS SET! TOKEN IS SET!");
-                          //read();
-
                           setState(() async {
                             setState(() {
                               _isLoading = true;
                             });
+
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.setString(key, value);
+                            print("TOKEN IS SET! TOKEN IS SET!");
+                            //read();
 
                             final login = LoginCredentials(
                               email: _loginController.text,
@@ -203,9 +203,6 @@ class _LoginState extends State<Login> {
                                             SignUpSuccessful()));
                               }
                             });
-                          });
-                          setState(() {
-                            _isLoading = false;
                           });
                         } else {
                           ShowDialog(

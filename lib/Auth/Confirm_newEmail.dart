@@ -152,9 +152,6 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                             }
                           });
                         });
-                        setState(() {
-                          _isLoading = false;
-                        });
                       },
                       child: Center(
                         child: Text(

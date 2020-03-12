@@ -153,9 +153,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                             }
                           });
                         });
-                        setState(() {
-                          _isLoading = false;
-                        });
                       },
                       child: Center(
                         child: Text(

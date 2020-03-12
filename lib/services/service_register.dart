@@ -11,7 +11,7 @@ class RegisterService {
   // Register
   Future<APIResponse<dynamic>> Register(RegisterCredentials item) {
     return http
-        .post(API + '/api/Client/Register',
+        .post(API + '/api/Client/Registration/Register',
             headers: headers, body: json.encode(item.toJson()))
         .then((data) {
       if (data.statusCode == 200) {

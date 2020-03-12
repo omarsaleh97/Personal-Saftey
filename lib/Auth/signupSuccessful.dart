@@ -327,7 +327,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                                           : 'Error';
                                       final text = result.status == 0
                                           ? 'You will be forwarded to the next page!'
-                                          : "Make sure the Phone number is 11 digits.";
+                                          : "There seems to be a problem. Try again.";
                                       showDialog(
                                           context: context,
                                           builder: (_) => AlertDialog(

@@ -214,16 +214,13 @@ class _SignUpState extends State<SignUp> {
                                   }
                                 });
                               });
-                              setState(() {
-                                _isLoading = false;
-                              });
                             } else if (fullNameFlag == false)
                               ShowDialog("Error", "Name can't be empty.");
                             else if (emailFlag == false)
                               ShowDialog("Error", "Invalid Email Address");
                             else if (passwordFlag == false)
                               ShowDialog("Error",
-                                  "Password be longer than 6 characters and must contain 1 Uppercase letter and 1 Special character.");
+                                  "Password be longer than 6 characters and must contain 1 Uppercase letter, 1 Number and 1 Special character.");
                             else if (nationalIDFlag == false)
                               ShowDialog(
                                   "Error", "National ID must be 14 digits.");

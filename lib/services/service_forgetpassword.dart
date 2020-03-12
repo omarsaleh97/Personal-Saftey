@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:personal_safety/models/api_response.dart';
-import 'package:personal_safety/models/confirm_mail.dart';
 import 'package:personal_safety/models/forget_password.dart';
 
 class ForgetPasswordService {

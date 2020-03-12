@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:personal_safety/screens/home.dart';
 import '../models/authorityType.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -26,7 +26,8 @@ class AuthorityData {
         shape: RoundedRectangleBorder(
           borderRadius: new BorderRadius.circular(8),
         ),
-        onPressed: () {},
+        onPressed: () {
+        },
         child: Text(
           "Request",
           style: TextStyle(color: Color(0xff006E90),fontSize: 12),
@@ -107,7 +108,9 @@ class AuthorityData {
         shape: RoundedRectangleBorder(
           borderRadius: new BorderRadius.circular(8),
         ),
-        onPressed: () {},
+        onPressed: ()async{
+
+        },
         child: Text(
           "Request",
           style: TextStyle(color: Color(0xff006E90),fontSize: 12),
@@ -117,3 +120,6 @@ class AuthorityData {
     ),
   ];
 }
+
+
+

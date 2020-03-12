@@ -51,29 +51,29 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-      - assets/images/LOGO.png
-      - assets/images/LOGO.svg
-      - assets/images/photo.png
-      - assets/images/cloud.png
-      - assets/images/shield.svg
-      - assets/images/shine.svg
-      - assets/images/night.svg
-      - assets/images/location.svg
-      - assets/images/user.svg
-      - assets/images/1.png
-      - assets/images/ambulance.svg
-      - assets/images/badge.svg
-      - assets/images/firefighter.svg
-      - assets/images/home-24px.svg
-      - assets/images/edit-24px.svg
-      - assets/images/new_releases-24px.svg
-      - assets/images/photo_camera-24px.svg
-      - assets/images/place-24px.svg
-      - assets/images/public-24px.svg
-      - assets/images/timelapse-24px.svg
-      - assets/images/tow-truck.svg
-      - assets/images/1.jpg
-      - assets/images/warning.svg
+      - assets/images/
+#      - assets/images/LOGO.svg
+#      - assets/images/photo.png
+#      - assets/images/cloud.png
+#      - assets/images/shield.svg
+#      - assets/images/shine.svg
+#      - assets/images/night.svg
+#      - assets/images/location.svg
+#      - assets/images/user.svg
+#      - assets/images/1.png
+#      - assets/images/ambulance.svg
+#      - assets/images/badge.svg
+#      - assets/images/firefighter.svg
+#      - assets/images/home-24px.svg
+#      - assets/images/edit-24px.svg
+#      - assets/images/new_releases-24px.svg
+#      - assets/images/photo_camera-24px.svg
+#      - assets/images/place-24px.svg
+#      - assets/images/public-24px.svg
+#      - assets/images/timelapse-24px.svg
+#      - assets/images/tow-truck.svg
+#      - assets/images/1.jpg
+#      - assets/images/warning.svg
 
 
 

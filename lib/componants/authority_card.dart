@@ -7,6 +7,7 @@ import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/theme.dart';
 import 'package:personal_safety/componants/title_text.dart';
 import 'package:personal_safety/models/authorityType.dart';
+import 'package:personal_safety/screens/search.dart';
 
 class AuthorityCard extends StatefulWidget {
   final Authority authority;
@@ -17,8 +18,11 @@ class AuthorityCard extends StatefulWidget {
 }
 
 class _AuthorityCardState extends State<AuthorityCard> {
+  void _value1Changed(bool value) {
+    setState(() => _value1 = value);
+    print("result = $value");
+  }
 
-  void _value1Changed(bool value) {setState(() => _value1 = value);print("result = $value");}
   void _value2Changed(bool value) => setState(() => _value2 = value);
   Authority type;
   void initState() {
@@ -28,8 +32,6 @@ class _AuthorityCardState extends State<AuthorityCard> {
 
   bool _value1 = false;
   bool _value2 = false;
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +65,10 @@ class _AuthorityCardState extends State<AuthorityCard> {
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return Alert(onchange1:_value1Changed ,onchange2: _value2Changed,);
+                            return Alert(
+                              onchange1: _value1Changed,
+                              onchange2: _value2Changed,
+                            );
                           });
                     },
                     child: Text(
@@ -125,21 +130,20 @@ class MyPainter extends CustomPainter {
 }
 
 class Alert extends StatefulWidget {
-bool value1;
-bool value2;
+  bool value1;
+  bool value2;
 
-Function onchange1;
-Function onchange2;
+  Function onchange1;
+  Function onchange2;
 
-  Alert({this.value1,this.value2,this.onchange1,this.onchange2});
+  Alert({this.value1, this.value2, this.onchange1, this.onchange2});
   @override
   _AlertState createState() => _AlertState();
 }
 
 class _AlertState extends State<Alert> {
-
-bool value1=false;
-bool value2=false;
+  bool value1 = false;
+  bool value2 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -175,50 +179,46 @@ bool value2=false;
             padding: const EdgeInsets.only(top: 30),
             child: Center(
                 child: Text(
-                  "Approve Request",
-                  style: TextStyle(
-                      fontSize: 30, color: Colors.red),
-                )),
+              "Approve Request",
+              style: TextStyle(fontSize: 30, color: Colors.red),
+            )),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 70),
             child: Center(
                 child: Text(
-                  "you are about to send request to arrive at your location."
-                      "Please approve the follwing options and proceed",
-                  style:
-                  TextStyle(fontSize: 13, color: grey),
-                  textAlign: TextAlign.center,
-                )),
+              "you are about to send request to arrive at your location."
+              "Please approve the follwing options and proceed",
+              style: TextStyle(fontSize: 13, color: grey),
+              textAlign: TextAlign.center,
+            )),
           ),
           CheckboxListTile(
-            value:value1 ,
-            onChanged: (value){
+            value: value1,
+            onChanged: (value) {
               widget.onchange1(value);
               setState(() {
-                value1=value;
+                value1 = value;
               });
             },
             title: new Text(
               "Notify my Emergency Contact",
               style: TextStyle(fontSize: 12),
             ),
-            controlAffinity:
-            ListTileControlAffinity.leading,
+            controlAffinity: ListTileControlAffinity.leading,
             activeColor: Colors.red,
           ),
           CheckboxListTile(
             value: value2,
-            onChanged: (value){
+            onChanged: (value) {
               widget.onchange2(value);
               setState(() {
-                value2=value;
+                value2 = value;
               });
             },
             title: new Text("Notify my neighbourhood ",
                 style: TextStyle(fontSize: 12)),
-            controlAffinity:
-            ListTileControlAffinity.leading,
+            controlAffinity: ListTileControlAffinity.leading,
             activeColor: Colors.red,
           ),
           Padding(
@@ -230,17 +230,18 @@ bool value2=false;
                     child: Center(
                       child: Text(
                         "Request",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18),
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
                     color: Accent1,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                      new BorderRadius.circular(30),
+                      borderRadius: new BorderRadius.circular(30),
                     ),
-                    onPressed: () async {}),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Search()));
+                    }),
               ))
         ],
       ),

@@ -10,7 +10,7 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   CancelAlertDialog() {
     return showDialog(
-context: context,
+      context: context,
       builder: (context) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -38,29 +38,33 @@ context: context,
                   Container(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        "A facility operator was about to accept your request,are sure you want to cancel the pending request?",
+                        "A facility operator was about to accept your request, are sure you want to cancel the pending request?",
                         style: TextStyle(
                             fontSize: 14,
                             color: Colors.white,
                             fontWeight: FontWeight.w300),
                       )),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            height: 50.0,
-            width: 200,
-            child: RaisedButton(
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30),
-              ),
-              onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
-              },
-              child: Text("cancel",style: TextStyle(color:  Color(0xffFF2B56),fontSize: 18),),
-            )
-          )
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                      height: 50.0,
+                      width: 200,
+                      child: RaisedButton(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30),
+                        ),
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "cancel",
+                          style:
+                              TextStyle(color: Color(0xffFF2B56), fontSize: 18),
+                        ),
+                      ))
                 ],
               ),
             ],
@@ -75,7 +79,6 @@ context: context,
         ),
         backgroundColor: Color(0xffFF2B56),
         content: Column(
-          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -150,7 +153,7 @@ context: context,
                       backgroundColor: Color(0xffFF2B56),
                     ),
                     radius: 130,
-                    backgroundColor: Color(0xffFF2B56).withOpacity(0.3),
+                    backgroundColor: Color(0xffFF2B56).withOpacity(00.3),
                   ),
                   radius: 150,
                   backgroundColor: Color(0xffFF2B56).withOpacity(0.3),
@@ -158,7 +161,7 @@ context: context,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 600),
+              padding: const EdgeInsets.only(top: 580),
               child: Container(
                 alignment: Alignment.bottomCenter,
                 child: alertDialog(),

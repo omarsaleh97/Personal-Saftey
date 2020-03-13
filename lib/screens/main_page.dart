@@ -192,6 +192,13 @@ class _MainPageState extends State<MainPage> {
       });
     }
   }
+  int _cIndex = 0;
+
+  void _incrementTab(index) {
+    setState(() {
+      _cIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -235,15 +242,43 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               ),
-              Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: CustomBottomNavigationBar(
-                    onIconPresedCallback: onBottomIconPressed,
-                  ))
+//              Positioned(
+//                  bottom: 0,
+//                  right: 0,
+//                  child: CustomBottomNavigationBar(
+//                    onIconPresedCallback: onBottomIconPressed,
+//                  ))
             ],
           ),
+
         ),
+          bottomNavigationBar:BottomNavigationBar(
+            currentIndex: _cIndex,
+            type: BottomNavigationBarType.shifting ,
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.home,color:(_cIndex==0) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')
+
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.notification_important,color:(_cIndex==1) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.location_on,color:(_cIndex==2) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.new_releases,color:(_cIndex==3) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')
+              )
+            ],
+            onTap: (index){
+              _incrementTab(index);
+              onBottomIconPressed(index);
+            },
+          )
       ),
     );
   }

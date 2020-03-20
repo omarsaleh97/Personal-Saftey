@@ -51,6 +51,8 @@ class _HomeState extends State<Home> {
     );
   }
 
+
+
   Widget _newPublicEvent() {
     return Container(
       margin: AppTheme.padding,

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_safety/Auth/Confirm_newEmail.dart';
 import 'package:personal_safety/Auth/login.dart';
+import 'package:personal_safety/Auth/success.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
@@ -23,6 +24,11 @@ class _SignUpState extends State<SignUp> {
 
   bool _isLoading = false;
   bool passwordVisible;
+  bool fullNameFlag = false;
+  bool emailFlag = false;
+  bool passwordFlag = false;
+  bool nationalIDFlag = false;
+  bool phoneNumberFlag = false;
   String errorMessages;
   RegisterCredentials register;
   TextEditingController _fullNameController = TextEditingController();
@@ -39,44 +45,64 @@ class _SignUpState extends State<SignUp> {
     passwordVisible = false;
   }
 
+  nameValidation() {
+    if (_fullNameController.text.isEmpty) {
+      fullNameFlag = false;
+    } else
+      fullNameFlag = true;
+  }
+
   emailValidation() {
     if (!_emailController.text.trim().toLowerCase().contains('@')) {
-      return "Please use an correct email (ex: user@user.com )";
+      emailFlag = false;
     } else if (_emailController.text.isEmpty) {
-      return "Enter your email , please";
-    }
+      emailFlag = false;
+    } else
+      emailFlag = true;
   }
 
   passwordValidation() {
-    if (_passwordController.text.length < 6) {
-      return "Password must more than 6 and complex (ex:Test@123)";
-    } else if (_passwordController.text.isEmpty) {
-      _validate = true;
-      return "Enter your password , please";
-    }
-    _validate = true;
+    String pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regExp = new RegExp(pattern);
+    passwordFlag = regExp.hasMatch(_passwordController.text);
   }
 
   nationalIDValidation() {
-    if (_nationalIdController.text
-        .trim()
-        .length < 14) {
-      return "Natioal ID must be = 14 number";
-    }
-    if (_emailController.text.isEmpty) {
-      return "Enter your National ID , please";
-    }
+    if (_nationalIdController.text.trim().length < 14) {
+      nationalIDFlag = false;
+    } else if (_emailController.text.isEmpty) {
+      nationalIDFlag = false;
+    } else
+      nationalIDFlag = true;
   }
 
   phoneValidation() {
-    if (_phoneNumberController.text
-        .trim()
-        .length < 11) {
-      return "Phone Number must be = 11 number";
-    }
-    if (_phoneNumberController.text.isEmpty) {
-      return "Enter your Phone Number , please";
-    }
+    if (_phoneNumberController.text.trim().length < 11) {
+      phoneNumberFlag = false;
+    } else if (_phoneNumberController.text.isEmpty) {
+      phoneNumberFlag = false;
+    } else
+      phoneNumberFlag = true;
+  }
+
+  ShowDialog(String title, String text) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text(title),
+              content: Text(text),
+              actions: <Widget>[
+                FlatButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      Navigator.of(context).pop();
+                    })
+              ],
+            ));
   }
 
   @override
@@ -114,10 +140,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
                     SingleChildScrollView(
-                      child: Form(
-                          key: _formKey,
-                          child: SignupForm()
-                      ),
+                      child: Form(key: _formKey, child: SignupForm()),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -130,80 +153,80 @@ class _SignUpState extends State<SignUp> {
                           shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _fullNameController.text.isEmpty
-                                  ? _validate = true
-                                  : _validate = false;
-                              _emailController.text.isEmpty
-                                  ? _validate = true
-                                  : _validate = false;
-                              _nationalIdController.text.isEmpty
-                                  ? _validate = true
-                                  : _validate = false;
-                              _phoneNumberController.text.isEmpty
-                                  ? _validate = true
-                                  : _validate = false;
-                              _passwordController.text.isEmpty
-                                  ? _validate = true
-                                  : _validate = false;
-                            });
+                          onPressed: () async {
+                            nameValidation();
+                            passwordValidation();
+                            emailValidation();
+                            nationalIDValidation();
+                            phoneValidation();
+                            if (fullNameFlag == true &&
+                                emailFlag == true &&
+                                passwordFlag == true &&
+                                nationalIDFlag == true &&
+                                phoneNumberFlag == true) {
+                              setState(() async {
+                                setState(() {
+                                  _isLoading = true;
+                                });
 
-                            setState(() async {
-                              setState(() {
-                                _isLoading = true;
+                                final register = RegisterCredentials(
+                                  fullName: _fullNameController.text,
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                  nationalId: _nationalIdController.text,
+                                  phoneNumber: _phoneNumberController.text,
+                                );
+                                final result =
+                                    await registerService.Register(register);
+                                debugPrint("from REGISTER status: " +
+                                    result.status.toString());
+                                debugPrint("from REGISTER token : " +
+                                    result.result.toString());
+                                debugPrint("from REGISTER error : " +
+                                    result.hasErrors.toString());
+                                final title = result.hasErrors
+                                    ? 'Error'
+                                    : 'Registration Successful!';
+                                final text = result.hasErrors
+                                    ? 'Make sure that Email, Phone Number and National ID are not taken.'
+                                    : 'Account Created Successfully!';
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                          title: Text(title),
+                                          content: Text(text),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                                child: Text('OK'),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _isLoading = false;
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                })
+                                          ],
+                                        )).then((data) {
+                                  if (result.status == 0) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Success()));
+                                  }
+                                });
                               });
-
-                              final register = RegisterCredentials(
-                                fullName: _fullNameController.text,
-                                email: _emailController.text,
-                                password: _passwordController.text,
-                                nationalId: _nationalIdController.text,
-                                phoneNumber: _phoneNumberController.text,
-                              );
-                              final result =
-                              await registerService.Register(register);
-                              debugPrint("from REGISTER status: " +
-                                  result.status.toString());
-                              debugPrint("from REGISTER token : " +
-                                  result.result.toString());
-                              debugPrint("from REGISTER error : " +
-                                  result.hasErrors.toString());
-                              final title = result.hasErrors
-                                  ? 'Error'
-                                  : 'Registration Successful!';
-                              final text = result.hasErrors
-                                  ? result.messages.toString()
-                                  : 'You can now Login with your created account!';
-                              showDialog(
-                                  context: context,
-                                  builder: (_) =>
-                                      AlertDialog(
-                                        title: Text(title),
-                                        content: Text(text),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                              child: Text('OK'),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _isLoading = false;
-                                                });
-                                                Navigator.of(context).pop();
-                                              })
-                                        ],
-                                      )).then((data) {
-                                if (result.result) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ConfirmEmail()));
-                                }
-                              });
-                            });
-                            setState(() {
-                              _isLoading = false;
-                            });
+                            } else if (fullNameFlag == false)
+                              ShowDialog("Error", "Name can't be empty.");
+                            else if (emailFlag == false)
+                              ShowDialog("Error", "Invalid Email Address");
+                            else if (passwordFlag == false)
+                              ShowDialog("Error",
+                                  "Password be longer than 6 characters and must contain 1 Uppercase letter, 1 Number and 1 Special character.");
+                            else if (nationalIDFlag == false)
+                              ShowDialog(
+                                  "Error", "National ID must be 14 digits.");
+                            else if (phoneNumberFlag == false)
+                              ShowDialog(
+                                  "Error", "Phone Number must be 11 digits.");
                           },
                           child: Center(
                             child: Text(
@@ -228,7 +251,6 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-
   SignupForm() {
     return Stack(
       children: <Widget>[
@@ -244,23 +266,7 @@ class _SignUpState extends State<SignUp> {
         ),
         Padding(
           padding: EdgeInsets.only(top: 85.0, left: 20.0, right: 20.0),
-          child: Container(
-            height: displaySize(context).height * .07,
-            decoration: kBoxDecorationStyle,
-            child: TextField(
-              keyboardType: TextInputType.text,
-              controller: _fullNameController,
-              style: new TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                errorText: _validate ? 'Value Can\'t Be Empty' : null,
-                contentPadding: const EdgeInsets.all(20),
-                errorBorder: InputBorder.none,
-                border: InputBorder.none,
-                hintText: "Full Name",
-                hintStyle: kHintStyle,
-              ),
-            ),
-          ),
+          child: TextFieldWidget(context: context, fullNameController: _fullNameController, validate: _validate),
         ),
         Padding(
           padding: EdgeInsets.only(top: 155.0, left: 20.0, right: 20.0),
@@ -301,9 +307,7 @@ class _SignUpState extends State<SignUp> {
                     icon: Icon(
                       // Based on passwordVisible state choose the icon
                       passwordVisible ? Icons.visibility : Icons.visibility_off,
-                      color: Theme
-                          .of(context)
-                          .primaryColorDark,
+                      color: Theme.of(context).primaryColorDark,
                     ),
                     onPressed: () {
                       // Update the state i.e. toogle the state of passwordVisible variable
@@ -337,9 +341,7 @@ class _SignUpState extends State<SignUp> {
                   icon: Icon(
                     // Based on passwordVisible state choose the icon
                     passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Theme
-                        .of(context)
-                        .primaryColorDark,
+                    color: Theme.of(context).primaryColorDark,
                   ),
                   onPressed: () {
                     // Update the state i.e. toogle the state of passwordVisible variable
@@ -376,3 +378,5 @@ class _SignUpState extends State<SignUp> {
     );
   }
 }
+
+

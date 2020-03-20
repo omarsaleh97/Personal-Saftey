@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/Auth/logout.dart';
 import 'package:personal_safety/componants/BottomNavBar/BottomNavBar.dart';
@@ -24,6 +25,31 @@ class _MainPageState extends State<MainPage> {
   bool isNewsPageSelected = true;
   bool isActiveRequestPageSelected = true;
 
+  Future<bool> _onBackPressed() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('You are going to exit the application.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('NO'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text('YES'),
+                onPressed: () async {
+                  SystemNavigator.pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   Widget _appBar() {
     return Container(
       padding: AppTheme.padding,
@@ -37,25 +63,27 @@ class _MainPageState extends State<MainPage> {
                 Icons.dehaze,
               ),
               color: Colors.black54,
-              onPressed: () {_drawer();},
+              onPressed: () {
+                _drawer();
+              },
             ),
           ),
           ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(13)),
             child: Container(
-              decoration: BoxDecoration(
-                  color: greyIcon, borderRadius: BorderRadius.circular(20)),
-              child:        IconButton(
-                icon: Icon(Icons.lock),
-                onPressed: ()async {
-                  //_save("0");
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.remove('token');
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Logout()));
-                },
-              )
-            ),
+                decoration: BoxDecoration(
+                    color: greyIcon, borderRadius: BorderRadius.circular(20)),
+                child: IconButton(
+                  icon: Icon(Icons.lock),
+                  onPressed: () async {
+                    //_save("0");
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.remove('token');
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Logout()));
+                  },
+                )),
           )
         ],
       ),
@@ -164,55 +192,93 @@ class _MainPageState extends State<MainPage> {
       });
     }
   }
+  int _cIndex = 0;
+
+  void _incrementTab(index) {
+    setState(() {
+      _cIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: _drawer(),
-      body: SafeArea(
-        child: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            SingleChildScrollView(
-              child: Container(
-                height: AppTheme.fullHeight(context) - 50,
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                  colors: [
-                    grey,
-                    grey2,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                )),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    _appBar(),
-                    _title(),
-                    Expanded(
-                        child: AnimatedSwitcher(
-                            duration: Duration(milliseconds: 300),
-                            switchInCurve: Curves.easeInToLinear,
-                            switchOutCurve: Curves.easeOutBack,
-                            child: isHomePageSelected
-                                ? Home()
-                                : Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Logout(),
-                                  )))
-                  ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        drawer: _drawer(),
+        body: SafeArea(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              SingleChildScrollView(
+                child: Container(
+                  height: AppTheme.fullHeight(context) - 50,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                    colors: [
+                      grey,
+                      grey2,
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  )),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      _appBar(),
+                      _title(),
+                      Expanded(
+                          child: AnimatedSwitcher(
+                              duration: Duration(milliseconds: 300),
+                              switchInCurve: Curves.easeInToLinear,
+                              switchOutCurve: Curves.easeOutBack,
+                              child: isHomePageSelected
+                                  ? Home()
+                                  : Align(
+                                      alignment: Alignment.topCenter,
+                                      child: ActiveRequest(),
+                                    )))
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-                bottom: 0,
-                right: 0,
-                child: CustomBottomNavigationBar(
-                  onIconPresedCallback: onBottomIconPressed,
-                ))
-          ],
+//              Positioned(
+//                  bottom: 0,
+//                  right: 0,
+//                  child: CustomBottomNavigationBar(
+//                    onIconPresedCallback: onBottomIconPressed,
+//                  ))
+            ],
+          ),
+
         ),
+          bottomNavigationBar:BottomNavigationBar(
+            currentIndex: _cIndex,
+            type: BottomNavigationBarType.shifting ,
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.home,color:(_cIndex==0) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')
+
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.notification_important,color:(_cIndex==1) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.location_on,color:(_cIndex==2) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.new_releases,color:(_cIndex==3) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')
+              )
+            ],
+            onTap: (index){
+              _incrementTab(index);
+              onBottomIconPressed(index);
+            },
+          )
       ),
     );
   }

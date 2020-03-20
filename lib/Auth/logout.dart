@@ -4,9 +4,7 @@ import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/Auth/signup.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:personal_safety/componants/mediaQuery.dart';
-import 'package:personal_safety/componants/test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Logout extends StatefulWidget {
   @override

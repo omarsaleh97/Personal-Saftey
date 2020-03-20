@@ -4,15 +4,21 @@ import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/models/login.dart';
 import 'dart:developer';
 
+import 'package:personal_safety/others/StaticVariables.dart';
+
 class LoginService {
   static var token = '';
-  static const API = 'https://personalsafety.azurewebsites.net/';
   static const headers = {'Content-Type': 'application/json'};
 
   // Logging In
   Future<APIResponse<dynamic>> Login(LoginCredentials item) {
+
+    String finalString = StaticVariables.API + '/api/Account/Login';
+
+    print("Trying to login to " + finalString);
+
     return http
-        .post(API + '/api/Account/Login',
+        .post(finalString,
             headers: headers, body: json.encode(item.toJson()))
         .then((data) {
       if (data.statusCode == 200) {
@@ -24,9 +30,16 @@ class LoginService {
         print(APIresult.hasErrors);
         return APIresult;
       }
+      else
+        {
+
+          print("Tried to login but failed ;_;");
+
+        }
       return APIResponse<dynamic>(
           hasErrors: true, messages: "An Error Has Occured");
     }).catchError((_) => APIResponse<dynamic>(
             hasErrors: true, messages: "An Error Has Occured"));
+
   }
 }

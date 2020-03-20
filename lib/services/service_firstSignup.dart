@@ -4,15 +4,17 @@ import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/models/firstSignup.dart';
 import 'package:personal_safety/models/register.dart';
 import 'dart:developer';
+import 'package:personal_safety/others/StaticVariables.dart';
+
 
 class FirstSignupService {
   static bool result = false;
-  static const API = 'https://personalsafety.azurewebsites.net/';
+  //static const API = 'https://personalsafety.azurewebsites.net/';
   static const headers = {'Content-Type': 'application/json'};
   // Register
   Future<APIResponse<dynamic>> FirstSignup(FirstSignupCredentials item) {
 //    return http
-//        .post(API + '/api/User/CompleteProfile',
+//        .post(StaticVariables.API + '/api/User/CompleteProfile',
 //           headers: headers, body: json.encode(item.json()))
 //        .then((data) {
 //      if (data.statusCode == 200) {

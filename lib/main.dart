@@ -10,6 +10,7 @@ import 'package:personal_safety/Auth/signupSuccessful.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_safety/screens/main_page.dart';
+import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/services/service_confirm.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/services/service_forgetpassword.dart';
@@ -28,6 +29,7 @@ void setupLocator() {
 }
 
 Future<void> main() async {
+  //SocketHandler.ConnectSocket();
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();

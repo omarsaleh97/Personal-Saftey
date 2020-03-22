@@ -1,13 +1,16 @@
+import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/componants/authority_data.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/theme.dart';
 import 'package:personal_safety/componants/title_text.dart';
+import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/models/authorityType.dart';
 import 'package:personal_safety/screens/search.dart';
+import 'package:personal_safety/services/SocketHandler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthorityCard extends StatefulWidget {
   final Authority authority;
@@ -238,13 +241,22 @@ class _AlertState extends State<Alert> {
                       borderRadius: new BorderRadius.circular(30),
                     ),
                     onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Search()));
+                      MakeSOSRequest(1);
                     }),
               ))
         ],
       ),
     );
   }
+
+  void MakeSOSRequest(int requestType) async {
+
+    await SocketHandler.ConnectToClientChannel();
+
+    Navigator.pop(context);
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => Search()));
+
+  }
+
 }

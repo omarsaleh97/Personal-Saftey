@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/models/first_login.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +24,7 @@ class FirstLoginService {
 //  }
 
   static bool result = false;
-  static const API = 'https://personalsafety.azurewebsites.net/';
+  //static const API = 'https://personalsafety.azurewebsites.net/';
   static var headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer $token'
@@ -33,7 +34,7 @@ class FirstLoginService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     return http
-        .put(API + '/api/Client/Registration/CompleteProfile',
+        .put(StaticVariables.API + '/api/Client/Registration/CompleteProfile',
             headers: headers, body: json.encode(item.toJson()))
         .then((data) {
       if (data.statusCode == 200) {

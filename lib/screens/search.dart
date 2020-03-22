@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/screens/home.dart';
+import 'dart:async';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Search extends StatefulWidget {
   @override
   _SearchState createState() => _SearchState();
+  
 }
 
-class _SearchState extends State<Search> {
+class _SearchState extends State<Search> with TickerProviderStateMixin {
+
+  SharedPreferences prefs;
+  
+  int circle1Radius = 110, circle2Radius = 130, circle3Radius = 150;
+
+  AnimationController _circle1FadeController, _circle1SizeController;
+  Animation<double> _radiusAnimation, _fadeAnimation;
+  
   CancelAlertDialog() {
     return showDialog(
       context: context,
@@ -77,7 +90,7 @@ class _SearchState extends State<Search> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
-        backgroundColor: Color(0xffFF2B56),
+        backgroundColor: GetColorBasedOnState(),
         content: Column(
           children: <Widget>[
             Row(
@@ -86,7 +99,7 @@ class _SearchState extends State<Search> {
                 Container(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      "Searching..",
+                      prefs == null? "Requesting" : prefs.getString("activerequeststate"),
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     )),
                 Container(
@@ -122,8 +135,118 @@ class _SearchState extends State<Search> {
 
   @override
   void initState() {
+
     super.initState();
+
+    SetPrefs();
+
+    const Secs = const Duration(seconds:2);
+    new Timer.periodic(Secs, (Timer t) => DoSearchAnimation());
+
   }
+
+  void SetPrefs() async
+  {
+
+    if (prefs == null)
+      prefs = await SharedPreferences.getInstance();
+
+  }
+
+  double beginValue = 100, endValue = 150, beginFade = 1, endFade = 0.2, tmpValue, tmpValue2;
+  
+  Color GetColorBasedOnState()
+  {
+
+    SetPrefs();
+
+    Color toReturn = Color.fromRGBO(255, 43, 86, 1.0);
+
+    if (prefs == null)
+        toReturn = Color.fromRGBO(255, 43, 86, 1.0); //Reddish
+    else {
+
+      String state = prefs.getString("activerequeststate");
+
+      print("Switching on state " + state.toString());
+
+      switch(state)
+      {
+
+        case "Searching":
+
+          toReturn = Color.fromRGBO(255, 43, 86, 1.0); //Reddish
+
+          break;
+
+        case "Pending":
+
+          toReturn = Color.fromRGBO(255, 174, 0, 1.0); //Orange
+
+          break;
+
+        case "Accepted":
+
+          toReturn = Color.fromRGBO(30, 204, 18, 1.0); //Green
+
+          break;
+
+      }
+
+    }
+
+    return toReturn;
+
+  }
+
+  Color requestColor = Color.fromRGBO(255, 43, 86, 1.0);
+
+  void DoSearchAnimation() async
+  {
+
+    _circle1FadeController = new AnimationController(duration: new Duration(
+        milliseconds: 2000
+    ),
+        vsync: this);
+
+    _circle1SizeController = new AnimationController(duration: new Duration(
+        milliseconds: 2000
+    ),
+        vsync: this);
+
+    _radiusAnimation = new Tween<double>(begin: beginValue, end: endValue).animate(
+        new CurvedAnimation(curve: Curves.easeInSine,
+            parent: _circle1SizeController)
+    );
+
+    _fadeAnimation = new Tween<double>(begin: beginFade, end: endFade).animate(
+        new CurvedAnimation(curve: Curves.easeInSine,
+            parent: _circle1FadeController)
+    );
+
+    _circle1SizeController.addListener(()
+    {
+      this.setState((){});
+    });
+
+    _circle1FadeController.addListener(()
+    {
+      this.setState((){});
+    });
+
+    _circle1FadeController.forward();
+    _circle1SizeController.forward();
+
+    tmpValue = beginValue;
+    beginValue = endValue;
+    endValue = tmpValue;
+
+    tmpValue2 = beginFade;
+    beginFade = endFade;
+    endFade = tmpValue2;
+
+  }
+
 
   @override
   int _cIndex = 0;
@@ -140,8 +263,6 @@ class _SearchState extends State<Search> {
           children: <Widget>[
             Center(
               child: Container(
-                child: CircleAvatar(
-                  child: CircleAvatar(
                     child: CircleAvatar(
                       child: SvgPicture.asset(
                         "assets/images/place-24px.svg",
@@ -149,15 +270,9 @@ class _SearchState extends State<Search> {
                         width: 100,
                         height: 150,
                       ),
-                      radius: 110,
-                      backgroundColor: Color(0xffFF2B56),
+                      radius: _radiusAnimation == null? beginValue : _radiusAnimation.value,
+                      backgroundColor: GetColorBasedOnState().withOpacity(_fadeAnimation == null? 1 : _fadeAnimation.value),
                     ),
-                    radius: 130,
-                    backgroundColor: Color(0xffFF2B56).withOpacity(00.3),
-                  ),
-                  radius: 150,
-                  backgroundColor: Color(0xffFF2B56).withOpacity(0.3),
-                ) /* add child content here */,
               ),
             ),
             Padding(

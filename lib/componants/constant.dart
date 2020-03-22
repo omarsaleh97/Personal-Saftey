@@ -14,6 +14,7 @@ final kLabelStyle = TextStyle(
   fontFamily: 'OpenSans',
 );
 
+
 final kBoxDecorationStyle = BoxDecoration(
   color: Colors.white,
 
@@ -32,6 +33,36 @@ final kBoxDecorationStyle2 = BoxDecoration(
 
   borderRadius: BorderRadius.circular(15.0),
 );
+class CustomTextField extends StatelessWidget {
+  const CustomTextField({
+    Key key,
+    @required TextEditingController customController,
+    @required String customHint,
+  })  : customController = customController,
+        customHint = customHint,
+        super(key: key);
+
+  final TextEditingController customController;
+  final String customHint;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: customController,
+      decoration: InputDecoration(
+        errorBorder: InputBorder.none,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        contentPadding: const EdgeInsets.all(20),
+//                        icon: Icon(
+//                          Icons.contact_phone,
+//                          color: grey,
+//                        ),
+        hintText: customHint,
+      ),
+    );
+  }
+}
+
 
 
 class TextFieldWidget extends StatelessWidget {

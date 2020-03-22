@@ -191,19 +191,9 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                           Container(
                             alignment: Alignment.centerLeft,
                             decoration: kBoxDecorationStyle2,
-                            child: TextField(
-                              controller: _medicalHistory,
-                              decoration: InputDecoration(
-                                errorBorder: InputBorder.none,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                contentPadding: const EdgeInsets.all(20),
-//                        icon: Icon(
-//                          Icons.contact_phone,
-//                          color: grey,
-//                        ),
-                                hintText: "Medical History",
-                              ),
+                            child: CustomTextField(
+                              customController: _medicalHistory,
+                              customHint: "Medical History",
                             ),
                           ),
                           SizedBox(
@@ -212,19 +202,9 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                           Container(
                             alignment: Alignment.centerLeft,
                             decoration: kBoxDecorationStyle2,
-                            child: TextField(
-                              controller: _emergencyName,
-                              decoration: InputDecoration(
-                                errorBorder: InputBorder.none,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                contentPadding: const EdgeInsets.all(20),
-//                        icon: Icon(
-//                          Icons.contact_phone,
-//                          color: grey,
-//                        ),
-                                hintText: "Emergency Contact (Optional)",
-                              ),
+                            child: CustomTextField(
+                              customController: _emergencyName,
+                              customHint: "Emergency Contact (Optional)",
                             ),
                           ),
                           SizedBox(
@@ -233,19 +213,9 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                           Container(
                             alignment: Alignment.centerLeft,
                             decoration: kBoxDecorationStyle2,
-                            child: TextField(
-                              controller: _emergencyPhone,
-                              decoration: InputDecoration(
-                                errorBorder: InputBorder.none,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                contentPadding: const EdgeInsets.all(20),
-//                        icon: Icon(
-//                          Icons.contact_phone,
-//                          color: grey,
-//                        ),
-                                hintText: "Phone Number (Optional)",
-                              ),
+                            child: CustomTextField(
+                              customController: _emergencyPhone,
+                              customHint: "Contact Number (Optional)",
                             ),
                           ),
                           Padding(

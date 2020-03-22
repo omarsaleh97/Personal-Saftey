@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
 
-
-
-final kHintStyle =  TextStyle(
+final kHintStyle = TextStyle(
   color: Colors.grey,
-
 );
 
 final kLabelStyle = TextStyle(
@@ -14,10 +11,8 @@ final kLabelStyle = TextStyle(
   fontFamily: 'OpenSans',
 );
 
-
 final kBoxDecorationStyle = BoxDecoration(
   color: Colors.white,
-
   borderRadius: BorderRadius.circular(15.0),
   boxShadow: [
     BoxShadow(
@@ -30,24 +25,28 @@ final kBoxDecorationStyle = BoxDecoration(
 
 final kBoxDecorationStyle2 = BoxDecoration(
   color: Colors.white,
-
   borderRadius: BorderRadius.circular(15.0),
 );
+
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
     Key key,
+    TextInputType keyboard,
     @required TextEditingController customController,
     @required String customHint,
   })  : customController = customController,
         customHint = customHint,
+        keyboard = keyboard,
         super(key: key);
 
   final TextEditingController customController;
   final String customHint;
+  final TextInputType keyboard;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      keyboardType: keyboard,
       controller: customController,
       decoration: InputDecoration(
         errorBorder: InputBorder.none,
@@ -63,15 +62,15 @@ class CustomTextField extends StatelessWidget {
   }
 }
 
-
-
 class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget({
     Key key,
     @required this.context,
     @required TextEditingController fullNameController,
     @required bool validate,
-  }) : _fullNameController = fullNameController, _validate = validate, super(key: key);
+  })  : _fullNameController = fullNameController,
+        _validate = validate,
+        super(key: key);
 
   final BuildContext context;
   final TextEditingController _fullNameController;
@@ -98,4 +97,3 @@ class TextFieldWidget extends StatelessWidget {
     );
   }
 }
-

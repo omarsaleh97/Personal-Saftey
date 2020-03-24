@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 class SocketHandler
 {
 
-  static const clientServerURL = StaticVariables.API + "/hubs/client",
+  static const clientServerURL = "http://192.168.1.4:5566/hubs/client",
   realtimeServerURL = "http://192.168.1.4:5566/hubs/realtime";
 
   static bool connectionIsOpen = false;
@@ -31,8 +31,8 @@ class SocketHandler
     if (_hubConnection == null) {
       _hubConnection = HubConnectionBuilder().withUrl(clientServerURL, options: httpOptions).build();
       _hubConnection.onclose((error) => connectionIsOpen = false);
-      _hubConnection.on("ConnectionInfoChannel", SaveConnectionID_Client);
-      _hubConnection.on("ClientChannel", UpdateUserSOSState);
+      _hubConnection.on("SaveConnectionID_Client", SaveConnectionID_Client);
+      _hubConnection.on("UpdateUserSOSState", UpdateUserSOSState);
     }
 
     if (_hubConnection.state != HubConnectionState.Connected) {

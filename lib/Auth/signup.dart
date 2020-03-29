@@ -69,7 +69,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   nationalIDValidation() {
-    if (_nationalIdController.text.trim().length < 14) {
+    if (_nationalIdController.text.trim().length != 14) {
       nationalIDFlag = false;
     } else if (_emailController.text.isEmpty) {
       nationalIDFlag = false;
@@ -78,7 +78,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   phoneValidation() {
-    if (_phoneNumberController.text.trim().length < 11) {
+    if (_phoneNumberController.text.trim().length != 11) {
       phoneNumberFlag = false;
     } else if (_phoneNumberController.text.isEmpty) {
       phoneNumberFlag = false;
@@ -266,25 +266,20 @@ class _SignUpState extends State<SignUp> {
         ),
         Padding(
           padding: EdgeInsets.only(top: 85.0, left: 20.0, right: 20.0),
-          child: TextFieldWidget(context: context, fullNameController: _fullNameController, validate: _validate),
+          child: TextFieldWidget(
+              context: context,
+              fullNameController: _fullNameController,
+              validate: _validate),
         ),
         Padding(
           padding: EdgeInsets.only(top: 155.0, left: 20.0, right: 20.0),
           child: Container(
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
-            child: TextField(
-              keyboardType: TextInputType.emailAddress,
-              controller: _emailController,
-              style: new TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                errorText: _validate ? emailValidation() : null,
-                contentPadding: const EdgeInsets.all(20),
-                errorBorder: InputBorder.none,
-                border: InputBorder.none,
-                hintText: "Email",
-                hintStyle: kHintStyle,
-              ),
+            child: CustomTextField(
+              keyboard: TextInputType.emailAddress,
+              customController: _emailController,
+              customHint: "Email",
             ),
           ),
         ),
@@ -326,33 +321,37 @@ class _SignUpState extends State<SignUp> {
           child: Container(
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
-            child: TextField(
-              keyboardType: TextInputType.number,
-              controller: _nationalIdController,
-              style: new TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                errorText: _validate ? nationalIDValidation() : null,
-                contentPadding: const EdgeInsets.all(20),
-                errorBorder: InputBorder.none,
-                border: InputBorder.none,
-                hintText: "National ID",
-                hintStyle: kHintStyle,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    // Based on passwordVisible state choose the icon
-                    passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Theme.of(context).primaryColorDark,
-                  ),
-                  onPressed: () {
-                    // Update the state i.e. toogle the state of passwordVisible variable
-                    setState(() {
-                      passwordVisible = !passwordVisible;
-                    });
-                  },
-                ),
-              ),
-              obscureText: passwordVisible,
+            child: CustomTextField(
+              customController: _nationalIdController,
+              customHint: "National ID",
             ),
+//            TextField(
+//              keyboardType: TextInputType.number,
+//              controller: _nationalIdController,
+//              style: new TextStyle(color: Colors.black),
+//              decoration: InputDecoration(
+//                errorText: _validate ? nationalIDValidation() : null,
+//                contentPadding: const EdgeInsets.all(20),
+//                errorBorder: InputBorder.none,
+//                border: InputBorder.none,
+//                hintText: "National ID",
+//                hintStyle: kHintStyle,
+//                suffixIcon: IconButton(
+//                  icon: Icon(
+//                    // Based on passwordVisible state choose the icon
+//                    passwordVisible ? Icons.visibility : Icons.visibility_off,
+//                    color: Theme.of(context).primaryColorDark,
+//                  ),
+//                  onPressed: () {
+//                    // Update the state i.e. toogle the state of passwordVisible variable
+//                    setState(() {
+//                      passwordVisible = !passwordVisible;
+//                    });
+//                  },
+//                ),
+//              ),
+//              obscureText: passwordVisible,
+//            ),
           ),
         ),
         Padding(
@@ -360,23 +359,25 @@ class _SignUpState extends State<SignUp> {
           child: Container(
             height: displaySize(context).height * .07,
             decoration: kBoxDecorationStyle,
-            child: TextField(
-              keyboardType: TextInputType.number,
-              controller: _phoneNumberController,
-              style: new TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                  errorText: _validate ? phoneValidation() : null,
-                  contentPadding: const EdgeInsets.all(20),
-                  errorBorder: InputBorder.none,
-                  border: InputBorder.none,
-                  hintText: "Phone Number",
-                  hintStyle: kHintStyle),
+            child: CustomTextField(
+              customController: _phoneNumberController,
+              customHint: "Phone Number",
             ),
+//            TextField(
+//              keyboardType: TextInputType.number,
+//              controller: _phoneNumberController,
+//              style: new TextStyle(color: Colors.black),
+//              decoration: InputDecoration(
+//                  errorText: _validate ? phoneValidation() : null,
+//                  contentPadding: const EdgeInsets.all(20),
+//                  errorBorder: InputBorder.none,
+//                  border: InputBorder.none,
+//                  hintText: "Phone Number",
+//                  hintStyle: kHintStyle),
+//            ),
           ),
         ),
       ],
     );
   }
 }
-
-

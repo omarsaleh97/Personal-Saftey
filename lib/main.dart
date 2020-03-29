@@ -33,7 +33,12 @@ Future<void> main() async {
   //SocketHandler.ConnectSocket();
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
+
   await StaticVariables.Init();
+
+  if (!StaticVariables.prefs.containsKey("firstlogin"))
+    StaticVariables.prefs.setBool("firstlogin", true);
+
   var token = StaticVariables.prefs.getString('token');
   print(token);
   runApp(MaterialApp(

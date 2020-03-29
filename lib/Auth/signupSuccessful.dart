@@ -4,6 +4,7 @@ import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/test.dart';
 import 'package:personal_safety/models/first_login.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/models/emergency_contact.dart';
@@ -317,6 +318,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                                                 ],
                                               )).then((data) {
                                         if (result.status == 0) {
+                                          StaticVariables.prefs.setBool("firstlogin", false);
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(

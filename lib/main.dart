@@ -9,6 +9,7 @@ import 'package:personal_safety/Auth/signup.dart';
 import 'package:personal_safety/Auth/signupSuccessful.dart';
 import 'package:personal_safety/componants/card.dart';
 import 'package:get_it/get_it.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/services/service_confirm.dart';
@@ -32,8 +33,8 @@ Future<void> main() async {
   //SocketHandler.ConnectSocket();
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var token = prefs.getString('token');
+  await StaticVariables.Init();
+  var token = StaticVariables.prefs.getString('token');
   print(token);
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,

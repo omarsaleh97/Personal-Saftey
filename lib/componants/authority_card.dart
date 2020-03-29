@@ -253,6 +253,8 @@ class _AlertState extends State<Alert> {
 
     await SocketHandler.ConnectToClientChannel();
 
+    SocketHandler.SendSOSRequest(requestType);
+
     Navigator.pop(context);
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => Search()));

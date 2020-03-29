@@ -8,18 +8,11 @@ import 'package:signalr_client/signalr_client.dart';
 import 'package:http/http.dart' as http;
 
 class SocketHandler {
-  static const clientServerURL =
-          "https://personalsafety.azurewebsites.net/hubs/client",
-      realtimeServerURL =
-          "https://personalsafety.azurewebsites.net/hubs/realtime";
 
   static bool connectionIsOpen = false;
   static HubConnection _hubConnection;
 
-  static SharedPreferences prefs;
-
   static Future<void> ConnectToClientChannel() async {
-    prefs = await SharedPreferences.getInstance();
 
     print("Trying to connect to client channel..");
 
@@ -28,7 +21,7 @@ class SocketHandler {
 
     if (_hubConnection == null) {
       _hubConnection = HubConnectionBuilder()
-          .withUrl(clientServerURL, options: httpOptions)
+          .withUrl(StaticVariables.clientServerURL, options: httpOptions)
           .build();
       _hubConnection.onclose((error) => connectionIsOpen = false);
       _hubConnection.on("ConnectionInfoChannel", SaveConnectionID_Client);
@@ -36,6 +29,8 @@ class SocketHandler {
     }
 
     if (_hubConnection.state != HubConnectionState.Connected) {
+      if (_hubConnection.state != HubConnectionState.Disconnected)
+        await _hubConnection.stop();
       await _hubConnection.start();
       connectionIsOpen = true;
       //StartSharingLocation("START_LOCATION_SHARING", 11, 15);
@@ -47,9 +42,8 @@ class SocketHandler {
   static void SaveConnectionID_Client(List<Object> args) {
     print("Connected to client hub! connection ID is: " + args[0].toString());
 
-    prefs.setString('connectionid_client', args[0].toString());
+    StaticVariables.prefs.setString('connectionid_client', args[0].toString());
 
-    SendSOSRequest(1);
   }
 
   static String token = "";
@@ -59,14 +53,21 @@ class SocketHandler {
     'Authorization': 'Bearer $token'
   };
 
+  static void SetActiveSOSRequestState(String newState)
+  {
+
+    print("Setting active SOS request state with " + newState);
+    StaticVariables.prefs.setString("activerequeststate", newState);
+
+  }
+
   static Future<APIResponse<dynamic>> SendSOSRequest(int requestType) async {
     String jsonRequest = await GetSOSRequestJson(requestType);
 
     print("Calling API SendSOS with request " + jsonRequest + " ..");
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("activerequeststate", "Searching");
-    token = prefs.getString('token');
+    SetActiveSOSRequestState("Searching");
+    token = StaticVariables.prefs.getString('token');
     return http
         .post(StaticVariables.API + '/api/Client/SOS/SendSOSRequest',
             headers: headers, body: jsonRequest)
@@ -75,13 +76,13 @@ class SocketHandler {
         Map userMap = jsonDecode(data.body);
         var APIresult = APIResponse.fromJson(userMap);
         print(APIresult.toString());
-        print("TEST SUCCESS");
+        print("Send SOS Success");
         print(APIresult.result);
         var parsedJson = json.decode(APIresult.result);
-        prefs.setString("activerequeststate", parsedJson['requestStateName']);
+        SetActiveSOSRequestState(parsedJson['requestStateName']);
         return APIresult;
       } else {
-        print("BAD TEST");
+        print("Send SOS Failure");
         print(headers);
 
         print(data.statusCode);
@@ -97,10 +98,47 @@ class SocketHandler {
                 "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits."));
   }
 
-  static Future<String> GetSOSRequestJson(int authorityType) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  static Future<APIResponse<dynamic>> CancelSOSRequest(int requestID) async {
+    //String jsonRequest = await GetSOSRequestJson(requestType);
 
-    String connID = prefs.getString('connectionid_client');
+    print("Calling API CancelSOS with requestID " + requestID.toString() + " ..");
+
+    SetActiveSOSRequestState("Cancelling");
+    token = StaticVariables.prefs.getString('token');
+    return http
+        .put(StaticVariables.API + '/api/Client/SOS/CancelSOSRequest',
+        headers: headers, body: requestID)
+        .then((data) {
+      if (data.statusCode == 200) {
+        Map userMap = jsonDecode(data.body);
+        var APIresult = APIResponse.fromJson(userMap);
+        print(APIresult.toString());
+        print("Cancel SOS SUCCESS");
+        SetActiveSOSRequestState("Cancelled");
+        print(APIresult.result);
+//        var parsedJson = json.decode(APIresult.result);
+//        prefs.setString("activerequeststate", parsedJson['requestStateName']);
+        return APIresult;
+      } else {
+        print("Cancel SOS Failed");
+        print(headers);
+
+        print(data.statusCode);
+      }
+
+      return APIResponse<dynamic>(
+          hasErrors: true,
+          messages:
+          "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits.");
+    }).catchError((_) => APIResponse<dynamic>(
+        hasErrors: true,
+        messages:
+        "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits."));
+  }
+
+  static Future<String> GetSOSRequestJson(int authorityType) async {
+
+    String connID = StaticVariables.prefs.getString('connectionid_client');
 
     String toReturn = "{ \"authorityType\": " + authorityType.toString();
 
@@ -114,9 +152,10 @@ class SocketHandler {
   }
 
   static void UpdateUserSOSState(List<Object> args) {
-    print("Got arg1: " + args[1]);
-    prefs.setString("activerequeststate", args[1]);
-    print("Updated SOS State! with " + args[1]);
+    print("Server sent UpdateUserSOSState with: requestID " + int.parse(args[0]).toString() + " and state: " + args[1].toString());
+    StaticVariables.prefs.setString("sosrequest_" + args[0].toString(), args[1].toString());
+    StaticVariables.prefs.setInt("activerequestid", int.parse(args[0]));
+    SetActiveSOSRequestState(args[1]);
   }
 
   //#endregion
@@ -141,9 +180,8 @@ class SocketHandler {
   }
 
   static Future<String> getAccessToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String token = prefs.getString('token');
+    String token = StaticVariables.prefs.getString('token');
 
     return token;
   }

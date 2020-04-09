@@ -14,7 +14,11 @@ class ForgetPasswordService {
     print('*****************');
 
     return http
-        .get(StaticVariables.API + '/api/Account/ForgotPassword' + '?mail=' + item.email,
+        .get(
+            StaticVariables.API +
+                '/api/Account/ForgotPassword' +
+                '?mail=' +
+                item.email,
             headers: headers)
         .then((data) {
       print('??????????????????????');

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -206,26 +207,26 @@ class _MainPageState extends State<MainPage> {
       onWillPop: _onBackPressed,
       child: Scaffold(
         drawer: _drawer(),
-        body: SafeArea(
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              SingleChildScrollView(
-                child: Container(
-                  height: AppTheme.fullHeight(context) - 50,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                    colors: [
-                      grey,
-                      grey2,
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  )),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _appBar(),
+          body: SafeArea(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                SingleChildScrollView(
+                  child: Container(
+                    height: AppTheme.fullHeight(context) - 50,
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                      colors: [
+                        grey,
+                        grey2,
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    )),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        _appBar(),
                       _title(),
                       Expanded(
                           child: AnimatedSwitcher(
@@ -252,32 +253,36 @@ class _MainPageState extends State<MainPage> {
           ),
 
         ),
-          bottomNavigationBar:BottomNavigationBar(
-            currentIndex: _cIndex,
-            type: BottomNavigationBarType.shifting ,
-            items: [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.home,color:(_cIndex==0) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
-                  title: new Text('')
 
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.notification_important,color:(_cIndex==1) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
-                  title: new Text('')
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.location_on,color:(_cIndex==2) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
-                  title: new Text('')
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.new_releases,color:(_cIndex==3) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
-                  title: new Text('')
-              )
-            ],
-            onTap: (index){
-              _incrementTab(index);
-              onBottomIconPressed(index);
-            },
+          bottomNavigationBar:Container(
+            padding: EdgeInsets.only(right: 20,left: 20,bottom: 10),
+            child: BottomNavigationBar(
+              currentIndex: _cIndex,
+              type: BottomNavigationBarType.shifting ,
+              items: [
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.home,color:(_cIndex==0) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                    title: new Text('')
+
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.notification_important,color:(_cIndex==1) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                    title: new Text('')
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.location_on,color:(_cIndex==2) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                    title: new Text('')
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.new_releases,color:(_cIndex==3) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
+                    title: new Text('')
+                )
+              ],
+              onTap: (index){
+                _incrementTab(index);
+                onBottomIconPressed(index);
+              },
+            ),
           )
       ),
     );

@@ -4,7 +4,9 @@ import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/Auth/signup.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as JSON;
 
 class Logout extends StatefulWidget {
   @override
@@ -12,6 +14,44 @@ class Logout extends StatefulWidget {
 }
 
 class _LogoutState extends State<Logout> {
+
+  bool _isloggedin=false;
+  Map userProfile;
+  final facebookLogin = FacebookLogin();
+
+
+  _loginWithFacbook()async{
+
+    final result = await facebookLogin.logInWithReadPermissions(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final token = result.accessToken.token;
+        final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}');
+        final profile = JSON.jsonDecode(graphResponse.body);
+        print(profile+'******************');
+        setState(() {
+          userProfile = profile;
+          _isloggedin = true;
+        });
+        break;
+
+      case FacebookLoginStatus.cancelledByUser:
+        setState(() => _isloggedin = false );
+        break;
+      case FacebookLoginStatus.error:
+        setState(() => _isloggedin = false );
+        break;
+    }
+
+  }
+  _logout(){
+    facebookLogin.logOut();
+    setState(() {
+      _isloggedin = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -130,7 +170,7 @@ class _LogoutState extends State<Logout> {
                       borderRadius: new BorderRadius.circular(30),
                     ),
                     onPressed: () {
-                      print('tapped');
+                      _loginWithFacbook;
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

@@ -22,7 +22,6 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => LoginService());
   GetIt.instance.registerLazySingleton(() => RegisterService());
   GetIt.instance.registerLazySingleton(() => ConfirmService());
-
 }
 
 Future<void> main() async {
@@ -33,9 +32,9 @@ Future<void> main() async {
   var token = prefs.getString('token');
   print(token);
   runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-   // home: token == null ? Logout() : MainPage()
-home: MainPage(),
+    debugShowCheckedModeBanner: false,
+    // home: token == null ? Logout() : MainPage()
+    home: Logout(),
 //  home: ConfirmCode(),
-      ));
+  ));
 }

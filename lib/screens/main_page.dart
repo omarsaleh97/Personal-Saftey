@@ -193,6 +193,7 @@ class _MainPageState extends State<MainPage> {
       });
     }
   }
+
   int _cIndex = 0;
 
   void _incrementTab(index) {
@@ -201,89 +202,108 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  Widget get bottomNavBar {
+    return ClipRRect(
+      borderRadius: BorderRadius.all(
+        Radius.circular(10),
+      ),
+      child: BottomNavigationBar(
+        currentIndex: _cIndex,
+        type: BottomNavigationBarType.shifting,
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home,
+                  color: (_cIndex == 0)
+                      ? Colors.orange
+                      : Color.fromARGB(255, 0, 0, 0)),
+              title: new Text('')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.notification_important,
+                  color: (_cIndex == 1)
+                      ? Colors.orange
+                      : Color.fromARGB(255, 0, 0, 0)),
+              title: new Text('')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.location_on,
+                  color: (_cIndex == 2)
+                      ? Colors.orange
+                      : Color.fromARGB(255, 0, 0, 0)),
+              title: new Text('')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.new_releases,
+                  color: (_cIndex == 3)
+                      ? Colors.orange
+                      : Color.fromARGB(255, 0, 0, 0)),
+              title: new Text(''))
+        ],
+        onTap: (index) {
+          _incrementTab(index);
+          onBottomIconPressed(index);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-        drawer: _drawer(),
-          body: SafeArea(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                SingleChildScrollView(
-                  child: Container(
-                    height: AppTheme.fullHeight(context) - 50,
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                      colors: [
-                        grey,
-                        grey2,
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    )),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _appBar(),
-                      _title(),
+        body: SafeArea(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              SingleChildScrollView(
+                child: Container(
+                  height: AppTheme.fullHeight(context) - 50,
+//                  decoration: BoxDecoration(
+//                      gradient: LinearGradient(
+//                    colors: [
+//                      grey,
+//                      grey2,
+//                    ],
+//                    begin: Alignment.topCenter,
+//                    end: Alignment.bottomCenter,
+//                  )),
+                  //  color: grey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(color: grey, child: _appBar()),
+                      Container(color: grey, child: _title()),
                       Expanded(
-                          child: AnimatedSwitcher(
-                              duration: Duration(milliseconds: 300),
-                              switchInCurve: Curves.easeInToLinear,
-                              switchOutCurve: Curves.easeOutBack,
-                              child: isHomePageSelected
-                                  ? Home()
-                                  : Align(
-                                      alignment: Alignment.topCenter,
-                                    //  child: ActiveRequest(),
-                                    )))
+//                          child: AnimatedSwitcher(
+//                              duration: Duration(milliseconds: 300),
+//                              switchInCurve: Curves.easeInToLinear,
+//                              switchOutCurve: Curves.easeOutBack,
+//                              child: isHomePageSelected
+//                                  ? Home()
+//                                  : Align(
+//                                      alignment: Alignment.topCenter,
+//                                      //  child: ActiveRequest(),
+//                                    ))
+                        child: isHomePageSelected
+                            ? Home()
+                            : Align(
+                                alignment: Alignment.topCenter,
+                              ),
+                      )
                     ],
                   ),
                 ),
               ),
-//              Positioned(
-//                  bottom: 0,
-//                  right: 0,
-//                  child: CustomBottomNavigationBar(
-//                    onIconPresedCallback: onBottomIconPressed,
-//                  ))
+
             ],
           ),
-
         ),
-
-          bottomNavigationBar:Container(
-            padding: EdgeInsets.only(right: 20,left: 20,bottom: 10),
-            child: BottomNavigationBar(
-              currentIndex: _cIndex,
-              type: BottomNavigationBarType.shifting ,
-              items: [
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.home,color:(_cIndex==0) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
-                    title: new Text('')
-
-                ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.notification_important,color:(_cIndex==1) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
-                    title: new Text('')
-                ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.location_on,color:(_cIndex==2) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
-                    title: new Text('')
-                ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.new_releases,color:(_cIndex==3) ?Colors.orange : Color.fromARGB(255, 0, 0, 0)),
-                    title: new Text('')
-                )
-              ],
-              onTap: (index){
-                _incrementTab(index);
-                onBottomIconPressed(index);
-              },
-            ),
-          )
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.only(right: 20.0, left: 20, bottom: 10),
+          child: Container(
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(color: Colors.grey.withOpacity(.5), blurRadius: 5)
+              ]),
+              child: bottomNavBar),
+        ),
       ),
     );
   }

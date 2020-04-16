@@ -51,8 +51,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-
-
   Widget _newPublicEvent() {
     return Container(
       margin: AppTheme.padding,
@@ -104,7 +102,7 @@ class _HomeState extends State<Home> {
           width: double.infinity,
           height: 300,
           decoration: BoxDecoration(
-              color: grey, borderRadius: BorderRadius.circular(13)),
+              color: Colors.grey.withOpacity(0.1), borderRadius: BorderRadius.circular(13)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,20 +236,24 @@ class _HomeState extends State<Home> {
 
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        child: Column(
+        child: Container(
+          color: grey,
+          child: Column(
+
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-_authorityWidget(),
-        _newPublicEvent(),
-        Container(
-          color: Colors.white,
-          child: Column(
-            children: <Widget>[
-              _topStories(),
-            ],
+          _authorityWidget(),
+          _newPublicEvent(),
+          Container(
+            color: Colors.white,
+            child: Column(
+              children: <Widget>[
+               _topStories(),
+              ],
+            ),
           ),
-        ),
       ],
-    ));
+    ),
+        ));
   }
 }

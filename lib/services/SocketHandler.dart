@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:personal_safety/models/api_response.dart';
@@ -6,6 +7,7 @@ import 'package:personal_safety/screens/search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:signalr_client/signalr_client.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 
 class SocketHandler {
 
@@ -59,9 +61,64 @@ class SocketHandler {
     print("Setting active SOS request state with " + newState);
     StaticVariables.prefs.setString("activerequeststate", newState);
 
+    StartPendingTimeout(newState);
+
+  }
+
+  static void StartPendingTimeout(String state)
+  {
+
+    int timeoutSeconds = 10;
+
+    switch(state)
+    {
+
+      case "Searching":
+        timeoutSeconds = 10;
+        break;
+
+      case "Pending":
+        timeoutSeconds = 10;
+        break;
+
+      default:
+        return;
+
+    }
+
+    Timer timer;
+
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      String activeRequestState = StaticVariables.prefs.getString("activerequeststate");
+      if(--timeoutSeconds < 0 && activeRequestState == state) {
+
+        print("Time: " + timeoutSeconds.toString());
+        print("Timed out because of waiting too long on state: " + state);
+        timer.cancel();
+
+        try {
+
+          CancelSOSRequest(StaticVariables.prefs.getInt("activerequestid"));
+
+        }
+        catch(Ex)
+      {
+
+        print("Couldn't cancel SOS request. \n Exception: " + Ex.toString());
+
+      }
+
+      }
+      else if (activeRequestState != state) {
+        print("Disposing timer because state changed to: " + state);
+        timer.cancel();
+      }
+    });
+
   }
 
   static Future<APIResponse<dynamic>> SendSOSRequest(int requestType) async {
+
     String jsonRequest = await GetSOSRequestJson(requestType);
 
     print("Calling API SendSOS with request " + jsonRequest + " ..");
@@ -136,19 +193,24 @@ class SocketHandler {
         "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits."));
   }
 
+
+
   static Future<String> GetSOSRequestJson(int authorityType) async {
 
     String connID = StaticVariables.prefs.getString('connectionid_client');
 
+    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
     String toReturn = "{ \"authorityType\": " + authorityType.toString();
 
-    toReturn += ", \"longitude\": " + 5.toString();
+    toReturn += ", \"longitude\": " + position.longitude.toString();
 
-    toReturn += ", \"latitude\": " + 6.toString();
+    toReturn += ", \"latitude\": " + position.latitude.toString();
 
     toReturn += ", \"connectionId\": \"" + connID + "\" }";
 
     return toReturn;
+
   }
 
   static void UpdateUserSOSState(List<Object> args) {
@@ -159,10 +221,6 @@ class SocketHandler {
   }
 
   //#endregion
-
-  static void LOCATION_GROUP_NAME(List<Object> args) {
-    print("Joined a location group! group name is " + args[0]);
-  }
 
   static void StartSharingLocation(
       String functionName, int longitude, int latitude) {

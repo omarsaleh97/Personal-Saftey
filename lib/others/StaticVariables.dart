@@ -6,7 +6,7 @@ class StaticVariables {
 
 
   static const
-                API = 'https://personalsafety.azurewebsites.net/', //Publish
+                API = 'https://personal-safety.azurewebsites.net/', //Publish
                 //API = 'http://192.168.1.4:5566', //Test
     clientServerURL = API + "/hubs/client",
   realtimeServerURL = API + "/hubs/realtime";

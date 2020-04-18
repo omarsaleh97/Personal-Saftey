@@ -171,7 +171,6 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
     else {
 
       String state = StaticVariables.prefs.getString("activerequeststate");
-
       switch(state)
       {
 

@@ -10,12 +10,10 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 class SocketHandler {
-
   static bool connectionIsOpen = false;
   static HubConnection _hubConnection;
 
   static Future<void> ConnectToClientChannel() async {
-
     print("Trying to connect to client channel..");
 
     final httpOptions = new HttpConnectionOptions(
@@ -45,7 +43,6 @@ class SocketHandler {
     print("Connected to client hub! connection ID is: " + args[0].toString());
 
     StaticVariables.prefs.setString('connectionid_client', args[0].toString());
-
   }
 
   static String token = "";
@@ -55,70 +52,52 @@ class SocketHandler {
     'Authorization': 'Bearer $token'
   };
 
-  static void SetActiveSOSRequestState(String newState)
-  {
-
+  static void SetActiveSOSRequestState(String newState) {
     print("Setting active SOS request state with " + newState);
     StaticVariables.prefs.setString("activerequeststate", newState);
 
     StartPendingTimeout(newState);
-
   }
 
-  static void StartPendingTimeout(String state)
-  {
+  static void StartPendingTimeout(String state) {
+    int timeoutSeconds = 100000000000000000;
 
-    int timeoutSeconds = 10;
-
-    switch(state)
-    {
-
+    switch (state) {
       case "Searching":
-        timeoutSeconds = 10;
+        timeoutSeconds = 100000000000000000;
         break;
 
       case "Pending":
-        timeoutSeconds = 10;
+        timeoutSeconds = 100000000000000000;
         break;
 
       default:
         return;
-
     }
 
     Timer timer;
 
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      String activeRequestState = StaticVariables.prefs.getString("activerequeststate");
-      if(--timeoutSeconds < 0 && activeRequestState == state) {
-
+      String activeRequestState =
+          StaticVariables.prefs.getString("activerequeststate");
+      if (--timeoutSeconds < 0 && activeRequestState == state) {
         print("Time: " + timeoutSeconds.toString());
         print("Timed out because of waiting too long on state: " + state);
         timer.cancel();
 
         try {
-
           CancelSOSRequest(StaticVariables.prefs.getInt("activerequestid"));
-
+        } catch (Ex) {
+          print("Couldn't cancel SOS request. \n Exception: " + Ex.toString());
         }
-        catch(Ex)
-      {
-
-        print("Couldn't cancel SOS request. \n Exception: " + Ex.toString());
-
-      }
-
-      }
-      else if (activeRequestState != state) {
+      } else if (activeRequestState != state) {
         print("Disposing timer because state changed to: " + state);
         timer.cancel();
       }
     });
-
   }
 
   static Future<APIResponse<dynamic>> SendSOSRequest(int requestType) async {
-
     String jsonRequest = await GetSOSRequestJson(requestType);
 
     print("Calling API SendSOS with request " + jsonRequest + " ..");
@@ -158,13 +137,16 @@ class SocketHandler {
   static Future<APIResponse<dynamic>> CancelSOSRequest(int requestID) async {
     //String jsonRequest = await GetSOSRequestJson(requestType);
 
-    print("Calling API CancelSOS with requestID " + requestID.toString() + " ..");
+    print(
+        "Calling API CancelSOS with requestID " + requestID.toString() + " ..");
 
     SetActiveSOSRequestState("Cancelling");
     token = StaticVariables.prefs.getString('token');
     return http
-        .put(StaticVariables.API + '/api/Client/SOS/CancelSOSRequest',
-        headers: headers, body: requestID)
+        .put(
+            StaticVariables.API +
+                '/api/Client/SOS/CancelSOSRequest?requestId=$requestID',
+            headers: headers)
         .then((data) {
       if (data.statusCode == 200) {
         Map userMap = jsonDecode(data.body);
@@ -186,20 +168,18 @@ class SocketHandler {
       return APIResponse<dynamic>(
           hasErrors: true,
           messages:
-          "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits.");
+              "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits.");
     }).catchError((_) => APIResponse<dynamic>(
-        hasErrors: true,
-        messages:
-        "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits."));
+            hasErrors: true,
+            messages:
+                "Please make sure that:\n \n \n- Email is not taken and is correct.\n- Password is Complex. \n- National ID is 14 digits. \n- Phone Number is 11 digits."));
   }
 
-
-
   static Future<String> GetSOSRequestJson(int authorityType) async {
-
     String connID = StaticVariables.prefs.getString('connectionid_client');
 
-    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     String toReturn = "{ \"authorityType\": " + authorityType.toString();
 
@@ -210,13 +190,16 @@ class SocketHandler {
     toReturn += ", \"connectionId\": \"" + connID + "\" }";
 
     return toReturn;
-
   }
 
   static void UpdateUserSOSState(List<Object> args) {
-    print("Server sent UpdateUserSOSState with: requestID " + int.parse(args[0]).toString() + " and state: " + args[1].toString());
-    StaticVariables.prefs.setString("sosrequest_" + args[0].toString(), args[1].toString());
-    StaticVariables.prefs.setInt("activerequestid", int.parse(args[0]));
+    print("Server sent UpdateUserSOSState with: requestID " +
+        args[0].toString() +
+        " and state: " +
+        args[1].toString());
+    StaticVariables.prefs
+        .setString("sosrequest_" + args[0].toString(), args[1].toString());
+    StaticVariables.prefs.setInt("activerequestid", args[0]);
     SetActiveSOSRequestState(args[1]);
   }
 
@@ -238,7 +221,6 @@ class SocketHandler {
   }
 
   static Future<String> getAccessToken() async {
-
     String token = StaticVariables.prefs.getString('token');
 
     return token;

@@ -1,14 +1,24 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/models/login.dart';
 import 'dart:developer';
 
+
 import 'package:personal_safety/others/StaticVariables.dart';
+const key = 'token';
 
 class LoginService {
   static var token = '';
   static const headers = {'Content-Type': 'application/json'};
+
+  Future<bool> saveTokenPreference(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    final value = token;
+    prefs.setString(key, value);
+  }
 
   // Logging In
   Future<APIResponse<dynamic>> Login(LoginCredentials item) {
@@ -23,11 +33,20 @@ class LoginService {
         .then((data) {
       if (data.statusCode == 200) {
         Map userMap = jsonDecode(data.body);
+//        APIResponse<LoginResponse> test =
         var APIresult = APIResponse.fromJson(userMap);
-        print(APIresult.status);
-        print(APIresult.result);
-        token = APIresult.result;
-        print(APIresult.hasErrors);
+
+        var retrievedToken = userMap['result']['authenticationDetails']['token'];
+        saveTokenPreference(retrievedToken);
+
+
+        print('From Login Service:  ${APIresult.status}');
+
+
+        token = retrievedToken;
+        print(" retrieved token from login service:  "+token);
+        print('From Login Service:  ${APIresult.hasErrors}');
+
         return APIresult;
       }
       else

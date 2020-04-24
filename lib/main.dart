@@ -13,6 +13,7 @@ import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/screens/search.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/services/service_confirm.dart';
+import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/services/service_login.dart';
 import 'package:personal_safety/services/service_register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +24,7 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => LoginService());
   GetIt.instance.registerLazySingleton(() => RegisterService());
   GetIt.instance.registerLazySingleton(() => ConfirmService());
+  GetIt.instance.registerLazySingleton(() => FirstLoginService());
 
 }
 
@@ -37,11 +39,11 @@ Future<void> main() async {
     StaticVariables.prefs.setBool("firstlogin", true);
 
   var token = StaticVariables.prefs.getString('token');
-  print(token);
+  print("Saved token printed from Main and used for Remember Me: "+token);
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
-   // home: token == null ? Logout() : MainPage()
-home: MainPage(),
+   home: token == null ? Logout() : MainPage()
+//home: MainPage(),
 //  home: ConfirmCode(),
       ));
 }

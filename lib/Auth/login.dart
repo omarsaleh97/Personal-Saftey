@@ -193,7 +193,7 @@ class _LoginState extends State<Login> {
                                                 _isLoading = false;
                                               });
                                               Navigator.of(context).pop();
-                                              saveToken(result.result);
+
                                             })
                                       ],
                                     )).then((data) {

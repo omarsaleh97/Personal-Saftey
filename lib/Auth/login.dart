@@ -41,16 +41,6 @@ class _LoginState extends State<Login> {
     saveTokenPreference(resultToken);
   }
 
-  read() async {
-    final prefs = await SharedPreferences.getInstance();
-    value = prefs.get(key);
-    if (value != '0' && value != null) {
-      Navigator.of(context).push(new MaterialPageRoute(
-        builder: (BuildContext context) => new Test(),
-      ));
-    }
-  }
-
   LoginService get userService => GetIt.instance<LoginService>();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -79,7 +69,6 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    read();
     _isLoading = false;
     super.initState();
   }
@@ -193,7 +182,6 @@ class _LoginState extends State<Login> {
                                                 _isLoading = false;
                                               });
                                               Navigator.of(context).pop();
-
                                             })
                                       ],
                                     )).then((data) {
@@ -201,9 +189,11 @@ class _LoginState extends State<Login> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                        StaticVariables.prefs.getBool("firstlogin") ?
-                                            SignUpSuccessful() : MainPage()));
+                                        builder: (context) => StaticVariables
+                                                .prefs
+                                                .getBool("firstlogin")
+                                            ? SignUpSuccessful()
+                                            : MainPage()));
                               }
                             });
                           });

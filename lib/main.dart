@@ -42,7 +42,7 @@ Future<void> main() async {
 
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: token == null ? Logout() : MainPage()
+      home: token == null || firstlogin == true ? Logout() : MainPage()
 //home: MainPage(),
 //  home: ConfirmCode(),
       ));

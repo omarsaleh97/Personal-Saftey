@@ -11,6 +11,7 @@ import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
 import 'package:personal_safety/models/register.dart';
 import 'package:personal_safety/services/service_register.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -207,6 +208,12 @@ class _SignUpState extends State<SignUp> {
                                           ],
                                         )).then((data) {
                                   if (result.status == 0) {
+                                    if (StaticVariables.prefs
+                                            .getBool("firstlogin") ==
+                                        false) {
+                                      StaticVariables.prefs
+                                          .setBool("firstlogin", true);
+                                    }
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(

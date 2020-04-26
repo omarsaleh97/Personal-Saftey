@@ -25,7 +25,6 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => RegisterService());
   GetIt.instance.registerLazySingleton(() => ConfirmService());
   GetIt.instance.registerLazySingleton(() => FirstLoginService());
-
 }
 
 Future<void> main() async {
@@ -35,14 +34,15 @@ Future<void> main() async {
   await StaticVariables.Init();
   StaticVariables.prefs.setString("activerequeststate", "Searching");
 
-  if (!StaticVariables.prefs.containsKey("firstlogin"))
-    StaticVariables.prefs.setBool("firstlogin", true);
+  bool firstlogin = StaticVariables.prefs.getBool("firstlogin");
+  print('First Login token is: $firstlogin');
 
   var token = StaticVariables.prefs.getString('token');
-  print("Saved token printed from Main and used for Remember Me: "+token);
+  print("Saved token used for Remember Me: $token");
+
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
-   home: token == null ? Logout() : MainPage()
+      home: token == null ? Logout() : MainPage()
 //home: MainPage(),
 //  home: ConfirmCode(),
       ));

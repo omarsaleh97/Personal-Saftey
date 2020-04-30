@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
@@ -25,6 +27,9 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
     print("Disposing search page");
     _circle1FadeController.dispose();
     _circle1SizeController.dispose();
+
+    SocketHandler.Disconnect();
+
     super.dispose();
   }
   
@@ -189,6 +194,7 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
         case "Cancelled":
 
           toReturn = Color.fromRGBO(66, 66, 66, 1.0); //Dark grey
+          Navigator.pop(context);
 
           break;
 

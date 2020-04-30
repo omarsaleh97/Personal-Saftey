@@ -39,6 +39,17 @@ class SocketHandler {
     }
   }
 
+  static void Disconnect()
+  {
+
+    if (_hubConnection.state != HubConnectionState.Connected) {
+
+      _hubConnection.stop();
+
+    }
+  }
+
+
   //#region ClientSOSRequest
 
   static void SaveConnectionID_Client(List<Object> args) {
@@ -134,6 +145,7 @@ class SocketHandler {
         var APIresult = APIResponse.fromJson(userMap);
         print(APIresult.toString());
         print("Send SOS Success");
+        print(data.statusCode);
         print(APIresult.result);
         var parsedJson = json.decode(APIresult.result);
         SetActiveSOSRequestState(parsedJson['requestStateName']);

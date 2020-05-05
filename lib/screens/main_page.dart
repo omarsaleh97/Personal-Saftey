@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/Auth/logout.dart';
-import 'package:personal_safety/componants/BottomNavBar/BottomNavBar.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/theme.dart';
 import 'package:personal_safety/componants/title_text.dart';
 import 'package:personal_safety/screens/active_Request.dart';
 import 'package:personal_safety/screens/home.dart';
 import 'package:personal_safety/screens/nearestFacilities.dart';
+import 'package:personal_safety/screens/news.dart';
+import 'package:personal_safety/screens/tabs/NearbyEvent.dart';
+import 'package:personal_safety/screens/tabs/PublicEvent.dart';
+import 'package:personal_safety/screens/tabs/all_events.dart';
+import 'package:personal_safety/widgets/drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
@@ -65,7 +69,8 @@ class _MainPageState extends State<MainPage> {
               ),
               color: Colors.black54,
               onPressed: () {
-                _drawer();
+//                AppDrawer();
+//                print("press");
               },
             ),
           ),
@@ -86,27 +91,6 @@ class _MainPageState extends State<MainPage> {
                   },
                 )),
           )
-        ],
-      ),
-    );
-  }
-
-  Widget _drawer() {
-    return Drawer(
-      child: Column(
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            accountName: null,
-            accountEmail: null,
-          ),
-          ListView(
-            children: <Widget>[
-              ListTile(
-                title: Text("Log out"),
-                leading: Icon(Icons.lock),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -249,6 +233,30 @@ class _MainPageState extends State<MainPage> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
+         appBar: AppBar(
+           actions: <Widget>[
+             ClipRRect(
+               borderRadius: BorderRadius.all(Radius.circular(13)),
+               child: IconButton(
+                 icon: Icon(Icons.lock),
+                 color: primaryColor,
+                 onPressed: () async {
+                   //_save("0");
+                   SharedPreferences prefs =
+                   await SharedPreferences.getInstance();
+                   prefs.remove('token');
+                   Navigator.push(context,
+                       MaterialPageRoute(builder: (context) => Logout()));
+                 },
+               ),
+             )
+           ],
+               backgroundColor: grey,
+           bottomOpacity: 0.0,
+
+           elevation: 0.0,
+         ),
+        drawer: AppDrawer(),
         body: SafeArea(
           child: Stack(
             fit: StackFit.expand,
@@ -269,8 +277,8 @@ class _MainPageState extends State<MainPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container(color: grey, child: _appBar()),
-                      Container(color: grey, child: _title()),
+                     // Container(color: grey, child: _appBar()),
+                     Container(color: grey, child: _title()),
                       Expanded(
 //                          child: AnimatedSwitcher(
 //                              duration: Duration(milliseconds: 300),
@@ -282,17 +290,17 @@ class _MainPageState extends State<MainPage> {
 //                                      alignment: Alignment.topCenter,
 //                                      //  child: ActiveRequest(),
 //                                    ))
-                        child: isHomePageSelected
-                            ? Home()
-                            : Align(
-                                alignment: Alignment.topCenter,
-                              ),
-                      )
+                          child: isHomePageSelected
+                              ? Home()
+                              : isNewsPageSelected
+                                  ? News()
+                                  : isNearestPageSelected
+                                      ? NearestFacilities()
+                                      : isActiveRequestPageSelected ? ActiveRequest() : "")
                     ],
                   ),
                 ),
               ),
-
             ],
           ),
         ),

@@ -1,79 +1,56 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:personal_safety/Auth/login.dart';
-import 'package:personal_safety/Auth/logout.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:personal_safety/componants/newEventDialog.dart';
+import 'package:personal_safety/screens/tabs/NearbyEvent.dart';
+import 'package:personal_safety/screens/tabs/PublicEvent.dart';
+import 'package:personal_safety/screens/tabs/all_events.dart';
 
 class Test extends StatefulWidget {
   @override
-  _State createState() => new _State();
+  _TestState createState() => _TestState();
 }
 
-class _State extends State<Test> {
-  _save(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'token';
-    final value = token;
-    prefs.setString(key, value);
-  }
-
+class _TestState extends State<Test> with SingleTickerProviderStateMixin {
+  TabController controller;
   @override
   void initState() {
     super.initState();
-  }
-
-  Future<bool> _onBackPressed() {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Are you sure?'),
-            content: Text('You are going to exit the application.'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('NO'),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-              ),
-              FlatButton(
-                child: Text('YES'),
-                onPressed: () async {
-                  SystemNavigator.pop();
-                },
-              ),
-            ],
-          );
-        });
+    controller = TabController(length: 3, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Test Page'),
-        ),
-        body: new Container(
-          padding: new EdgeInsets.all(32.0),
-          child: new Column(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.lock),
-                onPressed: ()async {
-                  //_save("0");
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.remove('token');
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Logout()));
-                },
-              )
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Todos'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddEventScreen(),
+                ),
+              );
+            },
           ),
+        ],
+        bottom: TabBar(
+          controller: controller,
+          tabs: <Widget>[
+            Tab(text: 'All'),
+            Tab(text: 'NearBy Event'),
+            Tab(text: 'Public Event'),
+          ],
         ),
+      ),
+      body: TabBarView(
+        controller: controller,
+        children: <Widget>[
+//          AllEventsTab(),
+//          NearbyEvent(),
+//          PublicEvents(),
+        ],
       ),
     );
   }

@@ -25,6 +25,16 @@ dependencies:
   carousel_pro: ^1.0.0
   signalr_client: ^0.1.6
   geolocator: ^5.3.1
+  provider: ^3.0.0+1
+  image_picker: ^0.6.0+9
+  path_provider: ^1.1.0
+  path: ^1.6.2
+  sqflite: ^1.1.5
+  location: ^2.3.5
+  google_maps_flutter: ^0.5.17
+  intl: ^0.16.1
+  font_awesome_flutter: ^8.8.1
+
 
 
   # The following adds the Cupertino Icons font to your application.

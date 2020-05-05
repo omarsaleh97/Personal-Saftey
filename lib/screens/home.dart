@@ -5,8 +5,11 @@ import 'package:personal_safety/componants/authority_card.dart';
 import 'package:personal_safety/componants/authority_data.dart';
 import 'package:personal_safety/componants/authority_icon.dart';
 import 'package:personal_safety/componants/color.dart';
+import 'package:personal_safety/componants/newEventDialog.dart';
 import 'package:personal_safety/componants/theme.dart';
 import 'dart:math';
+
+import 'package:personal_safety/screens/news.dart';
 
 class Home extends StatefulWidget {
   Home({Key key, this.title}) : super(key: key);
@@ -51,6 +54,18 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void _makeNewEvent() async{
+    News save = await Navigator.of(context).push(new MaterialPageRoute<News>(
+        builder: (BuildContext context) {
+          return new AddEventScreen();
+        },
+        fullscreenDialog: true
+    ));
+    if (save != null) {
+     // _addWeightSave(save);
+    }
+  }
+
   Widget _newPublicEvent() {
     return Container(
       margin: AppTheme.padding,
@@ -58,21 +73,32 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Expanded(
             child: Container(
-              height: 50,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "New Public Event...",
-                  hintStyle: TextStyle(fontSize: 12),
-                  contentPadding:
-                      EdgeInsets.only(left: 10, right: 10, bottom: 0, top: 5),
-                ),
-              ),
-            ),
+                //height: 70,
+              width: 150,
+                alignment: Alignment.center,
+//              decoration: BoxDecoration(
+//                  color: Colors.white,
+//                  borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(10),
+                  ),
+                  onPressed:(){
+                  //Navigator.push(context, MaterialPageRoute(builder: (context)=>AddEventScreen()));
+                    _makeNewEvent();
+                  },
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        "New Public Event...",
+                        style: TextStyle(color: Colors.black, fontSize: 15,fontWeight: FontWeight.w400),
+                      ),
+                      SizedBox(width: 30),
+                      Icon(Icons.add,color: Colors.black,size: 15,)
+                    ],
+                  ),
+                  color: Accent2,
+                )),
           ),
           SizedBox(width: 10),
           _icon(
@@ -102,7 +128,8 @@ class _HomeState extends State<Home> {
           width: double.infinity,
           height: 300,
           decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.1), borderRadius: BorderRadius.circular(13)),
+              color: Colors.grey.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(13)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,23 +264,22 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Container(
-          color: grey,
-          child: Column(
-
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+      color: grey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
           _authorityWidget(),
           _newPublicEvent(),
           Container(
             color: Colors.white,
             child: Column(
               children: <Widget>[
-               _topStories(),
+                _topStories(),
               ],
             ),
           ),
-      ],
-    ),
-        ));
+        ],
+      ),
+    ));
   }
 }

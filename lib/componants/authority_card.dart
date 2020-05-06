@@ -8,6 +8,7 @@ import 'package:personal_safety/componants/theme.dart';
 import 'package:personal_safety/componants/title_text.dart';
 import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/models/authorityType.dart';
+import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/screens/search.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -250,15 +251,11 @@ class _AlertState extends State<Alert> {
   }
 
   void MakeSOSRequest(int requestType) async {
-
     await SocketHandler.ConnectToClientChannel();
 
     SocketHandler.SendSOSRequest(requestType);
-
+//    GlobalVar.Set("canpop", true);
     Navigator.pop(context);
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => Search()));
-
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
   }
-
 }

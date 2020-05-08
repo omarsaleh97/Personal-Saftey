@@ -6,6 +6,7 @@ import 'package:personal_safety/Auth/logout.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/theme.dart';
 import 'package:personal_safety/componants/title_text.dart';
+import 'package:personal_safety/models/newEvent.dart';
 import 'package:personal_safety/screens/active_Request.dart';
 import 'package:personal_safety/screens/home.dart';
 import 'package:personal_safety/screens/nearestFacilities.dart';
@@ -17,8 +18,8 @@ import 'package:personal_safety/widgets/drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
-  MainPage({Key key, this.title}) : super(key: key);
-
+  MainPage({Key key, this.title,this.data}) : super(key: key);
+NewEventData data;
   final String title;
   @override
   _MainPageState createState() => _MainPageState();
@@ -291,7 +292,7 @@ class _MainPageState extends State<MainPage> {
 //                                      //  child: ActiveRequest(),
 //                                    ))
                           child: isHomePageSelected
-                              ? Home()
+                              ? Home(event: widget.data,)
                               : isNewsPageSelected
                                   ? News()
                                   : isNearestPageSelected

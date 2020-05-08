@@ -24,7 +24,11 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+body: Column(
+  children: <Widget>[
+    AllEventsTab()
+  ],
+),
     );
   }
 }

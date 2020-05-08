@@ -17,12 +17,12 @@ class Events extends StatefulWidget {
   _EventsState createState() => _EventsState();
 }
 
-class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
-  TabController controller;
+class _EventsState extends State<Events>{
+
   @override
   void initState() {
     super.initState();
-    controller = TabController(length: EventStoriesData.StoryList.length, vsync: this);
+
   }
 
 
@@ -82,28 +82,10 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
         ),
         elevation: 0.0,
         backgroundColor: Colors.grey.withOpacity(.1),
-//        bottom: TabBar(
-//          controller: controller,
-//          tabs: <Widget>[
-//            Tab(text: 'All'),
-//            Tab(text: 'Corona'),
-//            Tab(text: 'Nearby'),
-//          ],
-//        ),
+
       ),
-      body:
-//      StoryCarousel(),
-//
-      Column(
+      body: Column(
         children: <Widget>[
-//          TabBarView(
-//            controller: controller,
-//            children: <Widget>[
-//              AllEventsTab(),
-//              NearbyEvent(),
-//              PublicEvents(),
-//            ],
-//          ),
           _storyWidget(),
           SingleChildScrollView(
             scrollDirection: Axis.vertical,

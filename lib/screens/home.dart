@@ -7,19 +7,27 @@ import 'package:personal_safety/componants/authority_icon.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/newEventDialog.dart';
 import 'package:personal_safety/componants/theme.dart';
+import 'package:personal_safety/models/database.dart';
+import 'package:personal_safety/models/newEvent.dart';
 import 'dart:math';
 
 import 'package:personal_safety/screens/news.dart';
+import 'package:personal_safety/screens/tabs/all_events.dart';
+import 'package:personal_safety/screens/tabs/all_eventsHome.dart';
+import 'package:personal_safety/widgets/event_list_item.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key, this.title}) : super(key: key);
+  Home({Key key, this.title, this.event}) : super(key: key);
 
   final String title;
+  NewEventData event;
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  NewEventData event;
+
   @override
   Widget _icon(IconData icon, {Color color = LightColor.iconColor}) {
     return Container(
@@ -54,15 +62,14 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _makeNewEvent() async{
+  void _makeNewEvent() async {
     News save = await Navigator.of(context).push(new MaterialPageRoute<News>(
         builder: (BuildContext context) {
           return new AddEventScreen();
         },
-        fullscreenDialog: true
-    ));
+        fullscreenDialog: true));
     if (save != null) {
-     // _addWeightSave(save);
+      // _addWeightSave(save);
     }
   }
 
@@ -74,7 +81,7 @@ class _HomeState extends State<Home> {
           Expanded(
             child: Container(
                 //height: 70,
-              width: 150,
+                width: 150,
                 alignment: Alignment.center,
 //              decoration: BoxDecoration(
 //                  color: Colors.white,
@@ -83,18 +90,25 @@ class _HomeState extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(10),
                   ),
-                  onPressed:(){
-                  //Navigator.push(context, MaterialPageRoute(builder: (context)=>AddEventScreen()));
+                  onPressed: () {
+                    //Navigator.push(context, MaterialPageRoute(builder: (context)=>AddEventScreen()));
                     _makeNewEvent();
                   },
                   child: Row(
                     children: <Widget>[
                       Text(
                         "New Public Event...",
-                        style: TextStyle(color: Colors.black, fontSize: 15,fontWeight: FontWeight.w400),
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400),
                       ),
                       SizedBox(width: 30),
-                      Icon(Icons.add,color: Colors.black,size: 15,)
+                      Icon(
+                        Icons.add,
+                        color: Colors.black,
+                        size: 15,
+                      )
                     ],
                   ),
                   color: Accent2,
@@ -141,124 +155,55 @@ class _HomeState extends State<Home> {
                   style: TextStyle(color: primaryColor, fontSize: 15),
                 ),
               ),
-              Flexible(
-                child: ListView(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    ListTile(
-                      title: Text(
-                        "Five questions lawmarkers should ask Devos about teacher effectivness",
-                        style: TextStyle(
-                            color: primaryColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13),
-                      ),
-                      subtitle: Text(
-                        "1 hour ago",
-                        style: TextStyle(
-                            color: greyIcon, fontWeight: FontWeight.w400),
-                      ),
-                      trailing: Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: Image.asset(
-                          "assets/images/1.jpg",
-                          width: 100,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(
-                        "Five questions lawmarkers should ask Devos about teacher effectivness",
-                        style: TextStyle(
-                            color: primaryColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13),
-                      ),
-                      subtitle: Text(
-                        "1 hour ago",
-                        style: TextStyle(
-                            color: greyIcon, fontWeight: FontWeight.w400),
-                      ),
-                      trailing: Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: Image.asset(
-                          "assets/images/1.jpg",
-                          width: 100,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(
-                        "Five questions lawmarkers should ask Devos about teacher effectivness",
-                        style: TextStyle(
-                            color: primaryColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13),
-                      ),
-                      subtitle: Text(
-                        "1 hour ago",
-                        style: TextStyle(
-                            color: greyIcon, fontWeight: FontWeight.w400),
-                      ),
-                      trailing: Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: Image.asset(
-                          "assets/images/1.jpg",
-                          width: 100,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(
-                        "Five questions lawmarkers should ask Devos about teacher effectivness",
-                        style: TextStyle(
-                            color: primaryColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13),
-                      ),
-                      subtitle: Text(
-                        "1 hour ago",
-                        style: TextStyle(
-                            color: greyIcon, fontWeight: FontWeight.w400),
-                      ),
-                      trailing: Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: Image.asset(
-                          "assets/images/1.jpg",
-                          width: 100,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(
-                        "Five questions lawmarkers should ask Devos about teacher effectivness",
-                        style: TextStyle(
-                            color: primaryColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13),
-                      ),
-                      subtitle: Text(
-                        "1 hour ago",
-                        style: TextStyle(
-                            color: greyIcon, fontWeight: FontWeight.w400),
-                      ),
-                      trailing: Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: Image.asset(
-                          "assets/images/1.jpg",
-                          width: 100,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
+//
+//                   Container(
+//                      child: EventCard(
+//                        containerHeight: 120,
+//                        padding: EdgeInsets.only(left: 20, right: 20),
+//                        imageHeight: 70,
+//                        imageWidth: 120,
+//                        function: () {
+//                          widget.event.toggleFavoriteStatus();
+//                        },
+//                        image: FileImage(widget.event.image),
+//                        description: widget.event.description,
+//                        isPublic: widget.event.isPublic,
+//                        isFav: widget.event.isFav,
+//                      ),
+//                   )
+
+//                ListView(
+//                  scrollDirection: Axis.vertical,
+//                  shrinkWrap: true,
+//                  children: <Widget>[
+//                    ListTile(
+//                      title: Text(
+//                        widget.event.description,
+//                        style: TextStyle(
+//                            color: primaryColor,
+//                            fontWeight: FontWeight.w400,
+//                            fontSize: 13),
+//                      ),
+//                      subtitle: Text(
+//                        "1 hour ago",
+//                        style: TextStyle(
+//                            color: greyIcon, fontWeight: FontWeight.w400),
+//                      ),
+//                      trailing: Padding(
+//                        padding: const EdgeInsets.only(top: 5.0),
+//                        child: Image(image: FileImage(widget.event.image))
+//                      ),
+//                    ),
+//                  ],
+//                ),
+
+          ]
+              )
+
           ),
         ),
-      ),
-    );
+      );
+
   }
 
   Widget build(BuildContext context) {

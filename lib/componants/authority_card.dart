@@ -219,7 +219,7 @@ class _AlertState extends State<Alert> {
                 value2 = value;
               });
             },
-            title: new Text("Notify my neighbourhood ",
+            title: new Text("Notify my neighbourhood",
                 style: TextStyle(fontSize: 12)),
             controlAffinity: ListTileControlAffinity.leading,
             activeColor: Colors.red,

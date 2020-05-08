@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/models/newEvent.dart';
@@ -12,6 +13,7 @@ class EventDetailScreen extends StatelessWidget {
   final NewEventData data;
 
   EventDetailScreen({this.data});
+
   @override
   Widget build(BuildContext context) {
     final eventId = ModalRoute.of(context).settings.arguments; // is the id!
@@ -20,18 +22,6 @@ class EventDetailScreen extends StatelessWidget {
       listen: false,
     ).findById(eventId);
     return Scaffold(
-//        appBar: AppBar(
-//          title: Text(
-//            "Event Overview",
-//            textScaleFactor: 1.2,
-//            style: TextStyle(color: primaryColor),
-//          ),
-//          elevation: 0.0,
-//          centerTitle: true,
-//          backgroundColor: grey,
-//        ),
-
-
       body: Column(
         children: <Widget>[
           Stack(
@@ -158,15 +148,17 @@ class EventDetailScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Center(
                         child: Container(
                           height: 40,
                           width: 120,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                            color: primaryColor
-                          ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                              color: primaryColor),
                           child: FlatButton(
                               onPressed: () {
                                 Navigator.push(
@@ -178,7 +170,105 @@ class EventDetailScreen extends StatelessWidget {
                                               isSelecting: false,
                                             )));
                               },
-                              child: Text('View in Map',style: TextStyle(color: Accent1),)),
+                              child: Text(
+                                'View in Map',
+                                style: TextStyle(color: Accent1),
+                              )),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Center(
+                        child: Container(
+                          width: 220,
+                          height: 50,
+                          child: RaisedButton(
+                              color: Accent1,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(8),
+                              ),
+                              onPressed: () {
+                                print('tapped');
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Container(
+                                                alignment: Alignment.topLeft,
+                                                child: IconButton(
+                                                  icon: Icon(Icons.close),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                              ),
+                                              Container(
+                                                alignment:
+                                                    Alignment.topCenter,
+                                                child: SvgPicture.asset(
+                                                  'assets/images/postalert.svg',
+                                                  width: 130,
+                                                  height: 130,
+                                                ),
+                                              ),
+                                              SizedBox(height: 20,),
+                                              Text(
+                                                'Are you sure?',
+                                                style: TextStyle(
+                                                    color: Accent1,
+                                                    fontSize: 25,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              SizedBox(height: 20,),
+
+                                              Text(
+
+                                                'You are about to be involved in this event.\n'
+                                                'All your data will be shared with the user and\n the system adminstartion in case something \n goes wrong. You will always have access to\n the user\'s data',
+                                                style: TextStyle(
+                                                    color: grey,
+                                                    fontSize: 12,
+                                                    ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              SizedBox(height: 50,),
+
+                                              Container(
+                                                width: 180,
+                                                height: 45,
+                                                child: RaisedButton(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        new BorderRadius
+                                                            .circular(20),
+                                                  ),
+                                                  onPressed: () {},
+                                                  color: Accent1,
+                                                  child: Text(
+                                                    'Proceed',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ));
+                              },
+                              child: Text(
+                                'HELP USER',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              )),
                         ),
                       )
                     ],
@@ -192,5 +282,3 @@ class EventDetailScreen extends StatelessWidget {
     );
   }
 }
-
-

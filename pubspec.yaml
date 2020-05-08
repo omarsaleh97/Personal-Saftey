@@ -31,7 +31,7 @@ dependencies:
   path: ^1.6.2
   sqflite: ^1.1.5
   location: ^2.3.5
-  google_maps_flutter: ^0.5.17
+  google_maps_flutter: ^0.5.27+1
   intl: ^0.16.1
   font_awesome_flutter: ^8.8.1
 

@@ -13,7 +13,7 @@
         android:label="personal_safety"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDU4k-7hp3JVM4J5w2O8tsJfe7JX3WC-cA"/>
+            android:value="AIzaSyCmdRW_PwoKpOTFjxSHT-r4JBd3QFGNMEQ"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

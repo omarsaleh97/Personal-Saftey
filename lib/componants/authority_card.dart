@@ -254,7 +254,8 @@ class _AlertState extends State<Alert> {
     await SocketHandler.ConnectToClientChannel();
 
     SocketHandler.SendSOSRequest(requestType);
-//    GlobalVar.Set("canpop", true);
+    GlobalVar.Set("canpop", true);
+    print("canpop is now: " + GlobalVar.Get("canpop", false).toString());
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
   }

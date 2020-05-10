@@ -26,7 +26,6 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
     print("Disposing search page");
     _circle1FadeController.dispose();
     _circle1SizeController.dispose();
-    print('DISPOSED OF SEARCH PAGE');
 
     SocketHandler.Disconnect();
 
@@ -196,11 +195,13 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
 
         case "Cancelled":
           toReturn = Color.fromRGBO(66, 66, 66, 1.0); //Dark grey
-          print('DESTROYING EVERYTHING');
-          if (GlobalVar.Get("canpop", false)) {
-//            Navigator.pop(context);
+
+          if (GlobalVar.Get("canpop", true)) {
+            Navigator.pop(context);
+            print('DESTROYING EVERYTHING');
             GlobalVar.Set("canpop", false);
           }
+
           break;
 
         case "Pending":
@@ -214,10 +215,10 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
           break;
         case "Solved":
           toReturn = Colors.blueAccent; //Green
-          if (GlobalVar.Get("canpop", true)) {
-//            Navigator.pop(context);
-            GlobalVar.Set("canpop", false);
-          }
+//          if (GlobalVar.Get("canpop", true)) {
+////            Navigator.pop(context);
+//            GlobalVar.Set("canpop", false);
+//          }
 
           break;
       }

@@ -120,135 +120,139 @@ class _SignUpState extends State<SignUp> {
             }
 
             return Container(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 50),
-                      child: Container(
-                        height: displaySize(context).height * .3,
-                        width: displaySize(context).width * .6,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(30),
-                                bottomLeft: Radius.circular(30),
-                                topRight: Radius.circular(30),
-                                bottomRight: Radius.circular(30))),
-                        child: SvgPicture.asset(
-                          'assets/images/location.svg',
+              child: GestureDetector(
+                onTap: () =>
+                    FocusScope.of(context).requestFocus(new FocusNode()),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 50),
+                        child: Container(
+                          height: displaySize(context).height * .3,
+                          width: displaySize(context).width * .6,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(30),
+                                  bottomLeft: Radius.circular(30),
+                                  topRight: Radius.circular(30),
+                                  bottomRight: Radius.circular(30))),
+                          child: SvgPicture.asset(
+                            'assets/images/location.svg',
+                          ),
                         ),
                       ),
-                    ),
-                    SingleChildScrollView(
-                      child: Form(key: _formKey, child: SignupForm()),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20, left: 70.0, bottom: 10, right: 70),
-                      child: Container(
-                        height: 50.0,
-                        width: 200,
-                        child: RaisedButton(
-                          color: Accent1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(30),
-                          ),
-                          onPressed: () async {
-                            nameValidation();
-                            passwordValidation();
-                            emailValidation();
-                            nationalIDValidation();
-                            phoneValidation();
-                            if (fullNameFlag == true &&
-                                emailFlag == true &&
-                                passwordFlag == true &&
-                                nationalIDFlag == true &&
-                                phoneNumberFlag == true) {
-                              setState(() async {
-                                setState(() {
-                                  _isLoading = true;
-                                });
+                      SingleChildScrollView(
+                        child: Form(key: _formKey, child: SignupForm()),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20, left: 70.0, bottom: 10, right: 70),
+                        child: Container(
+                          height: 50.0,
+                          width: 200,
+                          child: RaisedButton(
+                            color: Accent1,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30),
+                            ),
+                            onPressed: () async {
+                              nameValidation();
+                              passwordValidation();
+                              emailValidation();
+                              nationalIDValidation();
+                              phoneValidation();
+                              if (fullNameFlag == true &&
+                                  emailFlag == true &&
+                                  passwordFlag == true &&
+                                  nationalIDFlag == true &&
+                                  phoneNumberFlag == true) {
+                                setState(() async {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
 
-                                final register = RegisterCredentials(
-                                  fullName: _fullNameController.text,
-                                  email: _emailController.text,
-                                  password: _passwordController.text,
-                                  nationalId: _nationalIdController.text,
-                                  phoneNumber: _phoneNumberController.text,
-                                );
-                                final result =
-                                    await registerService.Register(register);
-                                debugPrint("from REGISTER status: " +
-                                    result.status.toString());
-                                debugPrint("from REGISTER token : " +
-                                    result.result.toString());
-                                debugPrint("from REGISTER error : " +
-                                    result.hasErrors.toString());
-                                final title = result.hasErrors
-                                    ? 'Error'
-                                    : 'Registration Successful!';
-                                final text = result.hasErrors
-                                    ? 'Make sure that Email, Phone Number and National ID are not taken.'
-                                    : 'Account Created Successfully!';
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                          title: Text(title),
-                                          content: Text(text),
-                                          actions: <Widget>[
-                                            FlatButton(
-                                                child: Text('OK'),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _isLoading = false;
-                                                  });
-                                                  Navigator.of(context).pop();
-                                                })
-                                          ],
-                                        )).then((data) {
-                                  if (result.status == 0) {
-                                    if (StaticVariables.prefs
-                                            .getBool("firstlogin") ==
-                                        false) {
-                                      StaticVariables.prefs
-                                          .setBool("firstlogin", true);
+                                  final register = RegisterCredentials(
+                                    fullName: _fullNameController.text,
+                                    email: _emailController.text,
+                                    password: _passwordController.text,
+                                    nationalId: _nationalIdController.text,
+                                    phoneNumber: _phoneNumberController.text,
+                                  );
+                                  final result =
+                                      await registerService.Register(register);
+                                  debugPrint("from REGISTER status: " +
+                                      result.status.toString());
+                                  debugPrint("from REGISTER token : " +
+                                      result.result.toString());
+                                  debugPrint("from REGISTER error : " +
+                                      result.hasErrors.toString());
+                                  final title = result.hasErrors
+                                      ? 'Error'
+                                      : 'Registration Successful!';
+                                  final text = result.hasErrors
+                                      ? 'Make sure that Email, Phone Number and National ID are not taken.'
+                                      : 'Account Created Successfully!';
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                            title: Text(title),
+                                            content: Text(text),
+                                            actions: <Widget>[
+                                              FlatButton(
+                                                  child: Text('OK'),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _isLoading = false;
+                                                    });
+                                                    Navigator.of(context).pop();
+                                                  })
+                                            ],
+                                          )).then((data) {
+                                    if (result.status == 0) {
+                                      if (StaticVariables.prefs
+                                              .getBool("firstlogin") ==
+                                          false) {
+                                        StaticVariables.prefs
+                                            .setBool("firstlogin", true);
+                                      }
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Success()));
                                     }
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Success()));
-                                  }
+                                  });
                                 });
-                              });
-                            } else if (fullNameFlag == false)
-                              ShowDialog("Error", "Name can't be empty.");
-                            else if (emailFlag == false)
-                              ShowDialog("Error", "Invalid Email Address");
-                            else if (passwordFlag == false)
-                              ShowDialog("Error",
-                                  "Password be longer than 6 characters and must contain 1 Uppercase letter, 1 Number and 1 Special character.");
-                            else if (nationalIDFlag == false)
-                              ShowDialog(
-                                  "Error", "National ID must be 14 digits.");
-                            else if (phoneNumberFlag == false)
-                              ShowDialog(
-                                  "Error", "Phone Number must be 11 digits.");
-                          },
-                          child: Center(
-                            child: Text(
-                              'Confirm',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                              } else if (fullNameFlag == false)
+                                ShowDialog("Error", "Name can't be empty.");
+                              else if (emailFlag == false)
+                                ShowDialog("Error", "Invalid Email Address");
+                              else if (passwordFlag == false)
+                                ShowDialog("Error",
+                                    "Password be longer than 6 characters and must contain 1 Uppercase letter, 1 Number and 1 Special character.");
+                              else if (nationalIDFlag == false)
+                                ShowDialog(
+                                    "Error", "National ID must be 14 digits.");
+                              else if (phoneNumberFlag == false)
+                                ShowDialog(
+                                    "Error", "Phone Number must be 11 digits.");
+                            },
+                            child: Center(
+                              child: Text(
+                                'Confirm',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             );
@@ -305,6 +309,7 @@ class _SignUpState extends State<SignUp> {
                   errorBorder: InputBorder.none,
                   border: InputBorder.none,
                   hintText: "Password",
+                  prefixIcon: Icon(Icons.lock),
                   suffixIcon: IconButton(
                     icon: Icon(
                       // Based on passwordVisible state choose the icon

@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:personal_safety/models/event_type_model.dart';
 import 'package:personal_safety/screens/tabs/NearbyEvent.dart';
 import 'package:personal_safety/screens/tabs/PublicEvent.dart';
 import 'package:personal_safety/screens/tabs/trendEvent.dart';
+import 'package:personal_safety/models/event_categories.dart';
+import 'package:personal_safety/services/event_categories_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 
 class StoryCard extends StatefulWidget {
   Story story;
@@ -23,32 +28,80 @@ class _StoryCardState extends State<StoryCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      semanticContainer: true,
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(image: type.image, fit: BoxFit.cover),
+    return EventCard();
+  }
+}
+
+class EventCard extends StatefulWidget {
+  EventCard({Key key, @required this.eventCategory}) : super(key: key);
+  EventCategories eventCategory;
+
+  @override
+  _EventCardState createState() => _EventCardState();
+}
+
+class _EventCardState extends State<EventCard> {
+//
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Story type;
+
+    return Container(
+      width: 100,
+      height: 100,
+      child: Card(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        semanticContainer: true,
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: NetworkImage(
+                    "https://personal-safety.azurewebsites.net/${widget.eventCategory.thumbnailUrl}"),
+                fit: BoxFit.cover),
+          ),
+          child: InkWell(
+              onTap: () {}
+//              if (type.id == 2) {
+////                Navigator.push(
+////                    context,
+////                    MaterialPageRoute(
+////                        builder: (context) => NearbyEvent(
+////                              data: type,
+////                            )));
+////              }
+////              if (type.id == 3) {
+////                Navigator.push(
+////                    context,
+////                    MaterialPageRoute(
+////                        builder: (context) => PublicEvents(
+////                              data: type,
+////                            )));
+////              }
+              ,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 0.0, top: 70),
+                child: Container(
+                  color: Colors.black26,
+                  child: Text(
+                    widget.eventCategory.title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              )),
         ),
-        child: InkWell(
-            onTap: () {
-              if(type.id==1){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>TrendEvent(data: type,)));
-              }
-              if(type.id==2){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>NearbyEvent(data: type,)));
-              }
-              if(type.id==3){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>PublicEvents(data: type,)));
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10.0, top: 70),
-                child: type.name,
-            )),
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
       ),
     );
   }

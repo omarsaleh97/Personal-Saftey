@@ -22,51 +22,33 @@ class Events extends StatefulWidget {
 
 class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
   TabController controller;
+  List<EventCategories> eventCategories;
   EventCategoriesService get userService =>
       GetIt.instance<EventCategoriesService>();
 
-  void getCatergories() async {
+  Future getCategories() async {
     final result = await userService.getEventCategories();
     print('OBTAINED CATEGORIES FROM SERVICE!!!!\n\n');
-    for (int i = 0; i < result.result.length; i++) {
+    setState(() {
       List<EventCategories> list = result.result;
-
-      print("ITEM ${i + 1}: \n\n");
-      print("ID: ${list[i].id}");
-      print("TITLE: ${list[i].title}");
-      print("THUMBNAIL: ${list[i].thumbnailUrl}");
-      print("\nEND OF ITEM ${i + 1}\n \n");
-    }
-    print('OBTAINED CATEGORIES FROM SERVICE!!!!');
+      for (int i = 0; i < result.result.length; i++) {
+        print("ITEM ${i + 1}: \n\n");
+        print("ID: ${list[i].id}");
+        print("TITLE: ${list[i].title}");
+        print("THUMBNAIL: ${list[i].thumbnailUrl}");
+        print("\nEND OF ITEM ${i + 1}\n \n");
+      }
+      print('OBTAINED CATEGORIES FROM SERVICE!!!!');
+      eventCategories = list;
+    });
   }
 
   @override
   void initState() {
-    getCatergories();
+    getCategories();
     super.initState();
     controller =
         TabController(length: EventStoriesData.StoryList.length, vsync: this);
-  }
-
-  Story story;
-
-  Widget _storyWidget() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 20),
-      width: AppTheme.fullWidth(context),
-      height: AppTheme.fullWidth(context) * .35,
-      child: GridView(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: .95,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 20),
-          padding: EdgeInsets.only(left: 20),
-          scrollDirection: Axis.horizontal,
-          children: EventStoriesData.StoryList.map((story) => StoryCard(
-                story: story,
-              )).toList()),
-    );
   }
 
   @override
@@ -111,31 +93,36 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
 //          ],
 //        ),
       ),
-      body:
-//      StoryCarousel(),
-//
-          SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-//          TabBarView(
-//            controller: controller,
-//            children: <Widget>[
-//              AllEventsTab(),
-//              NearbyEvent(),
-//              PublicEvents(),
-//            ],
-//          ),
-            _storyWidget(),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                height: 500,
-                child: AllEventsTab(),
+      body: eventCategories == null
+          ? Center(child: CircularProgressIndicator())
+          : Container(
+              margin: EdgeInsets.symmetric(vertical: 20),
+              width: AppTheme.fullWidth(context),
+              height: AppTheme.fullWidth(context) * .35,
+              child: GridView.builder(
+                padding: const EdgeInsets.all(10.0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    childAspectRatio: .95,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 20),
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: eventCategories.length,
+                itemBuilder: (context, index) => EventCard(
+                  eventCategory: eventCategories[index],
+                ),
               ),
-            )
-          ],
-        ),
-      ),
+            ),
+//                  for (int i = 0; i < eventCetegories.length; i++)
+//
+//                  SingleChildScrollView(
+//                    scrollDirection: Axis.vertical,
+//                    child: Container(
+//                      height: 500,
+//                      child: AllEventsTab(),
+//                    ),
+//                  )
     );
   }
 }

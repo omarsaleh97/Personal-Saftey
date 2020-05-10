@@ -20,6 +20,7 @@ import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/services/service_login.dart';
 import 'package:personal_safety/services/service_register.dart';
 import 'package:provider/provider.dart';
+import 'screens/events.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'others/StaticVariables.dart';
@@ -33,14 +34,14 @@ void setupLocator() {
 }
 
 Future<void> main() async {
+  bool firstlogin = StaticVariables.prefs.getBool("firstlogin");
+  if (firstlogin == null) StaticVariables.prefs.setBool("firstlogin", false);
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
 
   await StaticVariables.Init();
   StaticVariables.prefs.setString("activerequeststate", "Searching");
 
-  bool firstlogin = StaticVariables.prefs.getBool("firstlogin");
-  if (firstlogin == null) StaticVariables.prefs.setBool("firstlogin", false);
   print('First Login token is: $firstlogin');
 
   var token = StaticVariables.prefs.getString('token');

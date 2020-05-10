@@ -66,15 +66,15 @@ class SocketHandler {
   }
 
   static void StartPendingTimeout(String state) {
-    int timeoutSeconds = 999;
+    int timeoutSeconds = 10;
 
     switch (state) {
       case "Searching":
-        timeoutSeconds = 999;
+        timeoutSeconds = 10;
         break;
 
       case "Pending":
-        timeoutSeconds = 999;
+        timeoutSeconds = 10;
         break;
 
       default:

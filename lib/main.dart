@@ -34,16 +34,16 @@ void setupLocator() {
 }
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await StaticVariables.Init();
   StaticVariables.prefs.setString("activerequeststate", "Searching");
 
-  if (!StaticVariables.prefs.containsKey("firstlogin"))
-      StaticVariables.prefs.setBool("firstlogin", true);
-
   bool firstlogin = StaticVariables.prefs.getBool("firstlogin");
   if (firstlogin == null) StaticVariables.prefs.setBool("firstlogin", false);
+
+  if (!StaticVariables.prefs.containsKey("firstlogin"))
+    StaticVariables.prefs.setBool("firstlogin", true);
+
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
 

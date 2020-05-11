@@ -251,8 +251,8 @@ class _AlertState extends State<Alert> {
   }
 
   void MakeSOSRequest(int requestType) async {
+    SocketHandler.SetActiveSOSRequestState("Searching");
     await SocketHandler.ConnectToClientChannel();
-
     SocketHandler.SendSOSRequest(requestType);
     GlobalVar.Set("canpop", true);
     print("canpop is now: " + GlobalVar.Get("canpop", false).toString());

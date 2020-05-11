@@ -38,7 +38,8 @@ class SocketHandler {
   }
 
   static void Disconnect() {
-    if (_hubConnection.state != HubConnectionState.Connected) {
+    if (_hubConnection.state == HubConnectionState.Connected) {
+      debugPrint("Terminating connection..");
       _hubConnection.stop();
     }
   }

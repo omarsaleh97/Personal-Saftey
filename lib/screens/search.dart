@@ -190,15 +190,19 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
 
         case "Cancelling":
           toReturn = Color.fromRGBO(244, 26, 26, 1.0); //Dark reddish
-
+          if (GlobalVar.Get("canpop", true)) {
+            print('DESTROYING EVERYTHING because solved');
+            Navigator.pop(context);
+            GlobalVar.Set("canpop", false);
+          }
           break;
 
         case "Cancelled":
           toReturn = Color.fromRGBO(66, 66, 66, 1.0); //Dark grey
 
           if (GlobalVar.Get("canpop", true)) {
+            print('DESTROYING EVERYTHING because cancelled');
             Navigator.pop(context);
-            print('DESTROYING EVERYTHING');
             GlobalVar.Set("canpop", false);
           }
 
@@ -215,6 +219,11 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
           break;
         case "Solved":
           toReturn = Colors.blueAccent; //Green
+          if (GlobalVar.Get("canpop", true)) {
+            print('DESTROYING EVERYTHING because solved');
+            Navigator.pop(context);
+            GlobalVar.Set("canpop", false);
+          }
 //          if (GlobalVar.Get("canpop", true)) {
 ////            Navigator.pop(context);
 //            GlobalVar.Set("canpop", false);

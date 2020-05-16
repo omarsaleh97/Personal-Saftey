@@ -13,10 +13,9 @@ class Logout extends StatefulWidget {
 }
 
 class _LogoutState extends State<Logout> {
-
-  bool _isloggedin=false;
+  bool _isloggedin = false;
   Map userProfile;
- // final facebookLogin = FacebookLogin();
+  // final facebookLogin = FacebookLogin();
 
 //  _loginWithFacebook()async{
 //

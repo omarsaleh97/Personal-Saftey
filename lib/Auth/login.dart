@@ -265,10 +265,11 @@ class _LoginState extends State<Login> {
                 contentPadding: const EdgeInsets.all(20),
                 hintText: "Password",
                 errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                prefixIcon: Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
                     // Based on passwordVisible state choose the icon
-                    passwordVisible ? Icons.visibility : Icons.visibility_off,
+                    passwordVisible ? Icons.visibility_off : Icons.visibility,
                     color: Theme.of(context).primaryColorDark,
                   ),
                   onPressed: () {

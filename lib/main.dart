@@ -14,6 +14,7 @@ import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/search.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
+import 'package:personal_safety/services/change_password_service.dart';
 import 'package:personal_safety/services/event_categories_service.dart';
 import 'package:personal_safety/services/service_confirm.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
@@ -31,6 +32,7 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => ConfirmService());
   GetIt.instance.registerLazySingleton(() => FirstLoginService());
   GetIt.instance.registerLazySingleton(() => EventCategoriesService());
+  GetIt.instance.registerLazySingleton(() => ChangePasswordService());
 }
 
 Future<void> main() async {
@@ -57,7 +59,7 @@ Future<void> main() async {
     child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: token == null ? Logout() : MainPage()
-//      home: Events(),
+//      home: MainPage(),
         //home: News(),
         ),
   ));

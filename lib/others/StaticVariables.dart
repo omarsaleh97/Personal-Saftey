@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StaticVariables {
   //static const
 
-  static const API = 'https://personal-safety.azurewebsites.net/', //Publish
+  static const API = 'https://personalsafety.azurewebsites.net/', //Publish
       //API = 'http://192.168.1.4:5566', //Test
       clientServerURL = API + "/hubs/client",
       realtimeServerURL = API + "/hubs/realtime";

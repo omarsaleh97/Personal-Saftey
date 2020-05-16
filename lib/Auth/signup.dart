@@ -230,7 +230,7 @@ class _SignUpState extends State<SignUp> {
                                 ShowDialog("Error", "Invalid Email Address");
                               else if (passwordFlag == false)
                                 ShowDialog("Error",
-                                    "Password be longer than 6 characters and must contain 1 Uppercase letter, 1 Number and 1 Special character.");
+                                    "Password must: \n-Be longer than 7 characters.\n-Contain 1 Uppercase letter.\n-Contain 1 Number.\n-Contain 1 Special character.");
                               else if (nationalIDFlag == false)
                                 ShowDialog(
                                     "Error", "National ID must be 14 digits.");
@@ -313,7 +313,7 @@ class _SignUpState extends State<SignUp> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       // Based on passwordVisible state choose the icon
-                      passwordVisible ? Icons.visibility : Icons.visibility_off,
+                      passwordVisible ? Icons.visibility_off : Icons.visibility,
                       color: Theme.of(context).primaryColorDark,
                     ),
                     onPressed: () {

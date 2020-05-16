@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_safety/Auth/newPassword.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/screens/events.dart';
 import 'package:personal_safety/screens/tabs/NearbyEvent.dart';
@@ -12,7 +13,7 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text('Hello Friend!'),
+            title: Text('Welcome. Stay Safe!'),
             automaticallyImplyLeading: false,
             backgroundColor: primaryColor,
           ),
@@ -21,7 +22,8 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('Home'),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>MainPage()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MainPage()));
             },
           ),
           Divider(),
@@ -29,7 +31,17 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.event_available),
             title: Text('Event'),
             onTap: () {
-             Navigator.push(context, MaterialPageRoute(builder: (context)=>Events()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Events()));
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.lock_outline),
+            title: Text('Change Password'),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => NewPassword()));
             },
           ),
           Divider(),

@@ -13,6 +13,6 @@ class StaticVariables {
   static Future<void> Init() async {
     prefs = await SharedPreferences.getInstance();
     //static const API = 'http://192.168.1.4:5566'; //Test
-    const API = 'https://personal-safety.azurewebsites.net/'; //Publish
+    const API = 'https://personalsafety.azurewebsites.net/'; //Publish
   }
 }

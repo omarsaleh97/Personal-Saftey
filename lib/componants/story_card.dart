@@ -62,7 +62,7 @@ class _EventCardState extends State<EventCard> {
           decoration: BoxDecoration(
             image: DecorationImage(
                 image: NetworkImage(
-                    "https://personal-safety.azurewebsites.net/${widget.eventCategory.thumbnailUrl}"),
+                    "https://personalsafety.azurewebsites.net/${widget.eventCategory.thumbnailUrl}"),
                 fit: BoxFit.cover),
           ),
           child: InkWell(

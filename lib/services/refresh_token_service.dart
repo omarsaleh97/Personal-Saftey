@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:personal_safety/models/refresh_token.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,8 +9,7 @@ import 'dart:developer';
 
 import 'package:personal_safety/others/StaticVariables.dart';
 
-class LoginService {
-  static var token = '';
+class RefreshTokenService {
   static const headers = {'Content-Type': 'application/json'};
 
   Future<bool> saveTokenPreference(String token, String key) async {
@@ -19,10 +19,8 @@ class LoginService {
   }
 
   // Logging In
-  Future<APIResponse<dynamic>> Login(LoginCredentials item) {
-    String finalString = StaticVariables.API + '/api/Account/Login';
-
-    print("Trying to login to " + finalString);
+  Future<APIResponse<dynamic>> RefreshToken(RefreshTokenCredentials item) {
+    String finalString = StaticVariables.API + '/api/Account/RefreshToken';
 
     return http
         .post(finalString, headers: headers, body: json.encode(item.toJson()))
@@ -41,16 +39,12 @@ class LoginService {
         saveTokenPreference(retrievedToken, "token");
         saveTokenPreference(refreshToken, "refreshToken");
         saveTokenPreference(currentDate.toString(), "tokenDate");
-
-        print('From Login Service:  ${APIresult.status}');
-
-        token = retrievedToken;
-        print(" retrieved token from login service:  " + token);
-        print('From Login Service:  ${APIresult.hasErrors}');
+        print('From Refresh Token Service:  ${APIresult.status}');
+        print('From Refresh Token Service:  ${APIresult.hasErrors}');
 
         return APIresult;
       } else {
-        print("Tried to login but failed ;_;");
+        print("refresh token failed ;_;");
       }
       return APIResponse<dynamic>(
           hasErrors: true, messages: "An Error Has Occured");

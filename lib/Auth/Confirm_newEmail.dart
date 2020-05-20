@@ -61,7 +61,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                   padding: const EdgeInsets.only(top: 165, left: 30),
                   child: Container(
                     child: Text(
-                      "then tap verify",
+                      "then tap Send",
                       style: TextStyle(fontSize: 17, color: Accent1),
                     ),
                   ),
@@ -145,17 +145,14 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                                     ],
                                   )).then((data) {
                             if (result.status == 0) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Login()));
+                              Navigator.of(context).pop();
                             }
                           });
                         });
                       },
                       child: Center(
                         child: Text(
-                          'Verify',
+                          'Send',
                           style: TextStyle(
                             fontSize: 20,
                             color: Colors.white,

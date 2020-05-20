@@ -13,8 +13,8 @@ class ConfirmTokenService {
   // Logging In
   Future<APIResponse<dynamic>> confirmToken(ConfirmTokenCredentials item) {
     return http
-        .post(StaticVariables.API + '/api/Account/ConfirmMail',
-        headers: headers, body: json.encode(item.toJson()))
+        .post(StaticVariables.API + '/api/Account/SubmitConfirmation',
+            headers: headers, body: json.encode(item.toJson()))
         .then((data) {
       if (data.statusCode == 200) {
         Map userMap = jsonDecode(data.body);
@@ -28,6 +28,6 @@ class ConfirmTokenService {
       return APIResponse<dynamic>(
           hasErrors: true, messages: "An Error Has Occured");
     }).catchError((_) => APIResponse<dynamic>(
-        hasErrors: true, messages: "An Error Has Occured"));
+            hasErrors: true, messages: "An Error Has Occured"));
   }
 }

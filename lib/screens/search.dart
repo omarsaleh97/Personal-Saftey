@@ -296,67 +296,70 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(
-          children: <Widget>[
-            Center(
-              child: Container(
-                child: CircleAvatar(
-                  child: SvgPicture.asset(
-                    "assets/images/place-24px.svg",
-                    color: Colors.white,
-                    width: 100,
-                    height: 150,
+    return WillPopScope(
+      onWillPop: () {},
+      child: Scaffold(
+          body: Stack(
+            children: <Widget>[
+              Center(
+                child: Container(
+                  child: CircleAvatar(
+                    child: SvgPicture.asset(
+                      "assets/images/place-24px.svg",
+                      color: Colors.white,
+                      width: 100,
+                      height: 150,
+                    ),
+                    radius: _radiusAnimation == null
+                        ? beginValue
+                        : _radiusAnimation.value,
+                    backgroundColor: GetColorBasedOnState().withOpacity(
+                        _fadeAnimation == null ? 1 : _fadeAnimation.value),
                   ),
-                  radius: _radiusAnimation == null
-                      ? beginValue
-                      : _radiusAnimation.value,
-                  backgroundColor: GetColorBasedOnState().withOpacity(
-                      _fadeAnimation == null ? 1 : _fadeAnimation.value),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 580),
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                child: alertDialog(),
+              Padding(
+                padding: const EdgeInsets.only(top: 580),
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  child: alertDialog(),
+                ),
               ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _cIndex,
-          type: BottomNavigationBarType.shifting,
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home,
-                    color: (_cIndex == 0)
-                        ? Colors.orange
-                        : Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.notification_important,
-                    color: (_cIndex == 1)
-                        ? Colors.orange
-                        : Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.location_on,
-                    color: (_cIndex == 2)
-                        ? Colors.orange
-                        : Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.new_releases,
-                    color: (_cIndex == 3)
-                        ? Colors.orange
-                        : Color.fromARGB(255, 0, 0, 0)),
-                title: new Text(''))
-          ],
-          onTap: (index) {
-            _incrementTab(index);
-          },
-        ));
+            ],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _cIndex,
+            type: BottomNavigationBarType.shifting,
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.home,
+                      color: (_cIndex == 0)
+                          ? Colors.orange
+                          : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.notification_important,
+                      color: (_cIndex == 1)
+                          ? Colors.orange
+                          : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.location_on,
+                      color: (_cIndex == 2)
+                          ? Colors.orange
+                          : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text('')),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.new_releases,
+                      color: (_cIndex == 3)
+                          ? Colors.orange
+                          : Color.fromARGB(255, 0, 0, 0)),
+                  title: new Text(''))
+            ],
+            onTap: (index) {
+              _incrementTab(index);
+            },
+          )),
+    );
   }
 }

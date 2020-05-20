@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/Auth/login.dart';
+import 'package:personal_safety/Auth/logout.dart';
 import 'package:personal_safety/componants/color.dart';
 
 class Success extends StatefulWidget {
@@ -68,7 +69,7 @@ class _SuccessState extends State<Success> {
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Login()));
+                          MaterialPageRoute(builder: (context) => Logout()));
                     },
                     child: Center(
                       child: Text(

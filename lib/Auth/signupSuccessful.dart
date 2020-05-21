@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
@@ -108,13 +109,22 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text(title),
-              content: Text(text),
+              backgroundColor: primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              title: Text(
+                title,
+                style: TextStyle(color: grey),
+              ),
+              content: Text(text, style: TextStyle(color: grey)),
               actions: <Widget>[
                 FlatButton(
-                    child: Text('OK'),
+                    child: Text('OK', style: TextStyle(color: grey)),
                     onPressed: () {
-                      setState(() {});
+                      setState(() {
+                        _isLoading = false;
+                      });
                       Navigator.of(context).pop();
                     })
               ],
@@ -131,7 +141,10 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
         body: Center(child: Builder(
           builder: (_) {
             if (_isLoading) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CustomLoadingIndicator(
+                customColor: primaryColor,
+              ));
             }
             return GestureDetector(
               onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -308,11 +321,50 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                                         showDialog(
                                             context: context,
                                             builder: (_) => AlertDialog(
-                                                  title: Text(title),
-                                                  content: Text(text),
+                                                  backgroundColor: primaryColor,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
+                                                  ),
+                                                  title: Text(
+                                                    title,
+                                                    style:
+                                                        TextStyle(color: grey),
+                                                  ),
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      SizedBox(height: 20),
+                                                      Container(
+                                                        width: 60,
+                                                        height: 60,
+                                                        child: SvgPicture.asset(
+                                                          'assets/images/shine.svg',
+                                                          color: grey,
+                                                        ),
+                                                      ),
+                                                      Center(
+                                                        child: SvgPicture.asset(
+                                                          'assets/images/shield.svg',
+                                                          color: grey,
+                                                          height: 100,
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 30),
+                                                      Text(
+                                                        text,
+                                                        style: TextStyle(
+                                                            color: grey),
+                                                      ),
+                                                    ],
+                                                  ),
                                                   actions: <Widget>[
                                                     FlatButton(
-                                                        child: Text('OK'),
+                                                        child: Text('OK',
+                                                            style: TextStyle(
+                                                                color: grey)),
                                                         onPressed: () {
                                                           setState(() {
                                                             _isLoading = false;

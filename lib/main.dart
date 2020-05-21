@@ -107,12 +107,17 @@ Future<void> main() async {
   var refreshToken = StaticVariables.prefs.getString('refreshToken');
   print("Saved token used for Remember Me: $token");
   print("Saved Refersh token used for Remember Me: $refreshToken");
+  bool goHomeOrGoLogout = false;
+  if (token == null || firstlogin == true)
+    goHomeOrGoLogout = true;
+  else
+    goHomeOrGoLogout = false;
 
   runApp(ChangeNotifierProvider(
     builder: (context) => EventModel(),
     child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: token == null ? Logout() : MainPage()
+        home: goHomeOrGoLogout ? Logout() : MainPage()
 //      home: MainPage(),
         //home: News(),
         ),

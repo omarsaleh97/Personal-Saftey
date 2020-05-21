@@ -99,6 +99,7 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
 
   alertDialog() {
     return AlertDialog(
+        contentPadding: EdgeInsets.all(30),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
@@ -189,12 +190,16 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
           break;
 
         case "Cancelling":
-          toReturn = Color.fromRGBO(244, 26, 26, 1.0); //Dark reddish
-          if (GlobalVar.Get("canpop", true)) {
-            print('DESTROYING EVERYTHING because solved');
-            Navigator.pop(context);
-            GlobalVar.Set("canpop", false);
-          }
+          toReturn = Colors.black26; //BLACK
+
+          Timer(Duration(seconds: 15), () {
+            if (GlobalVar.Get("canpop", true)) {
+              print('DESTROYING EVERYTHING because cancelled');
+              Navigator.pop(context);
+              GlobalVar.Set("canpop", false);
+            }
+          });
+
           break;
 
         case "Cancelled":
@@ -214,16 +219,19 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
           break;
 
         case "Accepted":
-          toReturn = Color.fromRGBO(30, 204, 18, 1.0); //Green
+          toReturn = Color.fromRGBO(30, 150, 18, 1.0); //Green
 
           break;
         case "Solved":
           toReturn = Colors.blueAccent; //Green
-          if (GlobalVar.Get("canpop", true)) {
-            print('DESTROYING EVERYTHING because solved');
-            Navigator.pop(context);
-            GlobalVar.Set("canpop", false);
-          }
+          Timer(Duration(seconds: 15), () {
+            if (GlobalVar.Get("canpop", true)) {
+              print('DESTROYING EVERYTHING because cancelled');
+              Navigator.pop(context);
+              GlobalVar.Set("canpop", false);
+            }
+          });
+
 //          if (GlobalVar.Get("canpop", true)) {
 ////            Navigator.pop(context);
 //            GlobalVar.Set("canpop", false);
@@ -298,68 +306,46 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {},
-      child: Scaffold(
-          body: Stack(
-            children: <Widget>[
-              Center(
-                child: Container(
-                  child: CircleAvatar(
-                    child: SvgPicture.asset(
-                      "assets/images/place-24px.svg",
-                      color: Colors.white,
-                      width: 100,
-                      height: 150,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage("assets/images/SOS_Background.png"),
+                    fit: BoxFit.fill)),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Stack(
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                      child: CircleAvatar(
+                        child: SvgPicture.asset(
+                          "assets/images/pin.svg",
+                          color: Colors.white,
+                          width: 100,
+                          height: 150,
+                        ),
+                        radius: _radiusAnimation == null
+                            ? beginValue
+                            : _radiusAnimation.value,
+                        backgroundColor: GetColorBasedOnState().withOpacity(
+                            _fadeAnimation == null ? 1 : _fadeAnimation.value),
+                      ),
                     ),
-                    radius: _radiusAnimation == null
-                        ? beginValue
-                        : _radiusAnimation.value,
-                    backgroundColor: GetColorBasedOnState().withOpacity(
-                        _fadeAnimation == null ? 1 : _fadeAnimation.value),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 580),
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      child: alertDialog(),
+                    ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 580),
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  child: alertDialog(),
-                ),
-              ),
-            ],
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _cIndex,
-            type: BottomNavigationBarType.shifting,
-            items: [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.home,
-                      color: (_cIndex == 0)
-                          ? Colors.orange
-                          : Color.fromARGB(255, 0, 0, 0)),
-                  title: new Text('')),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.notification_important,
-                      color: (_cIndex == 1)
-                          ? Colors.orange
-                          : Color.fromARGB(255, 0, 0, 0)),
-                  title: new Text('')),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.location_on,
-                      color: (_cIndex == 2)
-                          ? Colors.orange
-                          : Color.fromARGB(255, 0, 0, 0)),
-                  title: new Text('')),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.new_releases,
-                      color: (_cIndex == 3)
-                          ? Colors.orange
-                          : Color.fromARGB(255, 0, 0, 0)),
-                  title: new Text(''))
-            ],
-            onTap: (index) {
-              _incrementTab(index);
-            },
-          )),
+//
+            )),
+      ),
     );
   }
 }

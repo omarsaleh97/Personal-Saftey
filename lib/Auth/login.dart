@@ -77,11 +77,18 @@ class _LoginState extends State<Login> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text(title),
-              content: Text(text),
+              backgroundColor: primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              title: Text(
+                title,
+                style: TextStyle(color: grey),
+              ),
+              content: Text(text, style: TextStyle(color: grey)),
               actions: <Widget>[
                 FlatButton(
-                    child: Text('OK'),
+                    child: Text('OK', style: TextStyle(color: grey)),
                     onPressed: () {
                       setState(() {
                         _isLoading = false;
@@ -102,7 +109,10 @@ class _LoginState extends State<Login> {
           child: Center(
             child: Builder(builder: (_) {
               if (_isLoading) {
-                return Center(child: CircularProgressIndicator());
+                return Center(
+                    child: CustomLoadingIndicator(
+                  customColor: grey,
+                ));
               }
               return SingleChildScrollView(
                 scrollDirection: Axis.vertical,
@@ -171,33 +181,45 @@ class _LoginState extends State<Login> {
                               final text = result.status == 0
                                   ? 'You will be forwarded to the next page!'
                                   : "Wrong Username or Password.\n\nIf you haven't confirmed your email address, please check your inbox for a Confirmation email.";
-                              showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                        title: Text(title),
-                                        content: Text(text),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                              child: Text('OK'),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _isLoading = false;
-                                                });
-                                                Navigator.of(context).pop();
-                                              })
-                                        ],
-                                      )).then((data) {
-                                if (result.status == 0) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => StaticVariables
-                                                  .prefs
-                                                  .getBool("firstlogin")
-                                              ? SignUpSuccessful()
-                                              : MainPage()));
-                                }
-                              });
+
+                              if (result.status == 0) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => StaticVariables
+                                                .prefs
+                                                .getBool("firstlogin")
+                                            ? SignUpSuccessful()
+                                            : MainPage()));
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                          backgroundColor: primaryColor,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                          title: Text(
+                                            title,
+                                            style: TextStyle(color: grey),
+                                          ),
+                                          content: Text(text,
+                                              style: TextStyle(color: grey)),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                                child: Text('OK',
+                                                    style:
+                                                        TextStyle(color: grey)),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _isLoading = false;
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                })
+                                          ],
+                                        ));
+                              }
                             });
                           } else {
                             ShowDialog(

@@ -91,11 +91,18 @@ class _SignUpState extends State<SignUp> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text(title),
-              content: Text(text),
+              backgroundColor: primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              title: Text(
+                title,
+                style: TextStyle(color: grey),
+              ),
+              content: Text(text, style: TextStyle(color: grey)),
               actions: <Widget>[
                 FlatButton(
-                    child: Text('OK'),
+                    child: Text('OK', style: TextStyle(color: grey)),
                     onPressed: () {
                       setState(() {
                         _isLoading = false;
@@ -116,7 +123,10 @@ class _SignUpState extends State<SignUp> {
         child: Builder(
           builder: (_) {
             if (_isLoading) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CustomLoadingIndicator(
+                customColor: grey2,
+              ));
             }
 
             return Container(
@@ -194,14 +204,58 @@ class _SignUpState extends State<SignUp> {
                                   final text = result.hasErrors
                                       ? 'Make sure that Email, Phone Number and National ID are not taken.'
                                       : 'Account Created Successfully!';
+                                  final svg1 = result.hasErrors
+                                      ? SvgPicture.asset(
+                                          'assets/images/close.svg',
+                                          color: grey,
+                                        )
+                                      : SvgPicture.asset(
+                                          'assets/images/shine.svg',
+                                          color: grey,
+                                        );
+                                  final svg2 = result.hasErrors
+                                      ? SvgPicture.asset(
+                                          'assets/images/not there.svg',
+                                          color: grey,
+                                        )
+                                      : SvgPicture.asset(
+                                          'assets/images/shield.svg',
+                                          color: grey,
+                                          height: 100,
+                                        );
                                   showDialog(
                                       context: context,
                                       builder: (_) => AlertDialog(
-                                            title: Text(title),
-                                            content: Text(text),
+                                            backgroundColor: primaryColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                            ),
+                                            title: Text(
+                                              title,
+                                              style: TextStyle(color: grey),
+                                            ),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                SizedBox(height: 20),
+                                                Container(
+                                                    width: 80,
+                                                    height: 80,
+                                                    child: svg1),
+                                                Center(child: svg2),
+                                                SizedBox(height: 30),
+                                                Text(
+                                                  text,
+                                                  style: TextStyle(color: grey),
+                                                ),
+                                              ],
+                                            ),
                                             actions: <Widget>[
                                               FlatButton(
-                                                  child: Text('OK'),
+                                                  child: Text('OK',
+                                                      style: TextStyle(
+                                                          color: grey)),
                                                   onPressed: () {
                                                     setState(() {
                                                       _isLoading = false;
@@ -217,10 +271,7 @@ class _SignUpState extends State<SignUp> {
                                         StaticVariables.prefs
                                             .setBool("firstlogin", true);
                                       }
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Success()));
+                                      Navigator.of(context).pop();
                                     }
                                   });
                                 });

@@ -88,12 +88,15 @@ class _EventCardState extends State<EventCard> {
                 padding: const EdgeInsets.only(left: 0.0, top: 70),
                 child: Container(
                   color: Colors.black26,
-                  child: Text(
-                    widget.eventCategory.title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 18,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      widget.eventCategory.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ),

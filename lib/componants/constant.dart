@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
 
 final kHintStyle = TextStyle(
@@ -22,6 +23,25 @@ final kBoxDecorationStyle = BoxDecoration(
     ),
   ],
 );
+
+class CustomLoadingIndicator extends StatelessWidget {
+  final Color customColor;
+  const CustomLoadingIndicator({
+    Key key,
+    @required this.customColor,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100,
+      height: 100,
+      child: LoadingIndicator(
+        color: customColor,
+        indicatorType: Indicator.ballBeat,
+      ),
+    );
+  }
+}
 
 final kBoxDecorationStyle2 = BoxDecoration(
   color: Colors.white,

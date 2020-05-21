@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_safety/componants/EventStoriesData.dart';
 import 'package:personal_safety/componants/color.dart';
+import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/newEventDialog.dart';
 import 'package:personal_safety/componants/story_card.dart';
 import 'package:personal_safety/componants/theme.dart';
@@ -94,35 +95,40 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
 //        ),
       ),
       body: eventCategories == null
-          ? Center(child: CircularProgressIndicator())
-          : Container(
-              margin: EdgeInsets.symmetric(vertical: 20),
-              width: AppTheme.fullWidth(context),
-              height: AppTheme.fullWidth(context) * .35,
-              child: GridView.builder(
-                padding: const EdgeInsets.all(10.0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    childAspectRatio: .95,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 20),
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: eventCategories.length,
-                itemBuilder: (context, index) => EventCard(
-                  eventCategory: eventCategories[index],
+          ? Center(
+              child: CustomLoadingIndicator(
+              customColor: primaryColor,
+            ))
+          : Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 20),
+                  width: AppTheme.fullWidth(context),
+                  height: AppTheme.fullWidth(context) * .35,
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(10.0),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        childAspectRatio: .95,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 20),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: eventCategories.length,
+                    itemBuilder: (context, index) => EventCard(
+                      eventCategory: eventCategories[index],
+                    ),
+                  ),
                 ),
-              ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Container(
+                    height: 500,
+                    child: AllEventsTab(),
+                  ),
+                )
+              ],
             ),
-//                  for (int i = 0; i < eventCetegories.length; i++)
-//
-//                  SingleChildScrollView(
-//                    scrollDirection: Axis.vertical,
-//                    child: Container(
-//                      height: 500,
-//                      child: AllEventsTab(),
-//                    ),
-//                  )
     );
   }
 }

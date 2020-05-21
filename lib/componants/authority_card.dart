@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:personal_safety/componants/authority_data.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/theme.dart';
@@ -12,6 +13,8 @@ import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/screens/search.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'constant.dart';
 
 class AuthorityCard extends StatefulWidget {
   final Authority authority;
@@ -148,106 +151,117 @@ class Alert extends StatefulWidget {
 class _AlertState extends State<Alert> {
   bool value1 = false;
   bool value2 = false;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-              alignment: Alignment.topLeft,
-              child: IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 40,
+    return _isLoading
+        ? Center(
+            child: CustomLoadingIndicator(
+            customColor: grey,
+          ))
+        : AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
             ),
-            child: Container(
-              alignment: Alignment.topCenter,
-              child: SvgPicture.asset(
-                'assets/images/warning.svg',
-                width: 130,
-                height: 130,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 30),
-            child: Center(
-                child: Text(
-              "Approve Request",
-              style: TextStyle(fontSize: 30, color: Colors.red),
-            )),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 70),
-            child: Center(
-                child: Text(
-              "you are about to send request to arrive at your location."
-              "Please approve the follwing options and proceed",
-              style: TextStyle(fontSize: 13, color: grey),
-              textAlign: TextAlign.center,
-            )),
-          ),
-          CheckboxListTile(
-            value: value1,
-            onChanged: (value) {
-              widget.onchange1(value);
-              setState(() {
-                value1 = value;
-              });
-            },
-            title: new Text(
-              "Notify my Emergency Contact",
-              style: TextStyle(fontSize: 12),
-            ),
-            controlAffinity: ListTileControlAffinity.leading,
-            activeColor: Colors.red,
-          ),
-          CheckboxListTile(
-            value: value2,
-            onChanged: (value) {
-              widget.onchange2(value);
-              setState(() {
-                value2 = value;
-              });
-            },
-            title: new Text("Notify my neighbourhood ",
-                style: TextStyle(fontSize: 12)),
-            controlAffinity: ListTileControlAffinity.leading,
-            activeColor: Colors.red,
-          ),
-          Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Container(
-                height: 50.0,
-                width: 200,
-                child: RaisedButton(
-                    child: Center(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    )),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 40,
+                  ),
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    child: SvgPicture.asset(
+                      'assets/images/warning.svg',
+                      width: 130,
+                      height: 130,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Center(
                       child: Text(
-                        "Request",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                    ),
-                    color: Accent1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30),
-                    ),
-                    onPressed: () {
-                      MakeSOSRequest(1);
-                    }),
-              ))
-        ],
-      ),
-    );
+                    "Approve Request",
+                    style: TextStyle(fontSize: 30, color: Colors.red),
+                  )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 70),
+                  child: Center(
+                      child: Text(
+                    "you are about to send request to arrive at your location."
+                    "Please approve the follwing options and proceed",
+                    style: TextStyle(fontSize: 13, color: grey),
+                    textAlign: TextAlign.center,
+                  )),
+                ),
+                CheckboxListTile(
+                  value: value1,
+                  onChanged: (value) {
+                    widget.onchange1(value);
+                    setState(() {
+                      value1 = value;
+                    });
+                  },
+                  title: new Text(
+                    "Notify my Emergency Contact",
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  activeColor: Colors.red,
+                ),
+                CheckboxListTile(
+                  value: value2,
+                  onChanged: (value) {
+                    widget.onchange2(value);
+                    setState(() {
+                      value2 = value;
+                    });
+                  },
+                  title: new Text("Notify my neighbourhood ",
+                      style: TextStyle(fontSize: 12)),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  activeColor: Colors.red,
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Container(
+                      height: 50.0,
+                      width: 200,
+                      child: RaisedButton(
+                          child: Center(
+                            child: Text(
+                              "Request",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                          ),
+                          color: Accent1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isLoading = true;
+                            });
+
+                            MakeSOSRequest(1);
+                          }),
+                    ))
+              ],
+            ),
+          );
   }
 
   void MakeSOSRequest(int requestType) async {
@@ -257,6 +271,9 @@ class _AlertState extends State<Alert> {
     GlobalVar.Set("canpop", true);
     print("canpop is now: " + GlobalVar.Get("canpop", false).toString());
     Navigator.pop(context);
+    setState(() {
+      _isLoading = true;
+    });
     Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
   }
 }

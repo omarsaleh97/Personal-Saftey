@@ -52,11 +52,18 @@ class _NewPasswordState extends State<NewPassword> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text(title),
-              content: Text(text),
+              backgroundColor: primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              title: Text(
+                title,
+                style: TextStyle(color: grey),
+              ),
+              content: Text(text, style: TextStyle(color: grey)),
               actions: <Widget>[
                 FlatButton(
-                    child: Text('OK'),
+                    child: Text('OK', style: TextStyle(color: grey)),
                     onPressed: () {
                       setState(() {
                         _isLoading = false;
@@ -75,7 +82,10 @@ class _NewPasswordState extends State<NewPassword> {
             child: Builder(
               builder: (_) {
                 if (_isLoading) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                      child: CustomLoadingIndicator(
+                    customColor: primaryColor,
+                  ));
                 }
                 return SingleChildScrollView(
                   child: Stack(
@@ -231,7 +241,7 @@ class _NewPasswordState extends State<NewPassword> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 470, left: 70.0, bottom: 10, right: 70),
+                            top: 500, left: 70.0, bottom: 10, right: 70),
                         child: Container(
                           height: 50.0,
                           width: 300,
@@ -265,38 +275,66 @@ class _NewPasswordState extends State<NewPassword> {
                                         result.result.toString());
                                     debugPrint("from Change Password: " +
                                         result.hasErrors.toString());
-                                    final title = result.status == -3
-                                        ? 'Your Password has been changed'
+                                    final title = result.status == 0
+                                        ? 'Your Password is Changed'
                                         : 'Error';
-                                    final text = result.status == -3
+                                    final text = result.status == 0
                                         ? 'Please login once again.'
                                         : "Your Old Password is incorrect.";
                                     showDialog(
                                         context: context,
                                         builder: (_) => AlertDialog(
-                                              title: Text(title),
-                                              content: Text(text),
+                                              backgroundColor: primaryColor,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
+                                              title: Text(
+                                                title,
+                                                style: TextStyle(color: grey),
+                                              ),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  SizedBox(height: 20),
+                                                  Container(
+                                                    width: 60,
+                                                    height: 60,
+                                                    child: SvgPicture.asset(
+                                                      'assets/images/shine.svg',
+                                                      color: grey,
+                                                    ),
+                                                  ),
+                                                  Center(
+                                                    child: SvgPicture.asset(
+                                                      'assets/images/shield.svg',
+                                                      color: grey,
+                                                      height: 100,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 30),
+                                                  Text(
+                                                    text,
+                                                    style:
+                                                        TextStyle(color: grey),
+                                                  ),
+                                                ],
+                                              ),
                                               actions: <Widget>[
                                                 FlatButton(
-                                                    child: Text('OK'),
-                                                    onPressed: () async {
-                                                      SharedPreferences prefs =
-                                                          await SharedPreferences
-                                                              .getInstance();
-                                                      prefs.remove('token');
+                                                    child: Text('OK',
+                                                        style: TextStyle(
+                                                            color: grey)),
+                                                    onPressed: () {
                                                       setState(() {
                                                         _isLoading = false;
                                                       });
                                                       Navigator.of(context)
                                                           .pop();
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      Navigator.of(context)
-                                                          .pop();
                                                     })
                                               ],
                                             )).then((data) {
-                                      if (result.status == -3) {
+                                      if (result.status == 0) {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -330,16 +368,6 @@ class _NewPasswordState extends State<NewPassword> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 470, left: 70.0, bottom: 10, right: 70),
-                        child: Container(
-                          child: SvgPicture.asset(
-                            'assets/images/shield.svg',
-                            color: grey,
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 );

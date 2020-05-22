@@ -35,18 +35,23 @@ class _MainPageState extends State<MainPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Are you sure?'),
-            content: Text('You are going to exit the application.'),
+            backgroundColor: primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            title: Text('Exit Application?', style: TextStyle(color: grey)),
+            content: Text('You are going to exit the application.',
+                style: TextStyle(color: grey)),
             actions: <Widget>[
               FlatButton(
-                child: Text('NO'),
+                child: Text('NO', style: TextStyle(color: grey)),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
               ),
               FlatButton(
-                child: Text('YES'),
-                onPressed: () async {
+                child: Text('YES', style: TextStyle(color: grey)),
+                onPressed: () {
                   SystemNavigator.pop();
                 },
               ),
@@ -233,29 +238,28 @@ class _MainPageState extends State<MainPage> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-         appBar: AppBar(
-           actions: <Widget>[
-             ClipRRect(
-               borderRadius: BorderRadius.all(Radius.circular(13)),
-               child: IconButton(
-                 icon: Icon(Icons.lock),
-                 color: primaryColor,
-                 onPressed: () async {
-                   //_save("0");
-                   SharedPreferences prefs =
-                   await SharedPreferences.getInstance();
-                   prefs.remove('token');
-                   Navigator.push(context,
-                       MaterialPageRoute(builder: (context) => Logout()));
-                 },
-               ),
-             )
-           ],
-               backgroundColor: grey,
-           bottomOpacity: 0.0,
-
-           elevation: 0.0,
-         ),
+        appBar: AppBar(
+          actions: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(13)),
+              child: IconButton(
+                icon: Icon(Icons.lock),
+                color: primaryColor,
+                onPressed: () async {
+                  //_save("0");
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.remove('token');
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Logout()));
+                },
+              ),
+            )
+          ],
+          backgroundColor: grey,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+        ),
         drawer: AppDrawer(),
         body: SafeArea(
           child: Stack(
@@ -277,8 +281,8 @@ class _MainPageState extends State<MainPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                     // Container(color: grey, child: _appBar()),
-                     Container(color: grey, child: _title()),
+                      // Container(color: grey, child: _appBar()),
+                      Container(color: grey, child: _title()),
                       Expanded(
 //                          child: AnimatedSwitcher(
 //                              duration: Duration(milliseconds: 300),
@@ -296,7 +300,9 @@ class _MainPageState extends State<MainPage> {
                                   ? News()
                                   : isNearestPageSelected
                                       ? NearestFacilities()
-                                      : isActiveRequestPageSelected ? ActiveRequest() : "")
+                                      : isActiveRequestPageSelected
+                                          ? ActiveRequest()
+                                          : "")
                     ],
                   ),
                 ),

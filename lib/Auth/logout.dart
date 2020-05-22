@@ -59,17 +59,22 @@ class _LogoutState extends State<Logout> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Are you sure?'),
-            content: Text('You are going to exit the application.'),
+            backgroundColor: primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            title: Text('Exit Application?', style: TextStyle(color: grey)),
+            content: Text('You are going to exit the application.',
+                style: TextStyle(color: grey)),
             actions: <Widget>[
               FlatButton(
-                child: Text('NO'),
+                child: Text('NO', style: TextStyle(color: grey)),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
               ),
               FlatButton(
-                child: Text('YES'),
+                child: Text('YES', style: TextStyle(color: grey)),
                 onPressed: () {
                   SystemNavigator.pop();
                 },

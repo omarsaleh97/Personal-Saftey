@@ -36,6 +36,7 @@ Future<void> main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var token = prefs.getString('token');
   print(token);
+  // ignore: missing_required_param
   runApp(ChangeNotifierProvider(
     builder: (context) => EventModel(),
     child: MaterialApp(

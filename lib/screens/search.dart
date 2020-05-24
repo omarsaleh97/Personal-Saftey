@@ -246,8 +246,8 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
       home: Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("assets/images/SOS_Background.png"),
-                fit: BoxFit.fill)),
+            image: AssetImage("assets/images/SOS_Background.png"),
+            fit: BoxFit.fill)),
         child: Scaffold(
             backgroundColor: Colors.transparent,
             body: Stack(

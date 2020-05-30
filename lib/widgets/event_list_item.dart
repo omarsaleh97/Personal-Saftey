@@ -4,21 +4,29 @@ import 'package:flutter/painting.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_safety/componants/color.dart';
-import 'package:personal_safety/models/newEvent.dart';
+import 'package:personal_safety/models/event_model.dart';
 import 'package:personal_safety/providers/event.dart';
 import 'package:personal_safety/screens/event_details.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EventListItem extends StatefulWidget {
-  final NewEventData event;
+  final EventGetterModel eventGetter;
 
-  EventListItem({@required this.event, Key key}) : super(key: key);
+  EventListItem({@required this.eventGetter, Key key}) : super(key: key);
 
   @override
   _EventListItemState createState() => _EventListItemState();
 }
 
 class _EventListItemState extends State<EventListItem> {
+  Future<bool> saveTokenPreference(String token, String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final value = token;
+    prefs.setString(key, value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dismissible(
@@ -63,10 +71,7 @@ class _EventListItemState extends State<EventListItem> {
           ),
         );
       },
-      onDismissed: (direction) {
-        Provider.of<EventModel>(context, listen: false)
-            .deleteEvent(widget.event);
-      },
+      onDismissed: (direction) {},
       child: Column(children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20),
@@ -83,12 +88,17 @@ class _EventListItemState extends State<EventListItem> {
             height: 146,
             child: Card(
                 child: InkWell(
-              onTap: () {
+              onTap: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setInt('eventDetailsID', widget.eventGetter.id);
+
+                var id = prefs.getInt("eventDetailsID");
+                print('EVENT DETAILS ID FOR SERVICE $id');
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => EventDetailScreen(
-                              data: widget.event,
+                              data: widget.eventGetter,
                             )));
               },
               child: Padding(
@@ -105,9 +115,8 @@ class _EventListItemState extends State<EventListItem> {
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         child: Image(
-                          image: FileImage(
-                            widget.event.image,
-                          ),
+                          image: NetworkImage(
+                              "https://personalsafety.azurewebsites.net/${widget.eventGetter.thumbnailUrl}"),
                           fit: BoxFit.cover,
                         ),
                         //margin: EdgeInsets.all(10),
@@ -120,11 +129,11 @@ class _EventListItemState extends State<EventListItem> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
-                            "UserName",
+                            widget.eventGetter.userName,
                             style: TextStyle(color: Colors.grey),
                           ),
                           Container(
-                            width: 240,
+                              width: 240,
                               child:
 //                              widget.event.description.length > 80
 //                                  ? Text(
@@ -138,25 +147,25 @@ class _EventListItemState extends State<EventListItem> {
 //                                    color: primaryColor, fontSize: 13),
 //                                    )
 //                                  :
-                              Text(
-                                      widget.event.description,
+                                  Text(
+                                widget.eventGetter.title,
                                 overflow: TextOverflow.fade,
                                 maxLines: 2,
                                 softWrap: false,
-                                      style: TextStyle(
-                                          color: primaryColor, fontSize: 13),
-                                    )),
+                                style: TextStyle(
+                                    color: primaryColor, fontSize: 13),
+                              )),
                           Padding(
-                            padding: const EdgeInsets.only(top:10),
+                            padding: const EdgeInsets.only(top: 10),
                             child: Container(
                                 child: Container(
                                     width: 60,
                                     decoration: BoxDecoration(
                                         color: Color(0xff006C8E),
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(5))),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5))),
                                     child: Text(
-                                      widget.event.isPublic == true
+                                      widget.eventGetter.isPublicHelp == true
                                           ? "Public Help"
                                           : 'Nearby Help',
                                       textAlign: TextAlign.center,
@@ -168,10 +177,11 @@ class _EventListItemState extends State<EventListItem> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Text(
-                                DateFormat('dd/MM/yyyy hh:mm')
-                                    .format(DateTime.now()),
+                                DateFormat('dd/MM/yyyy').add_jm().format(
+                                    DateTime.parse(
+                                        widget.eventGetter.creationDate)),
                                 style:
-                                    TextStyle(color: Colors.grey, fontSize: 10),
+                                    TextStyle(color: Colors.grey, fontSize: 13),
                               ),
                               SizedBox(
                                 width: 50,
@@ -181,21 +191,22 @@ class _EventListItemState extends State<EventListItem> {
                                 child: Row(
                                   children: <Widget>[
                                     Text(
-                                      "4k",
+                                      'Votes: ${widget.eventGetter.votes.toString()}',
                                       style: TextStyle(color: Colors.grey),
                                     ),
-                                    IconButton(
-                                        icon: Icon(
-                                          Icons.favorite_border,
-                                          color: widget.event.isFav
-                                              ? Colors.red
-                                              : Colors.grey,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            widget.event.toggleFavoriteStatus();
-                                          });
-                                        }),
+//                                    IconButton(
+//                                        icon: Icon(
+//                                          Icons.favorite_border,
+//                                          color: widget.eventGetter.isValidated
+//                                              ? Colors.red
+//                                              : Colors.grey,
+//                                        ),
+//                                        onPressed: () {
+//                                          setState(() {
+//                                            widget.eventGetter
+//                                                .toggleFavoriteStatus();
+//                                          });
+//                                        }),
                                   ],
                                 ),
                               )

@@ -163,7 +163,6 @@ class _LoginState extends State<Login> {
                                   await SharedPreferences.getInstance();
                               prefs.setString(key, value);
                               print("TOKEN IS SET! TOKEN IS SET!");
-                              //read();
 
                               final login = LoginCredentials(
                                 email: _loginController.text,

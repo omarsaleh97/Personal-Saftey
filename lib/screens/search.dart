@@ -192,7 +192,7 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
         case "Cancelling":
           toReturn = Colors.black26; //BLACK
 
-          Timer(Duration(seconds: 15), () {
+          Timer(Duration(seconds: 5), () {
             if (GlobalVar.Get("canpop", true)) {
               print('DESTROYING EVERYTHING because cancelled');
               Navigator.pop(context);
@@ -224,7 +224,7 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
           break;
         case "Solved":
           toReturn = Colors.blueAccent; //Green
-          Timer(Duration(seconds: 15), () {
+          Timer(Duration(seconds: 5), () {
             if (GlobalVar.Get("canpop", true)) {
               print('DESTROYING EVERYTHING because cancelled');
               Navigator.pop(context);

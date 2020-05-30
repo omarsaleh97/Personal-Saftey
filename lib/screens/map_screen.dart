@@ -9,12 +9,13 @@ import 'package:personal_safety/models/newEvent.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 
 class MapScreen extends StatefulWidget {
-  final EventLocation initialLocation;
+  final double latitude;
+  final double longitude;
   final bool isSelecting;
 
   MapScreen({
-    this.initialLocation =
-        const EventLocation(latitude: 30.791111, longitude: 30.998056),
+    this.latitude,
+    this.longitude,
     this.isSelecting = false,
   });
 
@@ -83,8 +84,8 @@ class _MapScreenState extends State<MapScreen> {
         myLocationButtonEnabled: true,
         initialCameraPosition: CameraPosition(
           target: LatLng(
-            widget.initialLocation.latitude,
-            widget.initialLocation.longitude,
+            widget.latitude,
+            widget.longitude,
           ),
           zoom: 16,
         ),
@@ -99,8 +100,8 @@ class _MapScreenState extends State<MapScreen> {
                   markerId: MarkerId('m1'),
                   position: _pickedLocation ??
                       LatLng(
-                        widget.initialLocation.latitude,
-                        widget.initialLocation.longitude,
+                        widget.latitude,
+                        widget.longitude,
                       ),
                 ),
               },
@@ -218,37 +219,46 @@ class _MapScreenState extends State<MapScreen> {
                             decoration: BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(5)),
-                                border:
-                                    Border.all(width: 0.5, color: primaryColor)),
+                                border: Border.all(
+                                    width: 0.5, color: primaryColor)),
                           ),
-                          SizedBox(height: 30,),
+                          SizedBox(
+                            height: 30,
+                          ),
                           Container(
                             padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Color(0xff16B68F),
-                              borderRadius: BorderRadius.all(Radius.circular(5))
+                                color: Color(0xff16B68F),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            child: Icon(
+                              Icons.phone,
+                              color: Colors.white,
                             ),
-                            child: Icon(Icons.phone,color: Colors.white,),
                           )
                         ],
                       )
                     ],
                   ),
-                  SizedBox(height: 50,),
+                  SizedBox(
+                    height: 50,
+                  ),
                   Container(
                     width: 120,
                     height: 40,
                     alignment: Alignment.center,
                     child: RaisedButton(
-                      onPressed: (){},
+                      onPressed: () {},
                       color: Accent2,
                       shape: RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(30),
                       ),
-                      child: Text('Cancel Event',style: TextStyle(color: Colors.white),),
+                      child: Text(
+                        'Cancel Event',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   )
-
                 ],
               ),
             ),

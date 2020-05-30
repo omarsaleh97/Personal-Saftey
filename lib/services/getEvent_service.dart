@@ -1,14 +1,15 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:personal_safety/models/api_response.dart';
-import 'package:personal_safety/models/event_categories.dart';
+import 'package:personal_safety/models/event_model.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class EventCategoriesService {
+class GetEventsService {
   static String token;
+  static int categoryID;
   Future<String> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
@@ -18,23 +19,20 @@ class EventCategoriesService {
     return token;
   }
 
-//  Future<void> setToken() async {
-//    token = await getToken();
-//    print("Token is set!");
-//  }
-
   static bool result = false;
   static var headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer $token'
   };
   // Register
-  Future<APIResponse<List<EventCategories>>> getEventCategories() async {
+  Future<APIResponse<List<EventGetterModel>>> getEvents() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
+    categoryID = prefs.getInt("categoryID");
     return http
         .get(
-      StaticVariables.API + '/api/Client/Events/GetEventsCategories',
+      StaticVariables.API +
+          '/api/Client/Events/GetEventsDetailed?filter=$categoryID',
       headers: headers,
     )
         .then((data) {
@@ -42,21 +40,21 @@ class EventCategoriesService {
         print("TEST SUCESSFUL!!!!!!! ");
         final jsonData = json.decode(data.body);
         var rest = jsonData["result"] as List;
-        List<EventCategories> eventCategoriesList;
+        List<EventGetterModel> eventList;
 //        print(rest);
-        eventCategoriesList = rest
-            .map<EventCategories>((json) => EventCategories.fromJson(json))
+        eventList = rest
+            .map<EventGetterModel>((json) => EventGetterModel.fromJson(json))
             .toList();
 
-        return APIResponse<List<EventCategories>>(result: eventCategoriesList);
+        return APIResponse<List<EventGetterModel>>(result: eventList);
       } else {
         print("BAD TEST");
         print(headers);
 
         print(data.statusCode);
       }
-      return APIResponse<List<EventCategories>>(hasErrors: true, messages: '');
+      return APIResponse<List<EventGetterModel>>(hasErrors: true, messages: '');
     }).catchError((_) =>
-            APIResponse<List<EventCategories>>(hasErrors: true, messages: ''));
+            APIResponse<List<EventGetterModel>>(hasErrors: true, messages: ''));
   }
 }

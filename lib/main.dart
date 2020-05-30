@@ -17,6 +17,7 @@ import 'package:personal_safety/screens/search.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/services/change_password_service.dart';
 import 'package:personal_safety/services/event_categories_service.dart';
+import 'package:personal_safety/services/getEvent_service.dart';
 import 'package:personal_safety/services/refresh_token_service.dart';
 import 'package:personal_safety/services/service_confirm.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
@@ -38,6 +39,7 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => ChangePasswordService());
   GetIt.instance.registerLazySingleton(() => RefreshTokenService());
   GetIt.instance.registerLazySingleton(() => ForgetPasswordService());
+  GetIt.instance.registerLazySingleton(() => GetEventsService());
 }
 
 RefreshTokenService get userService => GetIt.instance<RefreshTokenService>();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
@@ -12,12 +13,12 @@ import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/models/emergency_contact.dart';
 import 'dart:core';
 
-class SignUpSuccessful extends StatefulWidget {
+class EditProfile extends StatefulWidget {
   @override
-  _SignUpSuccessfulState createState() => _SignUpSuccessfulState();
+  _EditProfileState createState() => _EditProfileState();
 }
 
-class _SignUpSuccessfulState extends State<SignUpSuccessful> {
+class _EditProfileState extends State<EditProfile> {
   TextEditingController _currentAddressController = TextEditingController();
   TextEditingController _medicalHistory = TextEditingController();
   TextEditingController _bloodType = TextEditingController();
@@ -133,6 +134,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   }
 
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

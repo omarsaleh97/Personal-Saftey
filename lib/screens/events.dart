@@ -7,11 +7,15 @@ import 'package:personal_safety/componants/newEventDialog.dart';
 import 'package:personal_safety/componants/story_card.dart';
 import 'package:personal_safety/componants/theme.dart';
 import 'package:personal_safety/models/event_categories.dart';
+import 'package:personal_safety/models/event_model.dart';
 import 'package:personal_safety/models/event_type_model.dart';
 
 import 'package:personal_safety/screens/tabs/all_events.dart';
 import 'package:personal_safety/services/event_categories_service.dart';
+import 'package:personal_safety/services/getEvent_service.dart';
 import 'package:personal_safety/widgets/drawer.dart';
+import 'package:personal_safety/widgets/event_list.dart';
+import 'package:personal_safety/widgets/event_list_item.dart';
 
 class Events extends StatefulWidget {
   final String title;
@@ -24,21 +28,24 @@ class Events extends StatefulWidget {
 class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
   TabController controller;
   List<EventCategories> eventCategories;
+  Map<int, String> categoriesForNewEvents;
+  List<EventGetterModel> events;
   EventCategoriesService get userService =>
       GetIt.instance<EventCategoriesService>();
+  GetEventsService get eventService => GetIt.instance<GetEventsService>();
 
-  Future getCategories() async {
+  Future getEventsAndCategories() async {
+    final result2 = await eventService.getEvents();
+
     final result = await userService.getEventCategories();
-    print('OBTAINED CATEGORIES FROM SERVICE!!!!\n\n');
     setState(() {
+      print('OBTAINED EVENTS FROM SERVICE!!!!\n\n');
+      List<EventGetterModel> list2 = result2.result;
+      print('OBTAINED EVENTS FROM SERVICE!!!!');
+      print('OBTAINED CATEGORIES FROM SERVICE!!!!\n\n');
+
+      events = list2;
       List<EventCategories> list = result.result;
-      for (int i = 0; i < result.result.length; i++) {
-        print("ITEM ${i + 1}: \n\n");
-        print("ID: ${list[i].id}");
-        print("TITLE: ${list[i].title}");
-        print("THUMBNAIL: ${list[i].thumbnailUrl}");
-        print("\nEND OF ITEM ${i + 1}\n \n");
-      }
       print('OBTAINED CATEGORIES FROM SERVICE!!!!');
       eventCategories = list;
     });
@@ -46,7 +53,7 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    getCategories();
+    getEventsAndCategories();
     super.initState();
     controller =
         TabController(length: EventStoriesData.StoryList.length, vsync: this);
@@ -63,7 +70,9 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddEventScreen(),
+              builder: (context) => AddEventScreen(
+                eventCategoryData: eventCategories,
+              ),
             ),
           );
         },
@@ -124,7 +133,11 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
                   scrollDirection: Axis.vertical,
                   child: Container(
                     height: 500,
-                    child: AllEventsTab(),
+                    child: ListView.builder(
+                        itemCount: events.length,
+                        itemBuilder: (context, index) => EventListItem(
+                              eventGetter: events[index],
+                            )),
                   ),
                 )
               ],

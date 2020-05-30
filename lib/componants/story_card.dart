@@ -66,24 +66,22 @@ class _EventCardState extends State<EventCard> {
                 fit: BoxFit.cover),
           ),
           child: InkWell(
-              onTap: () {}
-//              if (type.id == 2) {
-////                Navigator.push(
-////                    context,
-////                    MaterialPageRoute(
-////                        builder: (context) => NearbyEvent(
-////                              data: type,
-////                            )));
-////              }
-////              if (type.id == 3) {
-////                Navigator.push(
-////                    context,
-////                    MaterialPageRoute(
-////                        builder: (context) => PublicEvents(
-////                              data: type,
-////                            )));
-////              }
-              ,
+              onTap: () async {
+                debugPrint(
+                    "ID from EVENT CATEGORY: ${widget.eventCategory.id}\n");
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setInt('categoryID', widget.eventCategory.id);
+
+                var id = prefs.getInt("categoryID");
+                print('EVENT CATEGORY ID FOR SERVICE $id');
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TrendEvent(
+                              eventCategoryData: widget.eventCategory,
+                            )));
+              },
               child: Padding(
                 padding: const EdgeInsets.only(left: 0.0, top: 70),
                 child: Container(

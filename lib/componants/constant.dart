@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:path/path.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
 
 final kHintStyle = TextStyle(
@@ -52,16 +53,19 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({
     Key key,
     TextInputType keyboard,
+    TextStyle hintStyle,
     @required TextEditingController customController,
     @required String customHint,
   })  : customController = customController,
         customHint = customHint,
         keyboard = keyboard,
+        hintStyle = hintStyle,
         super(key: key);
 
   final TextEditingController customController;
   final String customHint;
   final TextInputType keyboard;
+  final TextStyle hintStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +81,7 @@ class CustomTextField extends StatelessWidget {
 //                          color: grey,
 //                        ),
         hintText: customHint,
+        hintStyle:hintStyle,
       ),
     );
   }

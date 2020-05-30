@@ -10,6 +10,7 @@ import 'package:personal_safety/screens/active_Request.dart';
 import 'package:personal_safety/screens/home.dart';
 import 'package:personal_safety/screens/nearestFacilities.dart';
 import 'package:personal_safety/screens/news.dart';
+import 'package:personal_safety/screens/profilePage.dart';
 import 'package:personal_safety/screens/tabs/NearbyEvent.dart';
 import 'package:personal_safety/screens/tabs/PublicEvent.dart';
 import 'package:personal_safety/screens/tabs/all_events.dart';
@@ -60,59 +61,7 @@ class _MainPageState extends State<MainPage> {
         });
   }
 
-  Widget _appBar() {
-    return Container(
-      padding: AppTheme.padding,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          RotatedBox(
-            quarterTurns: 4,
-            child: IconButton(
-              icon: Icon(
-                Icons.dehaze,
-              ),
-              color: Colors.black54,
-              onPressed: () {
-//                AppDrawer();
-//                print("press");
-              },
-            ),
-          ),
-          ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(13)),
-            child: Container(
-                decoration: BoxDecoration(
-                    color: greyIcon, borderRadius: BorderRadius.circular(20)),
-                child: IconButton(
-                  icon: Icon(Icons.lock),
-                  onPressed: () async {
-                    //_save("0");
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.remove('token');
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Logout()));
-                  },
-                )),
-          )
-        ],
-      ),
-    );
-  }
 
-  Widget _icon(IconData icon, {Color color = LightColor.iconColor}) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(13)),
-      ),
-      child: Icon(
-        icon,
-        color: color,
-      ),
-    );
-  }
 
   Widget _title() {
     return Container(
@@ -243,15 +192,12 @@ class _MainPageState extends State<MainPage> {
             ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(13)),
               child: IconButton(
-                icon: Icon(Icons.lock),
+                icon: Icon(Icons.person),
                 color: primaryColor,
-                onPressed: () async {
-                  //_save("0");
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  prefs.remove('token');
+                onPressed: () {
+
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Logout()));
+                      MaterialPageRoute(builder: (context) => ProfilePage()));
                 },
               ),
             )

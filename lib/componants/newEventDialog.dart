@@ -167,21 +167,23 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading == true
-        ? CustomLoadingIndicator(
-            customColor: primaryColor,
-          )
-        : GestureDetector(
-            onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-            child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              resizeToAvoidBottomPadding: false,
-              appBar: AppBar(
-                centerTitle: true,
-                backgroundColor: primaryColor,
-                title: Text('Add Event'),
-              ),
-              body: ListView(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: primaryColor,
+          title: Text('Add Event'),
+        ),
+        body: _isLoading == true
+            ? Center(
+                child: CustomLoadingIndicator(
+                  customColor: primaryColor,
+                ),
+              )
+            : ListView(
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.all(15.0),
@@ -286,168 +288,178 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                       print('tapped');
                                       showDialog(
                                           context: context,
-                                          builder: (_) => AlertDialog(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.0),
-                                                ),
-                                                content: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    Container(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      child: IconButton(
-                                                        icon: Icon(Icons.close),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
+                                          builder: (_) => _isLoading == true
+                                              ? Center(
+                                                  child: CustomLoadingIndicator(
+                                                    customColor: primaryColor,
+                                                  ),
+                                                )
+                                              : AlertDialog(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
+                                                  ),
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: IconButton(
+                                                          icon:
+                                                              Icon(Icons.close),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Container(
-                                                      alignment:
-                                                          Alignment.topCenter,
-                                                      child: SvgPicture.asset(
-                                                        'assets/images/proceedalert.svg',
-                                                        width: 130,
-                                                        height: 130,
+                                                      Container(
+                                                        alignment:
+                                                            Alignment.topCenter,
+                                                        child: SvgPicture.asset(
+                                                          'assets/images/proceedalert.svg',
+                                                          width: 130,
+                                                          height: 130,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Text(
-                                                      'Confirm Ongoing Event',
-                                                      style: TextStyle(
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Text(
+                                                        'Confirm Ongoing Event',
+                                                        style: TextStyle(
+                                                            color: Color(
+                                                                0xff006E90),
+                                                            fontSize: 25,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Text(
+                                                        'You are about to be post an ongoing event.\n'
+                                                        'where pepble near your neighborhood get\nnotified and can get involved to help you.Are\nyou sure you you want to continue?',
+                                                        style: TextStyle(
+                                                          color: grey,
+                                                          fontSize: 12,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 50,
+                                                      ),
+                                                      Container(
+                                                        width: 180,
+                                                        height: 45,
+                                                        child: RaisedButton(
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                new BorderRadius
+                                                                    .circular(20),
+                                                          ),
+                                                          onPressed: () async {
+                                                            Navigator.pop(
+                                                                context);
+                                                            debugPrint(
+                                                                'JUST POSTED FROM POST BUTTON IN ALERT');
+                                                            setState(() async {
+                                                              File image;
+                                                              _isLoading = true;
+                                                              if (_pickedImage !=
+                                                                  null) {
+                                                                setState(() {
+                                                                  image =
+                                                                      _pickedImage;
+                                                                });
+
+                                                                try {
+                                                                  String
+                                                                      filename =
+                                                                      image.path
+                                                                          .split(
+                                                                              '/')
+                                                                          .last;
+                                                                  FormData
+                                                                      formData =
+                                                                      new FormData
+                                                                          .fromMap({
+                                                                    'Title':
+                                                                        titleController
+                                                                            .text,
+                                                                    'Description':
+                                                                        EventDescription
+                                                                            .text,
+                                                                    'EventCategoryId':
+                                                                        _selectedEventCategory
+                                                                            .id,
+                                                                    'Longitude':
+                                                                        _pickedLocation
+                                                                            .longitude,
+                                                                    'Latitude':
+                                                                        _pickedLocation
+                                                                            .latitude,
+                                                                    'IsPublicHelp':
+                                                                        publicStatus,
+                                                                    'Thumbnail': await MultipartFile.fromFile(
+                                                                        image
+                                                                            .path,
+                                                                        filename:
+                                                                            filename,
+                                                                        contentType: new MediaType(
+                                                                            'image',
+                                                                            'png')),
+                                                                    "type":
+                                                                        "image/png"
+                                                                  });
+                                                                  Response response = await dio
+                                                                      .post(
+                                                                          "https://personalsafety.azurewebsites.net//api/Client/Events/PostEvent",
+                                                                          data:
+                                                                              formData,
+                                                                          options:
+                                                                              Options(headers: {
+                                                                            'Content-Type':
+                                                                                'multipart/form-data',
+                                                                            'Authorization':
+                                                                                'Bearer $key'
+                                                                          }))
+                                                                      .whenComplete(
+                                                                          () {
+                                                                    setState(
+                                                                        () {
+                                                                      _isLoading =
+                                                                          false;
+                                                                    });
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  });
+                                                                } catch (e) {
+                                                                  print(e);
+                                                                }
+                                                              }
+                                                            });
+                                                          },
                                                           color:
                                                               Color(0xff006E90),
-                                                          fontSize: 25,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Text(
-                                                      'You are about to be post an ongoing event.\n'
-                                                      'where pepble near your neighborhood get\nnotified and can get involved to help you.Are\nyou sure you you want to continue?',
-                                                      style: TextStyle(
-                                                        color: grey,
-                                                        fontSize: 12,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 50,
-                                                    ),
-                                                    Container(
-                                                      width: 180,
-                                                      height: 45,
-                                                      child: RaisedButton(
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              new BorderRadius
-                                                                  .circular(20),
+                                                          child: Text(
+                                                            'Post',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 20),
+                                                          ),
                                                         ),
-                                                        onPressed: () async {
-                                                          debugPrint(
-                                                              'JUST POSTED FROM POST BUTTON IN ALERT');
-                                                          setState(() async {
-                                                            File image;
-
-                                                            if (_pickedImage !=
-                                                                null) {
-                                                              setState(() {
-                                                                image =
-                                                                    _pickedImage;
-                                                              });
-                                                              Navigator.pop(
-                                                                  context);
-                                                              _isLoading = true;
-                                                              Navigator.pop(
-                                                                  context);
-                                                              try {
-                                                                String
-                                                                    filename =
-                                                                    image.path
-                                                                        .split(
-                                                                            '/')
-                                                                        .last;
-                                                                FormData
-                                                                    formData =
-                                                                    new FormData
-                                                                        .fromMap({
-                                                                  'Title':
-                                                                      titleController
-                                                                          .text,
-                                                                  'Description':
-                                                                      EventDescription
-                                                                          .text,
-                                                                  'EventCategoryId':
-                                                                      _selectedEventCategory
-                                                                          .id,
-                                                                  'Longitude':
-                                                                      _pickedLocation
-                                                                          .longitude,
-                                                                  'Latitude':
-                                                                      _pickedLocation
-                                                                          .latitude,
-                                                                  'IsPublicHelp':
-                                                                      publicStatus,
-                                                                  'Thumbnail': await MultipartFile.fromFile(
-                                                                      image
-                                                                          .path,
-                                                                      filename:
-                                                                          filename,
-                                                                      contentType: new MediaType(
-                                                                          'image',
-                                                                          'png')),
-                                                                  "type":
-                                                                      "image/png"
-                                                                });
-                                                                Response response = await dio.post(
-                                                                    "https://personalsafety.azurewebsites.net//api/Client/Events/PostEvent",
-                                                                    data:
-                                                                        formData,
-                                                                    options:
-                                                                        Options(
-                                                                            headers: {
-                                                                          'Content-Type':
-                                                                              'multipart/form-data',
-                                                                          'Authorization':
-                                                                              'Bearer $key'
-                                                                        }));
-                                                                if (response
-                                                                        .statusCode ==
-                                                                    0) {
-                                                                  _isLoading =
-                                                                      false;
-                                                                }
-                                                              } catch (e) {
-                                                                print(e);
-                                                              }
-                                                            }
-                                                          });
-                                                        },
-                                                        color:
-                                                            Color(0xff006E90),
-                                                        child: Text(
-                                                          'Post',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 20),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ));
+                                                      )
+                                                    ],
+                                                  ),
+                                                ));
                                     } else {
                                       showDialog(
                                           context: context,
@@ -504,7 +516,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   )
                 ],
               ),
-            ),
-          );
+      ),
+    );
   }
 }

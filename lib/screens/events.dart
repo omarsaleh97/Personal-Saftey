@@ -28,13 +28,14 @@ class Events extends StatefulWidget {
 class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
   TabController controller;
   List<EventCategories> eventCategories;
-  Map<int, String> categoriesForNewEvents;
   List<EventGetterModel> events;
   EventCategoriesService get userService =>
       GetIt.instance<EventCategoriesService>();
   GetEventsService get eventService => GetIt.instance<GetEventsService>();
 
   Future getEventsAndCategories() async {
+    eventCategories = null;
+    events = null;
     final result2 = await eventService.getEvents();
 
     final result = await userService.getEventCategories();
@@ -67,14 +68,16 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
         child: Icon(Icons.add),
         backgroundColor: primaryColor,
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddEventScreen(
-                eventCategoryData: eventCategories,
+          if (events != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddEventScreen(
+                  eventCategoryData: eventCategories,
+                ),
               ),
-            ),
-          );
+            ).whenComplete(getEventsAndCategories);
+          } else {}
         },
       ),
       drawer: AppDrawer(),
@@ -103,7 +106,7 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
 //          ],
 //        ),
       ),
-      body: eventCategories == null
+      body: eventCategories == null || events == null
           ? Center(
               child: CustomLoadingIndicator(
               customColor: primaryColor,

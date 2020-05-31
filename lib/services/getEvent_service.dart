@@ -29,6 +29,7 @@ class GetEventsService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     categoryID = prefs.getInt("categoryID");
+    if (categoryID == null) categoryID = 0;
     return http
         .get(
       StaticVariables.API +

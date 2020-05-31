@@ -52,8 +52,8 @@ class _TrendEventState extends State<TrendEvent> {
             Stack(
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.width / 1.4,
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * .5,
                   child: ClipRRect(
                     child: Image(
                         image: NetworkImage(
@@ -94,7 +94,7 @@ class _TrendEventState extends State<TrendEvent> {
                               topRight: Radius.circular(30),
                             ),
                           ),
-                          height: MediaQuery.of(context).size.width * 1.5,
+                          height: MediaQuery.of(context).size.height,
                           child: events == null
                               ? Center(
                                   child: CustomLoadingIndicator(
@@ -104,7 +104,8 @@ class _TrendEventState extends State<TrendEvent> {
                               : SingleChildScrollView(
                                   scrollDirection: Axis.vertical,
                                   child: Container(
-                                    height: 500,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.67,
                                     child: ListView.builder(
                                         itemCount: events.length,
                                         itemBuilder: (context, index) =>

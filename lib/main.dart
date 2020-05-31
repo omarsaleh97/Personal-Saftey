@@ -18,6 +18,7 @@ import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/services/change_password_service.dart';
 import 'package:personal_safety/services/event_categories_service.dart';
 import 'package:personal_safety/services/getEvent_service.dart';
+import 'package:personal_safety/services/get_profile_service.dart';
 import 'package:personal_safety/services/refresh_token_service.dart';
 import 'package:personal_safety/services/service_confirm.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
@@ -40,6 +41,7 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => RefreshTokenService());
   GetIt.instance.registerLazySingleton(() => ForgetPasswordService());
   GetIt.instance.registerLazySingleton(() => GetEventsService());
+  GetIt.instance.registerLazySingleton(() => GetProfileService());
 }
 
 RefreshTokenService get userService => GetIt.instance<RefreshTokenService>();
@@ -120,7 +122,7 @@ Future<void> main() async {
     child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: goHomeOrGoLogout ? Logout() : MainPage()
-//      home: MainPage(),
+//      home: SignUpSuccessful(),
         //home: News(),
         ),
   ));

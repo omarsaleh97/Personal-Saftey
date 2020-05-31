@@ -12,6 +12,7 @@ import 'package:personal_safety/models/newEvent.dart';
 import 'package:personal_safety/providers/event.dart';
 import 'package:personal_safety/screens/map_screen.dart';
 import 'package:personal_safety/widgets/drawer.dart';
+import 'package:personal_safety/widgets/image_viewer.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
@@ -63,20 +64,29 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           children: <Widget>[
             Stack(
               children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.width,
-                  width: double.infinity,
-                  child: ClipRRect(
-                    child: Image(
-                      image: NetworkImage(
-                          "https://personalsafety.azurewebsites.net/${widget.data.thumbnailUrl}"),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  decoration: BoxDecoration(
-                      // borderRadius: BorderRadius.circular(20),
-
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ImageViewer(data: widget.data.thumbnailUrl)));
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.width,
+                    width: double.infinity,
+                    child: ClipRRect(
+                      child: Image(
+                        image: NetworkImage(
+                            "https://personalsafety.azurewebsites.net/${widget.data.thumbnailUrl}"),
+                        fit: BoxFit.cover,
                       ),
+                    ),
+                    decoration: BoxDecoration(
+                        // borderRadius: BorderRadius.circular(20),
+
+                        ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 300),
@@ -114,6 +124,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                           )
                                         : Text(
                                             addressToUse,
+                                            maxLines: 3,
                                             style: TextStyle(
                                                 color: primaryColor,
                                                 fontSize: 20,

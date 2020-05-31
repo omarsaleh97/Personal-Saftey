@@ -84,8 +84,12 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {},
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                getEventsAndCategories();
+              });
+            },
             color: Colors.grey,
           ),
         ],
@@ -111,39 +115,45 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
               child: CustomLoadingIndicator(
               customColor: primaryColor,
             ))
-          : Column(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 20),
-                  width: AppTheme.fullWidth(context),
-                  height: AppTheme.fullWidth(context) * .35,
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(10.0),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        childAspectRatio: .95,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 20),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: eventCategories.length,
-                    itemBuilder: (context, index) => EventCard(
-                      eventCategory: eventCategories[index],
+          : SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    width: AppTheme.fullWidth(context),
+                    height: AppTheme.fullWidth(context) * .35,
+                    child: GridView.builder(
+                      padding: const EdgeInsets.all(10.0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: .95,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 20),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: eventCategories.length,
+                      itemBuilder: (context, index) => EventCard(
+                        eventCategory: eventCategories[index],
+                      ),
                     ),
                   ),
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Container(
-                    height: 500,
-                    child: ListView.builder(
-                        itemCount: events.length,
-                        itemBuilder: (context, index) => EventListItem(
-                              eventGetter: events[index],
-                            )),
-                  ),
-                )
-              ],
+                  SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.65,
+                          child: ListView.builder(
+                              itemCount: events.length,
+                              itemBuilder: (context, index) => EventListItem(
+                                    eventGetter: events[index],
+                                  )),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
     );
   }

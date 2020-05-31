@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/test.dart';
@@ -29,6 +30,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   FirstLoginCredentials firstLogin;
   EmergencyContacts contacts;
   List<EmergencyContacts> contactList;
+  DateTime birthDate;
 
   List<BloodType> _bloodtype = BloodType.getBloodType();
   List<DropdownMenuItem<BloodType>> _dropdownMenuItem;
@@ -40,6 +42,14 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   bool contactNeedsPhone = false;
   bool phoneValid = false;
   bool bloodTypeValid = false;
+  bool birthDateFlag = false;
+
+  dateValidation() {
+    if (birthDate == null) {
+      birthDateFlag = false;
+    } else
+      birthDateFlag = true;
+  }
 
   adressValidation() {
     if (_currentAddressController.text.isEmpty) {
@@ -58,6 +68,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
 
   contactWithPhoneValidation() {
     if (_emergencyName.text.isNotEmpty && _emergencyPhone.text.isEmpty)
+      contactNeedsPhone = false;
+    else if (_emergencyName.text.isEmpty && _emergencyPhone.text.isNotEmpty)
       contactNeedsPhone = false;
     else
       contactNeedsPhone = true;
@@ -138,7 +150,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            "Edit your profile",
+            "Complete your profile",
             style: TextStyle(fontSize: 20, color: primaryColor),
           ),
           centerTitle: true,
@@ -149,7 +161,119 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
           ),
           actions: <Widget>[
             FlatButton(
-                onPressed: () {},
+                onPressed: () async {
+                  dateValidation();
+                  adressValidation();
+                  medicalHistoryValidation();
+                  contactWithPhoneValidation();
+                  phoneValidation();
+                  bloodTypeValidation();
+                  if (birthDateFlag == true &&
+                      medicalHistoryFlag == true &&
+                      addressFlag == true &&
+                      contactNeedsPhone == true &&
+                      phoneValid == true &&
+                      bloodTypeValid == true) {
+                    print("PRESSED");
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+                    setState(() async {
+                      final contacts = EmergencyContacts(
+                          name: _emergencyName.text,
+                          phoneNumber: _emergencyPhone.text);
+                      final firstLogin = FirstLoginCredentials(
+                          birthday: DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(birthDate.toString())),
+                          currentAddress: _currentAddressController.text,
+                          bloodType: _selectedBloodType.id,
+                          medicalHistoryNotes: _medicalHistory.text,
+                          emergencyContacts: [
+                            contacts,
+                          ]);
+
+                      final result = await userService.firstLogin(firstLogin);
+
+                      final title = result.status == 0
+                          ? 'Your Profile is updated!'
+                          : 'Error';
+                      final text = result.status == 0
+                          ? 'Your info will be shown as updated.'
+                          : "There seems to be a problem. Try again. Your Phone number may be taken.";
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                backgroundColor: primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                title: Text(
+                                  title,
+                                  style: TextStyle(color: grey),
+                                ),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    SizedBox(height: 20),
+                                    Container(
+                                      width: 60,
+                                      height: 60,
+                                      child: SvgPicture.asset(
+                                        'assets/images/shine.svg',
+                                        color: grey,
+                                      ),
+                                    ),
+                                    Center(
+                                      child: SvgPicture.asset(
+                                        'assets/images/shield.svg',
+                                        color: grey,
+                                        height: 100,
+                                      ),
+                                    ),
+                                    SizedBox(height: 30),
+                                    Text(
+                                      text,
+                                      style: TextStyle(color: grey),
+                                    ),
+                                  ],
+                                ),
+                                actions: <Widget>[
+                                  FlatButton(
+                                      child: Text('OK',
+                                          style: TextStyle(color: grey)),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Navigator.of(context).pop();
+                                      })
+                                ],
+                              )).then((data) {
+                        if (result.status == 0) {
+                          StaticVariables.prefs.setBool("firstlogin", false);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainPage()));
+                        }
+                      });
+                    });
+                  } else if (addressFlag == false) {
+                    ShowDialog("Error", "Address cannot be empty.");
+                  } else if (medicalHistoryFlag == false) {
+                    ShowDialog("Error", "Medical History cannot be empty.");
+                  } else if (contactNeedsPhone == false) {
+                    ShowDialog("Error",
+                        "A Contact name requires a Phone number. Either provide both, or leave both empty.");
+                  } else if (phoneValid == false) {
+                    ShowDialog("Error", "Phone Number must be 11 digits.");
+                  } else if (bloodTypeValid == false)
+                    ShowDialog("Error", "Must select a blood type.");
+                  else if (birthDateFlag == false) {
+                    ShowDialog("Error", "Please select your date of birth.");
+                  }
+                },
                 child: Text(
                   "Done",
                   style: TextStyle(color: primaryColor),
@@ -174,10 +298,12 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                   child: Column(
                     children: <Widget>[
                       Container(
-                        width: 200,
-                        height: 200,
+                        width: 130,
+                        height: 130,
                         decoration: BoxDecoration(
-                            color: Accent1,
+                            image: DecorationImage(
+                                image:
+                                    AssetImage('assets/images/ProfilePic.png')),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(100)),
                             border: Border.all(
@@ -301,240 +427,22 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
                                         print('change $date');
                                       }, onConfirm: (date) {
                                         print('confirm $date');
+                                        setState(() {
+                                          birthDate = date;
+                                        });
                                       },
                                           currentTime: DateTime.now(),
                                           locale: LocaleType.en);
                                     },
                                     child: Text(
-                                      'Select your date of birth ',
-                                      textAlign: TextAlign.left,
-                                      style: kHintStyle,
+                                      birthDate == null
+                                          ? "Select your date of birth"
+                                          : DateFormat('yyyy-MM-dd').format(
+                                              DateTime.parse(
+                                                  birthDate.toString())),
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 13),
                                     )),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black12,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15)),
-                                  ),
-                                  alignment: Alignment.centerLeft,
-                                  child: FlatButton(
-                                    onPressed: () {},
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.email,
-                                          color: Colors.black26,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          "Change Email Address",
-                                          style: kHintStyle,
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black12,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15)),
-                                  ),
-                                  alignment: Alignment.centerLeft,
-                                  child: FlatButton(
-                                    onPressed: () {},
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.vpn_key,
-                                          color: Colors.black26,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          "Change Password",
-                                          style: kHintStyle,
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 30, left: 70.0, bottom: 10, right: 70),
-                                child: Container(
-                                  height: 50.0,
-                                  width: 300,
-                                  child: RaisedButton(
-                                    color: primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(30),
-                                    ),
-                                    onPressed: () async {
-                                      adressValidation();
-                                      medicalHistoryValidation();
-                                      contactWithPhoneValidation();
-                                      phoneValidation();
-                                      bloodTypeValidation();
-                                      if (medicalHistoryFlag == true &&
-                                          addressFlag == true &&
-                                          contactNeedsPhone == true &&
-                                          phoneValid == true &&
-                                          bloodTypeValid == true) {
-                                        print("PRESSED");
-                                        setState(() {
-                                          _isLoading = true;
-                                        });
-
-                                        setState(() async {
-                                          final contacts = EmergencyContacts(
-                                              name: _emergencyName.text,
-                                              phoneNumber:
-                                                  _emergencyPhone.text);
-                                          final firstLogin =
-                                              FirstLoginCredentials(
-                                                  currentAddress:
-                                                      _currentAddressController
-                                                          .text,
-                                                  bloodType:
-                                                      _selectedBloodType.id,
-                                                  medicalHistoryNotes:
-                                                      _medicalHistory.text,
-                                                  emergencyContacts: [
-                                                contacts,
-                                              ]);
-
-                                          final result = await userService
-                                              .firstLogin(firstLogin);
-                                          debugPrint("BLOOD TYPE IS " +
-                                              _selectedBloodType.id.toString());
-                                          debugPrint(
-                                              "from FIRST STATUS LOGIN: " +
-                                                  result.status.toString());
-                                          debugPrint(
-                                              "from FIRST RESULT LOGIN: " +
-                                                  result.result.toString());
-                                          debugPrint(
-                                              "from FIRST ERROR LOGIN: " +
-                                                  result.hasErrors.toString());
-                                          final title = result.status == 0
-                                              ? 'Your Information is saved!'
-                                              : 'Error';
-                                          final text = result.status == 0
-                                              ? 'You will be forwarded to the next page!'
-                                              : "There seems to be a problem. Try again.";
-                                          showDialog(
-                                              context: context,
-                                              builder: (_) => AlertDialog(
-                                                    backgroundColor:
-                                                        primaryColor,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20.0),
-                                                    ),
-                                                    title: Text(
-                                                      title,
-                                                      style: TextStyle(
-                                                          color: grey),
-                                                    ),
-                                                    content: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: <Widget>[
-                                                        SizedBox(height: 20),
-                                                        Container(
-                                                          width: 60,
-                                                          height: 60,
-                                                          child:
-                                                              SvgPicture.asset(
-                                                            'assets/images/shine.svg',
-                                                            color: grey,
-                                                          ),
-                                                        ),
-                                                        Center(
-                                                          child:
-                                                              SvgPicture.asset(
-                                                            'assets/images/shield.svg',
-                                                            color: grey,
-                                                            height: 100,
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 30),
-                                                        Text(
-                                                          text,
-                                                          style: TextStyle(
-                                                              color: grey),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                          child: Text('OK',
-                                                              style: TextStyle(
-                                                                  color: grey)),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              _isLoading =
-                                                                  false;
-                                                            });
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          })
-                                                    ],
-                                                  )).then((data) {
-                                            if (result.status == 0) {
-                                              StaticVariables.prefs
-                                                  .setBool("firstlogin", false);
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MainPage()));
-                                            }
-                                          });
-                                        });
-                                      } else if (addressFlag == false) {
-                                        ShowDialog("Error",
-                                            "Address cannot be empty.");
-                                      } else if (medicalHistoryFlag == false) {
-                                        ShowDialog("Error",
-                                            "Medical History cannot be empty.");
-                                      } else if (contactNeedsPhone == false) {
-                                        ShowDialog("Error",
-                                            "A Contact name requires a Phone number. Either provide both, or leave both empty.");
-                                      } else if (phoneValid == false) {
-                                        ShowDialog("Error",
-                                            "Phone Number must be 11 digits.");
-                                      } else if (bloodTypeValid == false)
-                                        ShowDialog("Error",
-                                            "Must select a blood type.");
-                                    },
-                                    child: Center(
-                                      child: Text(
-                                        'Continue',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
                               ),
                             ],
                           ),

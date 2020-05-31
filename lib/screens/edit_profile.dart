@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
+import 'package:personal_safety/Auth/newPassword.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/test.dart';
@@ -16,6 +18,8 @@ import 'dart:core';
 class EditProfile extends StatefulWidget {
   @override
   _EditProfileState createState() => _EditProfileState();
+  final FirstLoginCredentials profileGetter;
+  EditProfile({@required this.profileGetter});
 }
 
 class _EditProfileState extends State<EditProfile> {
@@ -25,11 +29,14 @@ class _EditProfileState extends State<EditProfile> {
 
   TextEditingController _emergencyName = TextEditingController();
   TextEditingController _emergencyPhone = TextEditingController();
+  TextEditingController _fullNameController = TextEditingController();
+  TextEditingController _phoneNumberController = TextEditingController();
 
   FirstLoginService get userService => GetIt.instance<FirstLoginService>();
   FirstLoginCredentials firstLogin;
   EmergencyContacts contacts;
   List<EmergencyContacts> contactList;
+  DateTime birthDate;
 
   List<BloodType> _bloodtype = BloodType.getBloodType();
   List<DropdownMenuItem<BloodType>> _dropdownMenuItem;
@@ -40,7 +47,10 @@ class _EditProfileState extends State<EditProfile> {
   bool medicalHistoryFlag = false;
   bool contactNeedsPhone = false;
   bool phoneValid = false;
+  bool userPhoneValid = false;
   bool bloodTypeValid = false;
+  bool fullNameFlag = false;
+  bool birthDateFlag = false;
 
   adressValidation() {
     if (_currentAddressController.text.isEmpty) {
@@ -57,14 +67,30 @@ class _EditProfileState extends State<EditProfile> {
       medicalHistoryFlag = true;
   }
 
+  dateValidation() {
+    if (birthDate == null) {
+      birthDateFlag = false;
+    } else
+      birthDateFlag = true;
+  }
+
+  fullNameValidation() {
+    if (_fullNameController.text.isEmpty) {
+      fullNameFlag = false;
+    } else
+      fullNameFlag = true;
+  }
+
   contactWithPhoneValidation() {
     if (_emergencyName.text.isNotEmpty && _emergencyPhone.text.isEmpty)
+      contactNeedsPhone = false;
+    else if (_emergencyName.text.isEmpty && _emergencyPhone.text.isNotEmpty)
       contactNeedsPhone = false;
     else
       contactNeedsPhone = true;
   }
 
-  phoneValidation() {
+  emergencyContactPhoneValidation() {
     if (_emergencyPhone.text.isNotEmpty) {
       if (_emergencyPhone.text.length != 11) {
         phoneValid = false;
@@ -72,6 +98,16 @@ class _EditProfileState extends State<EditProfile> {
         phoneValid = true;
     } else
       phoneValid = true;
+  }
+
+  phoneNumberValidation() {
+    if (_phoneNumberController.text.isNotEmpty) {
+      if (_phoneNumberController.text.length != 11) {
+        userPhoneValid = false;
+      } else
+        userPhoneValid = true;
+    } else
+      userPhoneValid = false;
   }
 
   bloodTypeValidation() {
@@ -84,7 +120,19 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     _dropdownMenuItem = buildDropdownMenuItems(_bloodtype);
-    _selectedBloodType = _dropdownMenuItem[0].value;
+    _selectedBloodType =
+        _dropdownMenuItem[widget.profileGetter.bloodType].value;
+    _fullNameController.text = widget.profileGetter.fullName;
+    _phoneNumberController.text = widget.profileGetter.phoneNumber;
+    _currentAddressController.text = widget.profileGetter.currentAddress;
+    _emergencyName.text = widget.profileGetter.emergencyContacts[0].name;
+    _emergencyPhone.text =
+        widget.profileGetter.emergencyContacts[0].phoneNumber;
+    _medicalHistory.text = widget.profileGetter.medicalHistoryNotes;
+    setState(() {
+      birthDate = DateTime.parse(widget.profileGetter.birthday);
+    });
+
     super.initState();
   }
 
@@ -151,7 +199,127 @@ class _EditProfileState extends State<EditProfile> {
           ),
           actions: <Widget>[
             FlatButton(
-                onPressed: () {},
+                onPressed: () async {
+                  fullNameValidation();
+                  phoneNumberValidation();
+                  dateValidation();
+                  adressValidation();
+                  medicalHistoryValidation();
+                  contactWithPhoneValidation();
+                  emergencyContactPhoneValidation();
+                  bloodTypeValidation();
+                  if (birthDateFlag == true &&
+                      fullNameFlag == true &&
+                      userPhoneValid == true &&
+                      medicalHistoryFlag == true &&
+                      addressFlag == true &&
+                      contactNeedsPhone == true &&
+                      phoneValid == true &&
+                      bloodTypeValid == true) {
+                    print("PRESSED");
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+                    setState(() async {
+                      final contacts = EmergencyContacts(
+                          name: _emergencyName.text,
+                          phoneNumber: _emergencyPhone.text);
+                      final firstLogin = FirstLoginCredentials(
+                          fullName: _fullNameController.text,
+                          phoneNumber: _phoneNumberController.text,
+                          birthday: DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(birthDate.toString())),
+                          currentAddress: _currentAddressController.text,
+                          bloodType: _selectedBloodType.id,
+                          medicalHistoryNotes: _medicalHistory.text,
+                          emergencyContacts: [
+                            contacts,
+                          ]);
+
+                      final result = await userService.firstLogin(firstLogin);
+
+                      final title = result.status == 0
+                          ? 'Your Profile is updated!'
+                          : 'Error';
+                      final text = result.status == 0
+                          ? 'Your info will be shown as updated.'
+                          : "There seems to be a problem. Try again. Your Phone number may be taken.";
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                backgroundColor: primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                title: Text(
+                                  title,
+                                  style: TextStyle(color: grey),
+                                ),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    SizedBox(height: 20),
+                                    Container(
+                                      width: 60,
+                                      height: 60,
+                                      child: SvgPicture.asset(
+                                        'assets/images/shine.svg',
+                                        color: grey,
+                                      ),
+                                    ),
+                                    Center(
+                                      child: SvgPicture.asset(
+                                        'assets/images/shield.svg',
+                                        color: grey,
+                                        height: 100,
+                                      ),
+                                    ),
+                                    SizedBox(height: 30),
+                                    Text(
+                                      text,
+                                      style: TextStyle(color: grey),
+                                    ),
+                                  ],
+                                ),
+                                actions: <Widget>[
+                                  FlatButton(
+                                      child: Text('OK',
+                                          style: TextStyle(color: grey)),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Navigator.of(context).pop();
+                                      })
+                                ],
+                              )).then((data) {
+                        if (result.status == 0) {
+                          StaticVariables.prefs.setBool("firstlogin", false);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        }
+                      });
+                    });
+                  } else if (fullNameFlag == false) {
+                    ShowDialog("Error", "Full Name cannot be empty.");
+                  } else if (userPhoneValid == false) {
+                    ShowDialog("Error", "Your Phone Number must be 11 digits.");
+                  } else if (birthDateFlag == false) {
+                    ShowDialog("Error", "Full Name cannot be empty.");
+                  } else if (addressFlag == false) {
+                    ShowDialog("Error", "Address cannot be empty.");
+                  } else if (medicalHistoryFlag == false) {
+                    ShowDialog("Error", "Medical History cannot be empty.");
+                  } else if (contactNeedsPhone == false) {
+                    ShowDialog("Error",
+                        "A Contact name requires a Phone number. Either provide both, or leave both empty.");
+                  } else if (phoneValid == false) {
+                    ShowDialog(
+                        "Error", "Emergency Phone Number must be 11 digits.");
+                  } else if (bloodTypeValid == false)
+                    ShowDialog("Error", "Must select a blood type.");
+                },
                 child: Text(
                   "Done",
                   style: TextStyle(color: primaryColor),
@@ -176,10 +344,12 @@ class _EditProfileState extends State<EditProfile> {
                   child: Column(
                     children: <Widget>[
                       Container(
-                        width: 200,
-                        height: 200,
+                        width: 130,
+                        height: 130,
                         decoration: BoxDecoration(
-                            color: Accent1,
+                            image: DecorationImage(
+                                image:
+                                    AssetImage('assets/images/ProfilePic.png')),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(100)),
                             border: Border.all(
@@ -196,6 +366,44 @@ class _EditProfileState extends State<EditProfile> {
                           key: _formKey,
                           child: Column(
                             children: <Widget>[
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                decoration: kBoxDecorationStyle2,
+                                child: TextField(
+                                  controller: _fullNameController,
+                                  decoration: InputDecoration(
+                                    errorBorder: InputBorder.none,
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    contentPadding: const EdgeInsets.all(20),
+                                    hintText: "Full Name",
+                                    hintStyle: kHintStyle,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                decoration: kBoxDecorationStyle2,
+                                child: TextField(
+                                  controller: _phoneNumberController,
+                                  decoration: InputDecoration(
+                                    errorBorder: InputBorder.none,
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    contentPadding: const EdgeInsets.all(20),
+                                    hintText: "Phone Number",
+                                    hintStyle: kHintStyle,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
                               Container(
                                 alignment: Alignment.centerLeft,
                                 decoration: kBoxDecorationStyle2,
@@ -303,14 +511,18 @@ class _EditProfileState extends State<EditProfile> {
                                         print('change $date');
                                       }, onConfirm: (date) {
                                         print('confirm $date');
+                                        setState(() {
+                                          birthDate = date;
+                                        });
                                       },
                                           currentTime: DateTime.now(),
                                           locale: LocaleType.en);
                                     },
                                     child: Text(
-                                      'Select your date of birth ',
-                                      textAlign: TextAlign.left,
-                                      style: kHintStyle,
+                                      DateFormat('yyyy-MM-dd').format(
+                                          DateTime.parse(birthDate.toString())),
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 13),
                                     )),
                               ),
                               SizedBox(
@@ -354,7 +566,13 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                   alignment: Alignment.centerLeft,
                                   child: FlatButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NewPassword()));
+                                    },
                                     child: Row(
                                       children: <Widget>[
                                         Icon(
@@ -371,172 +589,8 @@ class _EditProfileState extends State<EditProfile> {
                                       ],
                                     ),
                                   )),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 30, left: 70.0, bottom: 10, right: 70),
-                                child: Container(
-                                  height: 50.0,
-                                  width: 300,
-                                  child: RaisedButton(
-                                    color: primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(30),
-                                    ),
-                                    onPressed: () async {
-                                      adressValidation();
-                                      medicalHistoryValidation();
-                                      contactWithPhoneValidation();
-                                      phoneValidation();
-                                      bloodTypeValidation();
-                                      if (medicalHistoryFlag == true &&
-                                          addressFlag == true &&
-                                          contactNeedsPhone == true &&
-                                          phoneValid == true &&
-                                          bloodTypeValid == true) {
-                                        print("PRESSED");
-                                        setState(() {
-                                          _isLoading = true;
-                                        });
-
-                                        setState(() async {
-                                          final contacts = EmergencyContacts(
-                                              name: _emergencyName.text,
-                                              phoneNumber:
-                                                  _emergencyPhone.text);
-                                          final firstLogin =
-                                              FirstLoginCredentials(
-                                                  currentAddress:
-                                                      _currentAddressController
-                                                          .text,
-                                                  bloodType:
-                                                      _selectedBloodType.id,
-                                                  medicalHistoryNotes:
-                                                      _medicalHistory.text,
-                                                  emergencyContacts: [
-                                                contacts,
-                                              ]);
-
-                                          final result = await userService
-                                              .firstLogin(firstLogin);
-                                          debugPrint("BLOOD TYPE IS " +
-                                              _selectedBloodType.id.toString());
-                                          debugPrint(
-                                              "from FIRST STATUS LOGIN: " +
-                                                  result.status.toString());
-                                          debugPrint(
-                                              "from FIRST RESULT LOGIN: " +
-                                                  result.result.toString());
-                                          debugPrint(
-                                              "from FIRST ERROR LOGIN: " +
-                                                  result.hasErrors.toString());
-                                          final title = result.status == 0
-                                              ? 'Your Information is saved!'
-                                              : 'Error';
-                                          final text = result.status == 0
-                                              ? 'You will be forwarded to the next page!'
-                                              : "There seems to be a problem. Try again.";
-                                          showDialog(
-                                              context: context,
-                                              builder: (_) => AlertDialog(
-                                                    backgroundColor:
-                                                        primaryColor,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20.0),
-                                                    ),
-                                                    title: Text(
-                                                      title,
-                                                      style: TextStyle(
-                                                          color: grey),
-                                                    ),
-                                                    content: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: <Widget>[
-                                                        SizedBox(height: 20),
-                                                        Container(
-                                                          width: 60,
-                                                          height: 60,
-                                                          child:
-                                                              SvgPicture.asset(
-                                                            'assets/images/shine.svg',
-                                                            color: grey,
-                                                          ),
-                                                        ),
-                                                        Center(
-                                                          child:
-                                                              SvgPicture.asset(
-                                                            'assets/images/shield.svg',
-                                                            color: grey,
-                                                            height: 100,
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 30),
-                                                        Text(
-                                                          text,
-                                                          style: TextStyle(
-                                                              color: grey),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                          child: Text('OK',
-                                                              style: TextStyle(
-                                                                  color: grey)),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              _isLoading =
-                                                                  false;
-                                                            });
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          })
-                                                    ],
-                                                  )).then((data) {
-                                            if (result.status == 0) {
-                                              StaticVariables.prefs
-                                                  .setBool("firstlogin", false);
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MainPage()));
-                                            }
-                                          });
-                                        });
-                                      } else if (addressFlag == false) {
-                                        ShowDialog("Error",
-                                            "Address cannot be empty.");
-                                      } else if (medicalHistoryFlag == false) {
-                                        ShowDialog("Error",
-                                            "Medical History cannot be empty.");
-                                      } else if (contactNeedsPhone == false) {
-                                        ShowDialog("Error",
-                                            "A Contact name requires a Phone number. Either provide both, or leave both empty.");
-                                      } else if (phoneValid == false) {
-                                        ShowDialog("Error",
-                                            "Phone Number must be 11 digits.");
-                                      } else if (bloodTypeValid == false)
-                                        ShowDialog("Error",
-                                            "Must select a blood type.");
-                                    },
-                                    child: Center(
-                                      child: Text(
-                                        'Continue',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              SizedBox(
+                                height: 20,
                               ),
                             ],
                           ),

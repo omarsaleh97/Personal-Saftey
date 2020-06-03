@@ -1,6 +1,6 @@
 # personal_safety
 
-second part :https://github.com/omarelleboudy/PersonalSafety-Rescue
+Rescuepart :https://github.com/omarelleboudy/PersonalSafety-Rescue
 
 ## Getting Started
 

@@ -11,7 +11,6 @@ import 'package:personal_safety/models/event_categories.dart';
 import 'package:personal_safety/models/newEvent.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/providers/event.dart';
-import 'package:personal_safety/screens/events.dart';
 import 'package:personal_safety/services/event_categories_service.dart';
 import 'package:personal_safety/services/image_input.dart';
 import 'package:personal_safety/services/location_input.dart';

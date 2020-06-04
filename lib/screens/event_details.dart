@@ -34,8 +34,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
       var first = addresses.first;
       print("${first.featureName} : ${first.addressLine}");
-      String part1 = first.featureName.toString();
-      String part2 = first.subAdminArea.toString();
+      String part1 = first.subAdminArea.toString();
+      String part2 = first.adminArea.toString();
       String returnedAddress = part1 + ", " + part2;
       setState(() {
         addressToUse = returnedAddress;
@@ -122,13 +122,19 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                         ? CustomLoadingIndicator(
                                             customColor: grey,
                                           )
-                                        : Text(
-                                            addressToUse,
-                                            maxLines: 3,
-                                            style: TextStyle(
-                                                color: primaryColor,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w300),
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .6,
+                                            child: Text(
+                                              addressToUse,
+                                              maxLines: 3,
+                                              style: TextStyle(
+                                                  color: primaryColor,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w300),
+                                            ),
                                           ),
                                     Text(
                                       DateFormat('dd/MM/yyyy').add_jm().format(

@@ -61,6 +61,8 @@ class _MainPageState extends State<MainPage> {
         });
   }
 
+
+
   Widget _title() {
     return Container(
         margin: AppTheme.padding,
@@ -218,7 +220,8 @@ class _MainPageState extends State<MainPage> {
               decoration: BoxDecoration(boxShadow: [
                 BoxShadow(color: Colors.grey.withOpacity(.5), blurRadius: 5)
               ]),
-              child: bottomNavBar),
+              child: bottomNavBar
+          ),
         ),
       ),
     );

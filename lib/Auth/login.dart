@@ -182,6 +182,10 @@ class _LoginState extends State<Login> {
                                   : "Wrong Username or Password.\n\nIf you haven't confirmed your email address, please check your inbox for a Confirmation email.";
 
                               if (result.status == 0) {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.setString(
+                                    'emailForQRCode', _loginController.text);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_safety/Auth/newPassword.dart';
 import 'package:personal_safety/componants/color.dart';
-import 'package:personal_safety/screens/events.dart';
+import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/tabs/NearbyEvent.dart';
 import 'package:personal_safety/screens/tabs/PublicEvent.dart';
 import 'package:personal_safety/screens/main_page.dart';

@@ -97,6 +97,70 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
     );
   }
 
+  // ignore: non_constant_identifier_names
+  FeedbackDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          backgroundColor: Colors.indigoAccent,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Feedback",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      )),
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Column(
+                children: <Widget>[
+                  Container(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Give feedback to the rescuer",
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w300),
+                      )),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                      height: 50.0,
+                      width: 200,
+                      child: RaisedButton(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30),
+                        ),
+                        onPressed: () async {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Give feedback",
+                          style:
+                          TextStyle(color: Color(0xffFF2B56), fontSize: 18),
+                        ),
+                      ))
+                ],
+              ),
+            ],
+          )),
+    );
+  }
+
   alertDialog() {
     return AlertDialog(
         contentPadding: EdgeInsets.all(30),
@@ -226,8 +290,9 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
           toReturn = Colors.blueAccent; //Green
           Timer(Duration(seconds: 5), () {
             if (GlobalVar.Get("canpop", true)) {
-              print('DESTROYING EVERYTHING because cancelled');
-              Navigator.pop(context);
+              print('Showing feedback alert..');
+              FeedbackDialog();
+              //Navigator.pop(context);
               GlobalVar.Set("canpop", false);
             }
           });

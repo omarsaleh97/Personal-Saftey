@@ -1,25 +1,53 @@
-import 'package:carousel_pro/carousel_pro.dart';
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:personal_safety/communication/android_communication.dart';
 import 'package:personal_safety/componants/authority_card.dart';
 import 'package:personal_safety/componants/authority_data.dart';
-import 'package:personal_safety/componants/authority_icon.dart';
-import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/newEventDialog.dart';
 import 'package:personal_safety/componants/theme.dart';
+import 'package:personal_safety/services/SocketHandler.dart';
+import 'package:personal_safety/utils/AndroidCall.dart';
+import 'package:personal_safety/utils/LatLngWrapper.dart';
+import 'dart:async';
+
+import '../componants/color.dart';
+import '../componants/mediaQuery.dart';
+import '../others/StaticVariables.dart';
+import 'package:carousel_pro/carousel_pro.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/svg.dart';
+
 import 'dart:math';
 
-import 'package:personal_safety/screens/news.dart';
+import 'news.dart';
 
 class Home extends StatefulWidget {
   Home({Key key, this.title}) : super(key: key);
-
   final String title;
   @override
   _HomeState createState() => _HomeState();
+
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home>{
+
+  static const methodChannel = const MethodChannel(METHOD_CHANNEL);
+  bool isTrackingEnabled = false;
+  bool isServiceBounded = false;
+  List<LatLng> latLngList = [];
+  final Set<Polyline> _polylines = {};
+  AndroidCommunication androidCommunication = AndroidCommunication();
+
+  GoogleMapController googleMapController;
+
+  LatLng _center = const LatLng(45.521563, -122.677433);
+
+
   @override
   Widget _icon(IconData icon, {Color color = LightColor.iconColor}) {
     return Container(
@@ -48,9 +76,9 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.only(left: 20),
           scrollDirection: Axis.horizontal,
           children:
-              AuthorityData.AuthorityList.map((authority) => AuthorityCard(
-                    authority: authority,
-                  )).toList()),
+          AuthorityData.AuthorityList.map((authority) => AuthorityCard(
+            authority: authority,
+          )).toList()),
     );
   }
 
@@ -62,7 +90,7 @@ class _HomeState extends State<Home> {
         fullscreenDialog: true
     ));
     if (save != null) {
-     // _addWeightSave(save);
+      // _addWeightSave(save);
     }
   }
 
@@ -73,8 +101,8 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Expanded(
             child: Container(
-                //height: 70,
-              width: 150,
+              //height: 70,
+                width: 150,
                 alignment: Alignment.center,
 //              decoration: BoxDecoration(
 //                  color: Colors.white,
@@ -84,7 +112,7 @@ class _HomeState extends State<Home> {
                     borderRadius: new BorderRadius.circular(10),
                   ),
                   onPressed:(){
-                  //Navigator.push(context, MaterialPageRoute(builder: (context)=>AddEventScreen()));
+                    //Navigator.push(context, MaterialPageRoute(builder: (context)=>AddEventScreen()));
                     _makeNewEvent();
                   },
                   child: Row(
@@ -264,22 +292,143 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Container(
-      color: grey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _authorityWidget(),
-          _newPublicEvent(),
-          Container(
-            color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                _topStories(),
-              ],
-            ),
+          color: grey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _authorityWidget(),
+              _newPublicEvent(),
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    _topStories(),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
+
+  @override
+  void initState() {
+
+    super.initState();
+
+    _setAndroidMethodCallHandler();
+
+    _invokeServiceInAndroid();
+
+  }
+
+  void _onMapCreated(GoogleMapController googleMapController) {
+    this.googleMapController = googleMapController;
+  }
+
+  void _invokeServiceInAndroid() {
+    androidCommunication.invokeServiceInAndroid().then((onValue) {
+      setState(() {
+        isTrackingEnabled = true;
+      });
+    });
+  }
+
+  void _stopServiceInAndroid() {
+    androidCommunication.stopServiceInAndroid().then((onValue) {
+      setState(() {
+        isTrackingEnabled = false;
+      });
+    });
+  }
+
+  Future _isPetTrackingEnabled() async {
+    if (Platform.isAndroid) {
+      bool result = await methodChannel.invokeMethod("isPetTrackingEnabled");
+      setState(() {
+        isTrackingEnabled = result;
+      });
+      debugPrint("Pet Tracking Status - $isTrackingEnabled");
+    }
+  }
+
+  Future _isServiceBound() async {
+    if (Platform.isAndroid) {
+      debugPrint("ServiceBound Called from init");
+      bool result = await methodChannel.invokeMethod("serviceBound");
+      debugPrint("Result from ServiceBound call - $result");
+      setState(() {
+        isServiceBounded = result;
+        if (isServiceBounded) {
+          _isPetTrackingEnabled();
+        }
+      });
+      debugPrint("Pet Tracking Status - $isTrackingEnabled");
+    }
+  }
+
+  Future<dynamic> _androidMethodCallHandler(MethodCall call) async {
+    switch (call.method) {
+      case AndroidCall.PATH_LOCATION:
+        var pathLocation = jsonDecode(call.arguments);
+        LatLng latLng = LatLngWrapper.fromAndroidJson(pathLocation);
+        latLngList.add(latLng);
+        if (latLngList.isNotEmpty) {
+          setState(() {
+            if (latLngList.length > 2) {
+              var bounds = LatLngBounds(
+                  southwest: latLngList.first, northeast: latLngList.last);
+              var cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 25.0);
+              googleMapController.animateCamera(cameraUpdate);
+            }
+            _polylines.add(Polyline(
+              polylineId: PolylineId(latLngList.first.toString()),
+              visible: true,
+              points: latLngList,
+              color: Colors.green,
+              width: 2,
+            ));
+            _center = latLngList.last;
+          });
+        }
+        debugPrint("Wrapper here --> $latLng");
+
+        print("Called SendLocationToServer from native Android code.");
+        //SocketHandler.SendLocationToServer(latLng.latitude, latLng.longitude);
+        break;
+
+    }
+  }
+
+  void _setAndroidMethodCallHandler() {
+    methodChannel.setMethodCallHandler(_androidMethodCallHandler);
+  }
+
+  //-------------------------------------------------------------------------------
+
+  int circle1Radius = 110, circle2Radius = 130, circle3Radius = 150;
+
+  AnimationController _circle1FadeController, _circle1SizeController;
+  Animation<double> _radiusAnimation, _fadeAnimation;
+
+  String clientName = "Walter White", clientEmail = "Heisenberg@ABQ.com",
+      clientPhoneNumber = "01000000991", clientBloodType = "A+",
+      clientMedicalHistory = "Lung Cancer",
+      clientHomeAddress = "308 Negra Arroyo Lane, Albuquerque,"
+          " New Mexico, 87104";
+
+  int clientAge = 51;
+
+  Timer periodicalTimer;
+
+  @override
+  void dispose() {
+    // Never called
+    print("Disposing search page");
+    _circle1FadeController.dispose();
+    _circle1SizeController.dispose();
+    super.dispose();
+
+  }
+
 }

@@ -1,12 +1,5 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/componants/authority_card.dart';
 import 'package:personal_safety/componants/authority_data.dart';
 import 'package:personal_safety/componants/color.dart';
@@ -17,11 +10,6 @@ import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/profilePage.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 
-import '../communication/android_communication.dart';
-import '../services/SocketHandler.dart';
-import '../utils/AndroidCall.dart';
-import '../utils/LatLngWrapper.dart';
-
 class Home extends StatefulWidget {
   Home({Key key, this.title}) : super(key: key);
 
@@ -31,19 +19,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  static const methodChannel = const MethodChannel(METHOD_CHANNEL);
-  bool isTrackingEnabled = false;
-  bool isServiceBounded = false;
-  List<LatLng> latLngList = [];
-  final Set<Polyline> _polylines = {};
-  AndroidCommunication androidCommunication = AndroidCommunication();
-
-  GoogleMapController googleMapController;
-
-  LatLng _center = const LatLng(45.521563, -122.677433);
-
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
   @override
   Widget _authorityWidget() {
     return Container(
@@ -68,7 +43,7 @@ class _HomeState extends State<Home> {
 
   Widget _title() {
     return Container(
-        // color: grey2.withOpacity(0.5),
+       // color: grey2.withOpacity(0.5),
         margin: AppTheme.padding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -263,135 +238,6 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
-  }
-
-  void _onMapCreated(GoogleMapController googleMapController) {
-    this.googleMapController = googleMapController;
-  }
-
-  void _invokeServiceInAndroid() {
-    androidCommunication.invokeServiceInAndroid().then((onValue) {
-      setState(() {
-        isTrackingEnabled = true;
-      });
-    });
-  }
-
-  void _stopServiceInAndroid() {
-    androidCommunication.stopServiceInAndroid().then((onValue) {
-      setState(() {
-        isTrackingEnabled = false;
-      });
-    });
-  }
-
-  Future _isPetTrackingEnabled() async {
-    if (Platform.isAndroid) {
-      bool result = await methodChannel.invokeMethod("isPetTrackingEnabled");
-      setState(() {
-        isTrackingEnabled = result;
-      });
-      debugPrint("Pet Tracking Status - $isTrackingEnabled");
-    }
-  }
-
-  Future _isServiceBound() async {
-    if (Platform.isAndroid) {
-      debugPrint("ServiceBound Called from init");
-      bool result = await methodChannel.invokeMethod("serviceBound");
-      debugPrint("Result from ServiceBound call - $result");
-      setState(() {
-        isServiceBounded = result;
-        if (isServiceBounded) {
-          _isPetTrackingEnabled();
-        }
-      });
-      debugPrint("Pet Tracking Status - $isTrackingEnabled");
-    }
-  }
-
-  Future<dynamic> _androidMethodCallHandler(MethodCall call) async {
-    switch (call.method) {
-      case AndroidCall.PATH_LOCATION:
-        var pathLocation = jsonDecode(call.arguments);
-        LatLng latLng = LatLngWrapper.fromAndroidJson(pathLocation);
-        latLngList.add(latLng);
-        if (latLngList.isNotEmpty) {
-          setState(() {
-            if (latLngList.length > 2) {
-              var bounds = LatLngBounds(
-                  southwest: latLngList.first, northeast: latLngList.last);
-              var cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 25.0);
-              googleMapController.animateCamera(cameraUpdate);
-            }
-            _polylines.add(Polyline(
-              polylineId: PolylineId(latLngList.first.toString()),
-              visible: true,
-              points: latLngList,
-              color: Colors.green,
-              width: 2,
-            ));
-            _center = latLngList.last;
-          });
-        }
-        debugPrint("Wrapper here --> $latLng");
-
-        print("Called SendLocationToServer from native Android code.");
-        //SocketHandler.SendLocationToServer(latLng.latitude, latLng.longitude);
-        break;
-      case AndroidCall.PARSE_DATA:
-        var dataPayload = jsonDecode(call.arguments);
-        print(dataPayload);
-    }
-  }
-
-  void _setAndroidMethodCallHandler() {
-    methodChannel.setMethodCallHandler(_androidMethodCallHandler);
-  }
-
-  @override
-  void initState() {
-
-    _firebaseMessaging.autoInitEnabled();
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
-      },
-      onBackgroundMessage: myBackgroundMessageHandler,
-      onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
-      },
-    );
-
-    super.initState();
-
-    SocketHandler.Disconnect();
-
-    _setAndroidMethodCallHandler();
-
-    _invokeServiceInAndroid();
-
-    _firebaseMessaging.getToken().then((token) {
-      print("Firebase token: " + token);
-    });
-
-  }
-
-  static Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
-//    if (message.containsKey('data')) {
-//      print("I got some data");
-//      final dynamic data = message['data'];
-//    }
-//
-//    if (message.containsKey('notification')) {
-//      print("I got a notification");
-//      final dynamic notification = message['notification'];
-//    }
-
-    print("Should do some other work here");
   }
 
   Widget build(BuildContext context) {

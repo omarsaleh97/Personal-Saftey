@@ -7,5 +7,4 @@ object DartCall {
     const val SERVICE_BOUND = "serviceBound"
     const val PATH_LOCATION = "pathLocationPetTrackingService"
     const val SEND_LOCATION_TO_SERVER = "SendLocationToServer"
-    const val PARSE_DATA = "ParseData"
 }

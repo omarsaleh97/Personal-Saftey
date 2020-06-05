@@ -170,24 +170,28 @@ class _ProfilePageState extends State<ProfilePage> {
 //                                        },
 //                                      ),
                                       Center(
-                                        child: emailForNurse == null
-                                            ? Center(
-                                                child: CustomLoadingIndicator(
-                                                  customColor: primaryColor,
+                                        child: Container(
+                                          width: 200,
+                                          height: 200,
+                                          child: QrImage(
+                                            foregroundColor:
+                                                primaryColor.withOpacity(0.8),
+                                            data: emailForNurse,
+                                            version: 3,
+                                            size: 400,
+                                            gapless: false,
+                                            errorStateBuilder: (cxt, err) {
+                                              return Container(
+                                                child: Center(
+                                                  child: Text(
+                                                    "Uh oh! Something went wrong...",
+                                                    textAlign: TextAlign.center,
+                                                  ),
                                                 ),
-                                              )
-                                            : Container(
-                                                width: 200,
-                                                height: 200,
-                                                child: QrImage(
-                                                  foregroundColor: primaryColor
-                                                      .withOpacity(0.8),
-                                                  data: emailForNurse,
-                                                  version: 3,
-                                                  size: 1000,
-                                                  gapless: false,
-                                                ),
-                                              ),
+                                              );
+                                            },
+                                          ),
+                                        ),
                                       ),
                                       SizedBox(
                                         height: 30,

@@ -52,6 +52,17 @@ class _MapScreenState extends State<MapScreen> {
 
   }
 
+  @override
+  void dispose() {
+    
+    print("Disposing event page");
+
+    SocketHandler.Disconnect();
+
+    super.dispose();
+
+  }
+
 
   void _selectLocation(LatLng position) {
     setState(() {

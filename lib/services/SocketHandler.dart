@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
+import 'package:personal_safety/screens/map_screen.dart';
 import 'package:personal_safety/screens/search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:signalr_client/signalr_client.dart';
@@ -50,8 +51,9 @@ class SocketHandler {
   static void GetVolunteerLocation(List<Object> args)
   {
 
+    //GlobalVar.Set("location_" + args[0].toString(), new LatLng(double.parse( args[1].toString() ), double.parse(args[2].toString())));
 
-    GlobalVar.Set("location_" + args[0].toString(), new LatLng(double.parse( args[1].toString() ), double.parse(args[2].toString())));
+    MapScreen.SetUserPin(args[0].toString(), new LatLng(double.parse( args[1].toString() ), double.parse(args[2].toString())));
 
   }
 

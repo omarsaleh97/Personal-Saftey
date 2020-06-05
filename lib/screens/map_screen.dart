@@ -24,6 +24,13 @@ class MapScreen extends StatefulWidget {
   _MapScreenState createState() => _MapScreenState();
 
 
+  static void SetUserPin(String userEmail, LatLng position)
+  {
+
+    //TODO: Set a pin on map for that userEmail, use LatLng position
+
+  }
+
 }
 
 class _MapScreenState extends State<MapScreen> {
@@ -45,12 +52,6 @@ class _MapScreenState extends State<MapScreen> {
 
   }
 
-  static void SetUserPin(String userEmail, LatLng position)
-  {
-
-    //TODO: Set a pin on map for that userEmail, use LatLng position
-
-  }
 
   void _selectLocation(LatLng position) {
     setState(() {

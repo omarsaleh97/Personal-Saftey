@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/componants/authority_card.dart';
 import 'package:personal_safety/componants/authority_data.dart';
 import 'package:personal_safety/componants/color.dart';
@@ -39,6 +41,8 @@ class _HomeState extends State<Home> {
   GoogleMapController googleMapController;
 
   LatLng _center = const LatLng(45.521563, -122.677433);
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   Widget _authorityWidget() {
@@ -347,6 +351,21 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+
+    _firebaseMessaging.autoInitEnabled();
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+      },
+      onBackgroundMessage: myBackgroundMessageHandler,
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+      },
+    );
+
     super.initState();
 
     SocketHandler.Disconnect();
@@ -354,6 +373,25 @@ class _HomeState extends State<Home> {
     _setAndroidMethodCallHandler();
 
     _invokeServiceInAndroid();
+
+    _firebaseMessaging.getToken().then((token) {
+      print("Firebase token: " + token);
+    });
+
+  }
+
+  static Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
+//    if (message.containsKey('data')) {
+//      print("I got some data");
+//      final dynamic data = message['data'];
+//    }
+//
+//    if (message.containsKey('notification')) {
+//      print("I got a notification");
+//      final dynamic notification = message['notification'];
+//    }
+
+    print("Should do some other work here");
   }
 
   Widget build(BuildContext context) {

@@ -5,6 +5,7 @@ import 'package:personal_safety/services/change_password_service.dart';
 import 'package:personal_safety/services/event_categories_service.dart';
 import 'package:personal_safety/services/getEvent_service.dart';
 import 'package:personal_safety/services/get_profile_service.dart';
+import 'package:personal_safety/services/rate_rescuer_service.dart';
 import 'package:personal_safety/services/refresh_token_service.dart';
 import 'package:personal_safety/services/service_confirm.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
@@ -60,10 +61,9 @@ Future<void> main() async {
         debugShowCheckedModeBanner: false,
         home: goHomeOrGoLogout ? Logout() : MainPage()
 //      home: SignUpSuccessful(),
-      //home: News(),
-    ),
+        //home: News(),
+        ),
   ));
-
 }
 
 void refreshTokenMethod() async {
@@ -117,5 +117,5 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => ForgetPasswordService());
   GetIt.instance.registerLazySingleton(() => GetEventsService());
   GetIt.instance.registerLazySingleton(() => GetProfileService());
-
+  GetIt.instance.registerLazySingleton(() => RateRescuerService());
 }

@@ -316,6 +316,8 @@ class _HomeState extends State<Home>{
 
     super.initState();
 
+    SocketHandler.Disconnect();
+
     _setAndroidMethodCallHandler();
 
     _invokeServiceInAndroid();

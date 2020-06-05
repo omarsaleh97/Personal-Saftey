@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/models/newEvent.dart';
+import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 
 class MapScreen extends StatefulWidget {
@@ -21,10 +22,35 @@ class MapScreen extends StatefulWidget {
 
   @override
   _MapScreenState createState() => _MapScreenState();
+
+
 }
 
 class _MapScreenState extends State<MapScreen> {
   LatLng _pickedLocation;
+
+  @override
+  void initState() async {
+    super.initState();
+
+    await SocketHandler.ConnectToClientChannel();
+
+    Timer timer;
+
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+
+      SocketHandler.SendLocationToServer();
+
+    });
+
+  }
+
+  static void SetUserPin(String userEmail, LatLng position)
+  {
+
+    //TODO: Set a pin on map for that userEmail, use LatLng position
+
+  }
 
   void _selectLocation(LatLng position) {
     setState(() {

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:personal_safety/models/api_response.dart';
+import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/screens/search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +28,7 @@ class SocketHandler {
       _hubConnection.onclose((error) => connectionIsOpen = false);
       _hubConnection.on("ConnectionInfoChannel", SaveConnectionID_Client);
       _hubConnection.on("ClientChannel", UpdateUserSOSState);
+      _hubConnection.on("ClientEventsChannel", GetVolunteerLocation);
     }
 
     if (_hubConnection.state != HubConnectionState.Connected) {
@@ -42,6 +45,14 @@ class SocketHandler {
       debugPrint("Terminating connection..");
       _hubConnection.stop();
     }
+  }
+
+  static void GetVolunteerLocation(List<Object> args)
+  {
+
+
+    GlobalVar.Set("location_" + args[0].toString(), new LatLng(double.parse( args[1].toString() ), double.parse(args[2].toString())));
+
   }
 
   //#region ClientSOSRequest
@@ -64,6 +75,23 @@ class SocketHandler {
     StaticVariables.prefs.setString("activerequeststate", newState);
 
     StartPendingTimeout(newState);
+  }
+
+  static void SendLocationToServer() async
+  {
+
+    try {
+      Position position = await Geolocator()
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+      _hubConnection.invoke("LocationChannel",
+          args: <Object>[position.latitude, position.longitude]);
+    }
+    catch(e)
+    {
+      print("Couldn't send location to server. " + e.toString());
+    }
+
   }
 
   static void StartPendingTimeout(String state) {

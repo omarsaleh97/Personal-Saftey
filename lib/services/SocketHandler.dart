@@ -79,20 +79,34 @@ class SocketHandler {
     StartPendingTimeout(newState);
   }
 
-  static void SendLocationToServer() async
+  static void SendLocationToServer(String userEmail, int eventId) async
   {
 
     try {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-      _hubConnection.invoke("LocationChannel",
-          args: <Object>[position.latitude, position.longitude]);
+      _hubConnection.invoke("SendToEventRoom", args: <Object>[userEmail, eventId, latitude, longitude]);
+
     }
     catch(e)
     {
       print("Couldn't send location to server. " + e.toString());
     }
+
+  }
+
+  static void JoinEventRoom(String userEmail, int eventId)
+  {
+
+    _hubConnection.invoke("JoinEventRoom", args: <Object>[userEmail, eventId]);
+
+  }
+
+  static void LeaveEventRoom(String userEmail, int eventId)
+  {
+
+    _hubConnection.invoke("LeaveEventRoom", args: <Object>[userEmail, eventId]);
 
   }
 

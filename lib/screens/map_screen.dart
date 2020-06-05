@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/models/newEvent.dart';
+import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 
@@ -42,11 +43,13 @@ class _MapScreenState extends State<MapScreen> {
 
     await SocketHandler.ConnectToClientChannel();
 
+    SocketHandler.JoinEventRoom("test@test.com", GlobalVar.Get("eventid", 0)); //TODO: Actually retrieve userEmail
+
     Timer timer;
 
     timer = Timer.periodic(const Duration(seconds: 5), (timer) {
 
-      SocketHandler.SendLocationToServer();
+      SocketHandler.SendLocationToServer("test@test.com", GlobalVar.Get("eventid", 0)); //TODO: Actually retrieve userEmail
 
     });
 
@@ -54,8 +57,10 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void dispose() {
-    
+
     print("Disposing event page");
+
+    SocketHandler.LeaveEventRoom("test@test.com", GlobalVar.Get("eventid", 0)); //TODO: Actually retrieve userEmail
 
     SocketHandler.Disconnect();
 

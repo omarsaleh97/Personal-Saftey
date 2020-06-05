@@ -61,8 +61,6 @@ class _MainPageState extends State<MainPage> {
         });
   }
 
-
-
   Widget _title() {
     return Container(
         margin: AppTheme.padding,
@@ -79,7 +77,7 @@ class _MainPageState extends State<MainPage> {
                           ? 'Nearest Facilities'
                           : isActiveRequestPageSelected
                               ? 'Active Requests'
-                              : isNewsPageSelected ? 'News' : "",
+                              : "",
                   fontSize: 27,
                   fontWeight: FontWeight.w400,
                 ),
@@ -187,26 +185,6 @@ class _MainPageState extends State<MainPage> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-        appBar: AppBar(
-          actions: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(13)),
-              child: IconButton(
-                icon: Icon(Icons.person),
-                color: primaryColor,
-                onPressed: () {
-
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()));
-                },
-              ),
-            )
-          ],
-          backgroundColor: grey,
-          bottomOpacity: 0.0,
-          elevation: 0.0,
-        ),
-        drawer: AppDrawer(),
         body: SafeArea(
           child: Stack(
             fit: StackFit.expand,
@@ -214,36 +192,14 @@ class _MainPageState extends State<MainPage> {
               SingleChildScrollView(
                 child: Container(
                   height: AppTheme.fullHeight(context) - 50,
-//                  decoration: BoxDecoration(
-//                      gradient: LinearGradient(
-//                    colors: [
-//                      grey,
-//                      grey2,
-//                    ],
-//                    begin: Alignment.topCenter,
-//                    end: Alignment.bottomCenter,
-//                  )),
-                  //  color: grey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      // Container(color: grey, child: _appBar()),
-                      Container(color: grey, child: _title()),
                       Expanded(
-//                          child: AnimatedSwitcher(
-//                              duration: Duration(milliseconds: 300),
-//                              switchInCurve: Curves.easeInToLinear,
-//                              switchOutCurve: Curves.easeOutBack,
-//                              child: isHomePageSelected
-//                                  ? Home()
-//                                  : Align(
-//                                      alignment: Alignment.topCenter,
-//                                      //  child: ActiveRequest(),
-//                                    ))
                           child: isHomePageSelected
                               ? Home()
                               : isNewsPageSelected
-                                  ? News()
+                                  ? Events()
                                   : isNearestPageSelected
                                       ? NearestFacilities()
                                       : isActiveRequestPageSelected

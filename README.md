@@ -1,6 +1,6 @@
 # personal_safety
 
-A new Flutter application.
+Rescuepart :https://github.com/omarelleboudy/PersonalSafety-Rescue
 
 ## Getting Started
 

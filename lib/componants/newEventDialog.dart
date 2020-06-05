@@ -14,8 +14,11 @@ import 'package:personal_safety/models/newEvent.dart';
 import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/providers/event.dart';
+<<<<<<< HEAD
 import 'package:personal_safety/screens/events.dart';
 import 'package:personal_safety/screens/map_screen.dart';
+=======
+>>>>>>> e8d1f0babf53a28a6cddeb1a1f37d5cbc4dd7c16
 import 'package:personal_safety/services/event_categories_service.dart';
 import 'package:personal_safety/services/image_input.dart';
 import 'package:personal_safety/services/location_input.dart';

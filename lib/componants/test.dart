@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_safety/componants/newEventDialog.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/screens/tabs/NearbyEvent.dart';
 import 'package:personal_safety/screens/tabs/PublicEvent.dart';
 import 'package:personal_safety/screens/tabs/all_events.dart';
@@ -10,48 +11,23 @@ class Test extends StatefulWidget {
 }
 
 class _TestState extends State<Test> with SingleTickerProviderStateMixin {
-  TabController controller;
+  String token;
   @override
   void initState() {
     super.initState();
-    controller = TabController(length: 3, vsync: this);
+    setState(() {
+      token = StaticVariables.prefs.getString("fcmToken");
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Todos'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddEventScreen(),
-                ),
-              );
-            },
-          ),
-        ],
-        bottom: TabBar(
-          controller: controller,
-          tabs: <Widget>[
-            Tab(text: 'All'),
-            Tab(text: 'NearBy Event'),
-            Tab(text: 'Public Event'),
-          ],
-        ),
+        body: Center(
+      child: SelectableText(
+        token,
+        style: TextStyle(fontSize: 30),
       ),
-      body: TabBarView(
-        controller: controller,
-        children: <Widget>[
-//          AllEventsTab(),
-//          NearbyEvent(),
-//          PublicEvents(),
-        ],
-      ),
-    );
+    ));
   }
 }

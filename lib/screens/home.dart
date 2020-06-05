@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_safety/componants/authority_card.dart';
@@ -6,6 +7,7 @@ import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/theme.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:personal_safety/componants/title_text.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/profilePage.dart';
 import 'package:personal_safety/widgets/drawer.dart';
@@ -19,6 +21,52 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  @override
+  void initState() {
+    _fcm.autoInitEnabled();
+    _fcm.getToken().then((token) {
+      print(token);
+      StaticVariables.prefs.setString("fcmToken", token);
+    });
+
+    _fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        var data = message['data'];
+        print("onMessage: $data");
+        final snackbar = SnackBar(
+          content: Text(message['notification']['title']),
+          action: SnackBarAction(
+            label: 'Go',
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Events())),
+          ),
+        );
+
+        Scaffold.of(context).showSnackBar(snackbar);
+//        showDialog(
+//          context: context,
+//          builder: (context) => AlertDialog(
+//            content: ListTile(
+//              title: Text(message['notification']['title']),
+//              subtitle: Text(message['notification']['body']),
+//            ),
+//            actions: <Widget>[
+//              FlatButton(
+//                color: Colors.amber,
+//                child: Text('Ok'),
+//                onPressed: () => Navigator.of(context).pop(),
+//              ),
+//            ],
+//          ),
+//        );
+      },
+      onLaunch: (Map<String, dynamic> message) async {},
+      onResume: (Map<String, dynamic> message) async {},
+    );
+    super.initState();
+  }
+
   @override
   Widget _authorityWidget() {
     return Container(
@@ -43,7 +91,7 @@ class _HomeState extends State<Home> {
 
   Widget _title() {
     return Container(
-       // color: grey2.withOpacity(0.5),
+        // color: grey2.withOpacity(0.5),
         margin: AppTheme.padding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,

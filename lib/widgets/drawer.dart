@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_safety/Auth/newPassword.dart';
 import 'package:personal_safety/componants/color.dart';
+import 'package:personal_safety/componants/test.dart';
 import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/tabs/NearbyEvent.dart';
 import 'package:personal_safety/screens/tabs/PublicEvent.dart';
@@ -29,10 +30,10 @@ class AppDrawer extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(Icons.event_available),
-            title: Text('Event'),
+            title: Text('Test Notifications'),
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Events()));
+                  context, MaterialPageRoute(builder: (context) => Test()));
             },
           ),
           Divider(),

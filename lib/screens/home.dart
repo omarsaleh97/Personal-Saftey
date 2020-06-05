@@ -335,6 +335,9 @@ class _HomeState extends State<Home> {
         print("Called SendLocationToServer from native Android code.");
         //SocketHandler.SendLocationToServer(latLng.latitude, latLng.longitude);
         break;
+      case AndroidCall.PARSE_DATA:
+        var dataPayload = jsonDecode(call.arguments);
+        print(dataPayload);
     }
   }
 

@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:personal_safety/componants/authority_card.dart';
 import 'package:personal_safety/componants/authority_data.dart';
 import 'package:personal_safety/componants/color.dart';
@@ -10,6 +15,11 @@ import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/profilePage.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 
+import '../communication/android_communication.dart';
+import '../services/SocketHandler.dart';
+import '../utils/AndroidCall.dart';
+import '../utils/LatLngWrapper.dart';
+
 class Home extends StatefulWidget {
   Home({Key key, this.title}) : super(key: key);
 
@@ -19,6 +29,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  static const methodChannel = const MethodChannel(METHOD_CHANNEL);
+  bool isTrackingEnabled = false;
+  bool isServiceBounded = false;
+  List<LatLng> latLngList = [];
+  final Set<Polyline> _polylines = {};
+  AndroidCommunication androidCommunication = AndroidCommunication();
+
+  GoogleMapController googleMapController;
+
+  LatLng _center = const LatLng(45.521563, -122.677433);
+
   @override
   Widget _authorityWidget() {
     return Container(
@@ -43,7 +64,7 @@ class _HomeState extends State<Home> {
 
   Widget _title() {
     return Container(
-       // color: grey2.withOpacity(0.5),
+        // color: grey2.withOpacity(0.5),
         margin: AppTheme.padding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -240,37 +261,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: grey2.withOpacity(0.5),
-      drawer: AppDrawer(),
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()));
-            },
-            color: Colors.grey,
-          ),
-<<<<<<< HEAD
-        ));
-  }
-
-  @override
-  void initState() {
-
-    super.initState();
-
-    SocketHandler.Disconnect();
-
-    _setAndroidMethodCallHandler();
-
-    _invokeServiceInAndroid();
-
-  }
-
   void _onMapCreated(GoogleMapController googleMapController) {
     this.googleMapController = googleMapController;
   }
@@ -345,7 +335,6 @@ class _HomeState extends State<Home> {
         print("Called SendLocationToServer from native Android code.");
         //SocketHandler.SendLocationToServer(latLng.latitude, latLng.longitude);
         break;
-
     }
   }
 
@@ -353,32 +342,31 @@ class _HomeState extends State<Home> {
     methodChannel.setMethodCallHandler(_androidMethodCallHandler);
   }
 
-  //-------------------------------------------------------------------------------
-
-  int circle1Radius = 110, circle2Radius = 130, circle3Radius = 150;
-
-  AnimationController _circle1FadeController, _circle1SizeController;
-  Animation<double> _radiusAnimation, _fadeAnimation;
-
-  String clientName = "Walter White", clientEmail = "Heisenberg@ABQ.com",
-      clientPhoneNumber = "01000000991", clientBloodType = "A+",
-      clientMedicalHistory = "Lung Cancer",
-      clientHomeAddress = "308 Negra Arroyo Lane, Albuquerque,"
-          " New Mexico, 87104";
-
-  int clientAge = 51;
-
-  Timer periodicalTimer;
-
   @override
-  void dispose() {
-    // Never called
-    print("Disposing search page");
-    _circle1FadeController.dispose();
-    _circle1SizeController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
 
-=======
+    SocketHandler.Disconnect();
+
+    _setAndroidMethodCallHandler();
+
+    _invokeServiceInAndroid();
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: grey2.withOpacity(0.5),
+      drawer: AppDrawer(),
+      appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()));
+            },
+            color: Colors.grey,
+          ),
         ],
         iconTheme: IconThemeData.lerp(
             IconThemeData(color: Colors.grey), IconThemeData(size: 25), .5),
@@ -406,6 +394,5 @@ class _HomeState extends State<Home> {
         ),
       )),
     );
->>>>>>> e8d1f0babf53a28a6cddeb1a1f37d5cbc4dd7c16
   }
 }

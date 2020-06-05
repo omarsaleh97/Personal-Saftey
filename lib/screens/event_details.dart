@@ -9,6 +9,7 @@ import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/models/event_model.dart';
 import 'package:personal_safety/models/newEvent.dart';
+import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/providers/event.dart';
 import 'package:personal_safety/screens/map_screen.dart';
 import 'package:personal_safety/widgets/drawer.dart';
@@ -48,6 +49,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   @override
   void initState() {
     getLocationAsText(widget.data.latitude, widget.data.longitude);
+    GlobalVar.Set("eventid", widget.data.id);
+    print(GlobalVar.Get("eventid", 0).toString());
     super.initState();
   }
 

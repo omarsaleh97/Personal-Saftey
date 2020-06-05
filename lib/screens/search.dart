@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/screens/home.dart';
+import 'package:personal_safety/screens/main_page.dart';
 import 'dart:async';
 
 import 'package:personal_safety/services/SocketHandler.dart';
@@ -128,7 +129,7 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
                   Container(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        "Give feedback to the rescuer",
+                        "Give feedback On the Rescuer",
                         style: TextStyle(
                             fontSize: 14,
                             color: Colors.white,
@@ -147,11 +148,16 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
                         ),
                         onPressed: () async {
                           Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainPage()));
                         },
                         child: Text(
-                          "Give feedback",
+                          "Give Feedback",
                           style:
-                          TextStyle(color: Color(0xffFF2B56), fontSize: 18),
+                              TextStyle(color: Color(0xffFF2B56), fontSize: 18),
                         ),
                       ))
                 ],

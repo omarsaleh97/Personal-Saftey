@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -8,17 +7,10 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
-import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/models/event_categories.dart';
 import 'package:personal_safety/models/newEvent.dart';
-import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/providers/event.dart';
-<<<<<<< HEAD
-import 'package:personal_safety/screens/events.dart';
-import 'package:personal_safety/screens/map_screen.dart';
-=======
->>>>>>> e8d1f0babf53a28a6cddeb1a1f37d5cbc4dd7c16
 import 'package:personal_safety/services/event_categories_service.dart';
 import 'package:personal_safety/services/image_input.dart';
 import 'package:personal_safety/services/location_input.dart';
@@ -444,18 +436,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
                                                                       _isLoading =
                                                                           false;
                                                                     });
-
-                                                                    if (!publicStatus)
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    else
-                                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen()));
+                                                                    Navigator.pop(
+                                                                        context);
                                                                   });
-
-                                                                  Map userMap = jsonDecode(response.data.body);
-                                                                  var APIresult = APIResponse.fromJson(userMap);
-                                                                  GlobalVar.Set("eventid", APIresult.result["eventId"]);
-
                                                                 } catch (e) {
                                                                   print(e);
                                                                 }

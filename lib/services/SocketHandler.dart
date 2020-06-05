@@ -42,19 +42,22 @@ class SocketHandler {
   }
 
   static void Disconnect() {
-    if (_hubConnection.state == HubConnectionState.Connected) {
-      debugPrint("Terminating connection..");
-      _hubConnection.stop();
-    }
+    try {
+      if (_hubConnection.state == HubConnectionState.Connected) {
+        debugPrint("Terminating connection..");
+        _hubConnection.stop();
+      }
+    } catch (e) {}
   }
 
-  static void GetVolunteerLocation(List<Object> args)
-  {
-
+  static void GetVolunteerLocation(List<Object> args) {
+    print("printing from Get Volunteer Location" + args[1].toString());
     //GlobalVar.Set("location_" + args[0].toString(), new LatLng(double.parse( args[1].toString() ), double.parse(args[2].toString())));
 
-    MapScreen.SetUserPin(args[0].toString(), new LatLng(double.parse( args[1].toString() ), double.parse(args[2].toString())));
-
+    MapScreen.SetUserPin(
+        args[0].toString(),
+        new LatLng(double.parse(args[1].toString()),
+            double.parse(args[2].toString())));
   }
 
   //#region ClientSOSRequest
@@ -79,35 +82,34 @@ class SocketHandler {
     StartPendingTimeout(newState);
   }
 
-  static void SendLocationToServer(String userEmail, int eventId) async
-  {
-
+  static void SendLocationToServer(String userEmail, int eventId) async {
     try {
+      print(
+          "Sending location to server from Socket Handler, EVENT ID: $eventId, Email: $userEmail");
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-      _hubConnection.invoke("SendToEventRoom", args: <Object>[userEmail, eventId, position.latitude, position.longitude]);
-
-    }
-    catch(e)
-    {
+      _hubConnection.invoke("SendToEventRoom", args: <Object>[
+        userEmail,
+        eventId,
+        position.latitude,
+        position.longitude
+      ]);
+    } catch (e) {
       print("Couldn't send location to server. " + e.toString());
     }
-
   }
 
-  static void JoinEventRoom(String userEmail, int eventId)
-  {
-
+  static void JoinEventRoom(String userEmail, int eventId) {
     _hubConnection.invoke("JoinEventRoom", args: <Object>[userEmail, eventId]);
-
   }
 
-  static void LeaveEventRoom(String userEmail, int eventId)
-  {
-
+  static void LeaveEventRoom(String userEmail, int eventId) {
     _hubConnection.invoke("LeaveEventRoom", args: <Object>[userEmail, eventId]);
+  }
 
+  static void CancelEvent(String userEmail, int eventId) {
+    _hubConnection.invoke("LeaveEventRoom", args: <Object>[userEmail, eventId]);
   }
 
   static void StartPendingTimeout(String state) {

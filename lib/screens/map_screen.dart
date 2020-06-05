@@ -25,50 +25,48 @@ class MapScreen extends StatefulWidget {
   @override
   _MapScreenState createState() => _MapScreenState();
 
-
-  static void SetUserPin(String userEmail, LatLng position)
-  {
-
+  static void SetUserPin(String userEmail, LatLng position) {
     //TODO: Set a pin on map for that userEmail, use LatLng position
-
   }
-
 }
 
 class _MapScreenState extends State<MapScreen> {
   LatLng _pickedLocation;
 
-  @override
-  void initState() async {
-    super.initState();
-
+  void socketHandlerInit() async {
     await SocketHandler.ConnectToClientChannel();
 
-    SocketHandler.JoinEventRoom(StaticVariables.prefs.getString("useremail"), GlobalVar.Get("eventid", 0));
+    SocketHandler.JoinEventRoom(
+        StaticVariables.prefs.getString("emailForQRCode"),
+        GlobalVar.Get("eventid", 0));
 
     Timer timer;
 
     timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-
-      SocketHandler.SendLocationToServer(StaticVariables.prefs.getString("useremail"), GlobalVar.Get("eventid", 0));
-
+      SocketHandler.SendLocationToServer(
+          StaticVariables.prefs.getString("emailForQRCode"),
+          GlobalVar.Get("eventid", 0));
     });
+  }
 
+  @override
+  void initState() {
+    socketHandlerInit();
+    super.initState();
   }
 
   @override
   void dispose() {
-
     print("Disposing event page");
 
-    SocketHandler.LeaveEventRoom(StaticVariables.prefs.getString("useremail"), GlobalVar.Get("eventid", 0));
+    SocketHandler.LeaveEventRoom(
+        StaticVariables.prefs.getString("emailForQRCode"),
+        GlobalVar.Get("eventid", 0));
 
     SocketHandler.Disconnect();
 
     super.dispose();
-
   }
-
 
   void _selectLocation(LatLng position) {
     setState(() {

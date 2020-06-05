@@ -86,7 +86,7 @@ class SocketHandler {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-      _hubConnection.invoke("SendToEventRoom", args: <Object>[userEmail, eventId, latitude, longitude]);
+      _hubConnection.invoke("SendToEventRoom", args: <Object>[userEmail, eventId, position.latitude, position.longitude]);
 
     }
     catch(e)

@@ -7,6 +7,7 @@ import 'package:location/location.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/models/newEvent.dart';
 import 'package:personal_safety/others/GlobalVar.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 
@@ -43,13 +44,13 @@ class _MapScreenState extends State<MapScreen> {
 
     await SocketHandler.ConnectToClientChannel();
 
-    SocketHandler.JoinEventRoom("test@test.com", GlobalVar.Get("eventid", 0)); //TODO: Actually retrieve userEmail
+    SocketHandler.JoinEventRoom(StaticVariables.prefs.getString("useremail"), GlobalVar.Get("eventid", 0));
 
     Timer timer;
 
     timer = Timer.periodic(const Duration(seconds: 5), (timer) {
 
-      SocketHandler.SendLocationToServer("test@test.com", GlobalVar.Get("eventid", 0)); //TODO: Actually retrieve userEmail
+      SocketHandler.SendLocationToServer(StaticVariables.prefs.getString("useremail"), GlobalVar.Get("eventid", 0));
 
     });
 
@@ -60,7 +61,7 @@ class _MapScreenState extends State<MapScreen> {
 
     print("Disposing event page");
 
-    SocketHandler.LeaveEventRoom("test@test.com", GlobalVar.Get("eventid", 0)); //TODO: Actually retrieve userEmail
+    SocketHandler.LeaveEventRoom(StaticVariables.prefs.getString("useremail"), GlobalVar.Get("eventid", 0));
 
     SocketHandler.Disconnect();
 

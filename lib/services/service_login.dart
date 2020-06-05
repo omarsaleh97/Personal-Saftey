@@ -24,6 +24,8 @@ class LoginService {
 
     print("Trying to login to " + finalString);
 
+    StaticVariables.prefs.setString("useremail", item.email);
+
     return http
         .post(finalString, headers: headers, body: json.encode(item.toJson()))
         .then((data) {

@@ -25,14 +25,15 @@ class FirstLoginService {
 
   static bool result = false;
   //static const API = 'https://personalsafety.azurewebsites.net/';
-  static var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer $token'
-  };
+
   // Register
   Future<APIResponse<dynamic>> firstLogin(FirstLoginCredentials item) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     return http
         .put(StaticVariables.API + '/api/Client/Registration/EditProfile',
             headers: headers, body: json.encode(item.toJson()))

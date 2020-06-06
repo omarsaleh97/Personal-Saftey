@@ -12,21 +12,15 @@ class LoginService {
   static var token = '';
   static const headers = {'Content-Type': 'application/json'};
 
-  Future<bool> saveTokenPreference(String token, String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    final value = token;
-    prefs.setString(key, value);
-  }
-
   // Logging In
-  Future<APIResponse<dynamic>> Login(LoginCredentials item) {
+  Future<APIResponse<dynamic>> Login(LoginCredentials item) async {
     String finalString = StaticVariables.API + '/api/Account/Login';
 
     print("Trying to login to " + finalString);
 
     return http
         .post(finalString, headers: headers, body: json.encode(item.toJson()))
-        .then((data) {
+        .then((data) async {
       if (data.statusCode == 200) {
         Map userMap = jsonDecode(data.body);
 //        APIResponse<LoginResponse> test =
@@ -38,9 +32,10 @@ class LoginService {
             userMap['result']['authenticationDetails']['refreshToken'];
         var currentDate = DateTime.now();
 
-        saveTokenPreference(retrievedToken, "token");
-        saveTokenPreference(refreshToken, "refreshToken");
-        saveTokenPreference(currentDate.toString(), "tokenDate");
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString("token", retrievedToken);
+        prefs.setString("tokenDate", currentDate.toString());
+        prefs.setString("refreshToken", refreshToken);
 
         print('From Login Service:  ${APIresult.status}');
 

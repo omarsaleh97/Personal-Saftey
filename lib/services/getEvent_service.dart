@@ -20,15 +20,16 @@ class GetEventsService {
   }
 
   static bool result = false;
-  static var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer $token'
-  };
+
   // Register
   Future<APIResponse<List<EventGetterModel>>> getEvents() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     categoryID = prefs.getInt("categoryID");
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     if (categoryID == null) categoryID = 0;
     return http
         .get(

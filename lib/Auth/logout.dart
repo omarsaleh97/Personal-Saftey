@@ -7,6 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as JSON;
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Logout extends StatefulWidget {
   @override
   _LogoutState createState() => _LogoutState();
@@ -48,6 +50,10 @@ class _LogoutState extends State<Logout> {
 //      _isloggedin = false;
 //    });
 //  }
+  void clearSharedPerfs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
 
   @override
   void initState() {
@@ -76,6 +82,7 @@ class _LogoutState extends State<Logout> {
               FlatButton(
                 child: Text('YES', style: TextStyle(color: grey)),
                 onPressed: () {
+                  SystemNavigator.pop();
                   SystemNavigator.pop();
                 },
               ),

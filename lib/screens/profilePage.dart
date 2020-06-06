@@ -143,9 +143,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         //_save("0");
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
-                        prefs.setString('token', null);
+                        await prefs.clear();
+                        await prefs.setBool("firstlogin", false);
                         print("DELETED TOKEN FROM LOGOUT: " +
                             prefs.getString("token").toString());
+                        Navigator.pop(context);
+                        Navigator.pop(context);
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => Logout()));
                       },

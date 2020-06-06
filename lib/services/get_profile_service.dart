@@ -12,14 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class GetProfileService {
   static String token;
-  Future<String> getToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token');
-    print("TOKEN");
-    print(token.toString());
-    print("TOKEN");
-    return token;
-  }
 
   static bool result = false;
   static var headers = {
@@ -37,6 +29,7 @@ class GetProfileService {
     )
         .then((data) {
       if (data.statusCode == 200) {
+        print("FROM GET PROFILE SERVICE: " + token);
         print("TEST SUCESSFUL!!!!!!! ");
         Map userMap = jsonDecode(data.body);
         print(userMap["result"]["currentAddress"]);
@@ -46,8 +39,8 @@ class GetProfileService {
         emergencyContactsList = rest
             .map<EmergencyContacts>((json) => EmergencyContacts.fromJson(json))
             .toList();
-
-        FirstLoginCredentials profileList = FirstLoginCredentials(
+        FirstLoginCredentials profileList = new FirstLoginCredentials();
+        profileList = FirstLoginCredentials(
           fullName: userMap["result"]["fullName"],
           phoneNumber: userMap["result"]["phoneNumber"],
           currentAddress: userMap["result"]["currentAddress"],
@@ -56,7 +49,7 @@ class GetProfileService {
           birthday: userMap["result"]["birthday"],
           emergencyContacts: emergencyContactsList,
         );
-
+        print("DEBUG PRINT FROM GET PROFILE SERVICE:  ${profileList.fullName}");
         print(
             "DEBUG PRINT FROM GET PROFILE SERVICE:  ${profileList.emergencyContacts[0].phoneNumber}");
 

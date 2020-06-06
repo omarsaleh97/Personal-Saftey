@@ -24,7 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
   FirstLoginCredentials profileGetter;
   GetProfileService get profileService => GetIt.instance<GetProfileService>();
   String emailForNurse;
-  Future getProfile() async {
+  Future<void> getProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("FROM EDIT PROFILE: " + prefs.getString('token'));
     final result = await profileService.getProfile();
     setState(() {
       profileGetter = result.result;
@@ -141,7 +143,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         //_save("0");
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
-                        prefs.remove('token');
+                        prefs.setString('token', null);
+                        print("DELETED TOKEN FROM LOGOUT: " +
+                            prefs.getString("token").toString());
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => Logout()));
                       },

@@ -16,6 +16,8 @@ class SocketHandler {
   static bool connectionIsOpen = false;
   static HubConnection _hubConnection;
 
+  static bool updatingLocation = false;
+
   static Future<void> ConnectToClientChannel() async {
     print("Trying to connect to client channel..");
 
@@ -41,6 +43,28 @@ class SocketHandler {
     }
   }
 
+  static void StartSendingLocation()
+  {
+
+    if (updatingLocation)
+      return;
+
+    updatingLocation = true;
+
+    Timer timer;
+
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+
+      UpdateLastKnownLocation();
+
+      //timer.cancel();
+
+    });
+
+  }
+
+
+
   static void Disconnect() {
     try {
       if (_hubConnection.state == HubConnectionState.Connected) {
@@ -53,6 +77,8 @@ class SocketHandler {
   static void GetVolunteerLocation(List<Object> args) {
     print("printing from Get Volunteer Location" + args[1].toString());
     //GlobalVar.Set("location_" + args[0].toString(), new LatLng(double.parse( args[1].toString() ), double.parse(args[2].toString())));
+
+
 
     MapScreen.SetUserPin(
         args[0].toString(),
@@ -108,10 +134,6 @@ class SocketHandler {
     _hubConnection.invoke("LeaveEventRoom", args: <Object>[userEmail, eventId]);
   }
 
-  static void CancelEvent(String userEmail, int eventId) {
-    _hubConnection.invoke("LeaveEventRoom", args: <Object>[userEmail, eventId]);
-  }
-
   static void StartPendingTimeout(String state) {
     int timeoutSeconds = 1000;
 
@@ -148,6 +170,33 @@ class SocketHandler {
         timer.cancel();
       }
     });
+  }
+
+  static void UpdateLastKnownLocation() async {
+    String jsonRequest = await GetLastKnownLocationJson();
+
+    print("Calling API UpdateLastKnownLocation with request " + jsonRequest + " ..");
+
+    token = StaticVariables.prefs.getString('token');
+    return http
+        .post(StaticVariables.API + '/api/Client/Events/UpdateLastKnownLocation',
+        headers: headers, body: jsonRequest)
+        .then((data) {
+      if (data.statusCode == 200) {
+        Map userMap = jsonDecode(data.body);
+        var APIresult = APIResponse.fromJson(userMap);
+        print(APIresult.toString());
+        print("Updated last location successfully");
+        print(data.statusCode);
+        print(APIresult.result);
+      } else {
+        print("Updated last location failure");
+        print(headers);
+        print(data.statusCode);
+      }
+
+    });
+
   }
 
   static Future<APIResponse<dynamic>> SendSOSRequest(int requestType) async {
@@ -240,6 +289,18 @@ class SocketHandler {
     toReturn += ", \"latitude\": " + position.latitude.toString();
 
     toReturn += ", \"connectionId\": \"" + connID + "\" }";
+
+    return toReturn;
+  }
+
+  static Future<String> GetLastKnownLocationJson() async {
+
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    String toReturn = "{ \"latitude\": " + position.latitude.toString();
+
+    toReturn += ", \"longitude\": " + position.longitude.toString() + "}";
 
     return toReturn;
   }

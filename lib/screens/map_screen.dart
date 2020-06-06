@@ -22,15 +22,23 @@ class MapScreen extends StatefulWidget {
     this.isSelecting = false,
   });
 
+
+  static final _MapScreenState mss = _MapScreenState();
+
   @override
-  _MapScreenState createState() => _MapScreenState();
+  _MapScreenState createState() => mss;
+
 
   static void SetUserPin(String userEmail, LatLng position) {
-    //TODO: Set a pin on map for that userEmail, use LatLng position
+
+    mss.UpdatePin(userEmail, position);
+
   }
+
 }
 
 class _MapScreenState extends State<MapScreen> {
+
   LatLng _pickedLocation;
 
   void socketHandlerInit() async {
@@ -49,6 +57,8 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  static Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+
   @override
   void initState() {
     socketHandlerInit();
@@ -66,6 +76,45 @@ class _MapScreenState extends State<MapScreen> {
     SocketHandler.Disconnect();
 
     super.dispose();
+  }
+
+  void UpdatePin(String userEmail, LatLng position) {
+
+    MarkerId markerId = MarkerId(userEmail);
+
+    final Marker marker = Marker
+      (
+      markerId: MarkerId(userEmail),
+      position: position,
+      icon: BitmapDescriptor.defaultMarkerWithHue(0.5),
+      onTap: () => {print("I was tapped.")},
+    );
+
+    print("Trying to add a marker with ID " + userEmail);
+
+    setState(() {
+      bool exists = false;
+      for (int i=0; i<markers.length; i++) {
+        if (markers.keys
+            .elementAt(i)
+            .value == userEmail) {
+          exists = true;
+          continue;
+        }
+      }
+        if (!exists) {
+          print("Adding a new pin for a new user");
+          print("count before: " + markers.length.toString());
+          markers.putIfAbsent(markerId, () => marker);
+          print("count after: " + markers.length.toString());
+        }
+        else {
+          print("Updating pin for an existing user");
+          markers[markerId] = marker;
+        }
+      }
+    );
+
   }
 
   void _selectLocation(LatLng position) {
@@ -136,18 +185,7 @@ class _MapScreenState extends State<MapScreen> {
           _controller.complete(controller);
         },
         onTap: widget.isSelecting ? _selectLocation : null,
-        markers: (_pickedLocation == null && widget.isSelecting)
-            ? null
-            : {
-                Marker(
-                  markerId: MarkerId('m1'),
-                  position: _pickedLocation ??
-                      LatLng(
-                        widget.latitude,
-                        widget.longitude,
-                      ),
-                ),
-              },
+        markers: Set<Marker>.of(markers.values),
         trafficEnabled: true,
         scrollGesturesEnabled: true,
         myLocationEnabled: true,

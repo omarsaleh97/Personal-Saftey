@@ -78,7 +78,7 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
-  void UpdatePin(String userEmail, LatLng position) {
+  void UpdatePin(String userEmail, LatLng position) async {
 
     MarkerId markerId = MarkerId(userEmail);
 
@@ -86,22 +86,26 @@ class _MapScreenState extends State<MapScreen> {
       (
       markerId: MarkerId(userEmail),
       position: position,
-      icon: BitmapDescriptor.defaultMarkerWithHue(0.5),
-      onTap: () => {print("I was tapped.")},
+      icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), 'assets/images/car.png'),
     );
 
     print("Trying to add a marker with ID " + userEmail);
 
     setState(() {
       bool exists = false;
-      for (int i=0; i<markers.length; i++) {
-        if (markers.keys
-            .elementAt(i)
-            .value == userEmail) {
-          exists = true;
-          continue;
+      if (userEmail != StaticVariables.prefs.getString("emailForQRCode")) {
+        for (int i = 0; i < markers.length; i++) {
+          if (markers.keys
+              .elementAt(i)
+              .value == userEmail) {
+            exists = true;
+            continue;
+          }
         }
       }
+      else
+        return;
+
         if (!exists) {
           print("Adding a new pin for a new user");
           print("count before: " + markers.length.toString());

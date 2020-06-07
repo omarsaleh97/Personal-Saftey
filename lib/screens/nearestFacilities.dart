@@ -39,8 +39,8 @@ class _NearestFacilitiesState extends State<NearestFacilities> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: AppDrawer(),
       appBar: AppBar(
+        centerTitle: true,
         iconTheme: IconThemeData.lerp(
             IconThemeData(color: Colors.grey), IconThemeData(size: 25), .5),
         title: Text(

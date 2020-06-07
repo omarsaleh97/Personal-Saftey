@@ -10,6 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:personal_safety/componants/title_text.dart';
 import 'package:personal_safety/models/device_token_update.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
+import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/profilePage.dart';
 import 'package:personal_safety/services/update_device_token.dart';

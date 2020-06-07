@@ -20,7 +20,10 @@ import 'package:personal_safety/widgets/event_list_item.dart';
 class Events extends StatefulWidget {
   final String title;
 
-  Events({Key key, this.title}) : super(key: key);
+  Events({
+    Key key,
+    this.title,
+  }) : super(key: key);
   @override
   _EventsState createState() => _EventsState();
 }
@@ -64,7 +67,7 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 33.0),
+        padding: const EdgeInsets.only(bottom: 12.0),
         child: FloatingActionButton(
           heroTag: null,
           child: Icon(Icons.add),
@@ -83,8 +86,8 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
           },
         ),
       ),
-      drawer: AppDrawer(),
       appBar: AppBar(
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.refresh),

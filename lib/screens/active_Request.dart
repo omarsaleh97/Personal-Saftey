@@ -37,8 +37,8 @@ class _ActiveRequestState extends State<ActiveRequest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: AppDrawer(),
       appBar: AppBar(
+        centerTitle: true,
         actions: <Widget>[],
         iconTheme: IconThemeData.lerp(
             IconThemeData(color: Colors.grey), IconThemeData(size: 25), .5),

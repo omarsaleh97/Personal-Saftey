@@ -140,7 +140,7 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             Container(
               color: Colors.white70,
-              padding: EdgeInsets.only(top: 0, left: 20, right: 20),
+              padding: EdgeInsets.only(top: 8, left: 20, right: 20),
               width: MediaQuery.of(context).size.width,
               // height: MediaQuery.of(context).size.height *.325,
               child: Card(
@@ -308,7 +308,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: grey2.withOpacity(0.5),
-      drawer: AppDrawer(),
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
@@ -328,7 +327,7 @@ class _HomeState extends State<Home> {
       body: SingleChildScrollView(
           child: Container(
         color: grey2.withOpacity(0.5),
-        height: MediaQuery.of(context).size.height * 1.028,
+        height: MediaQuery.of(context).size.height * .987,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

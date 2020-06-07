@@ -10,6 +10,7 @@ import 'package:personal_safety/services/refresh_token_service.dart';
 import 'package:personal_safety/services/service_confirm.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/services/service_register.dart';
+import 'package:personal_safety/services/sos_history_service.dart';
 import 'package:personal_safety/services/update_device_token.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -120,4 +121,5 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => GetProfileService());
   GetIt.instance.registerLazySingleton(() => RateRescuerService());
   GetIt.instance.registerLazySingleton(() => UpdateDeviceTokenService());
+  GetIt.instance.registerLazySingleton(() => SOSHistoryService());
 }

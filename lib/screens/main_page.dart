@@ -189,24 +189,22 @@ class _MainPageState extends State<MainPage> {
           child: Stack(
             fit: StackFit.expand,
             children: <Widget>[
-              SingleChildScrollView(
-                child: Container(
-                  height: AppTheme.fullHeight(context) - 50,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                          child: isHomePageSelected
-                              ? Home()
-                              : isNewsPageSelected
-                                  ? Events()
-                                  : isNearestPageSelected
-                                      ? NearestFacilities()
-                                      : isActiveRequestPageSelected
-                                          ? ActiveRequest()
-                                          : "")
-                    ],
-                  ),
+              Container(
+                height: AppTheme.fullHeight(context) - 50,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                        child: isHomePageSelected
+                            ? Home()
+                            : isNewsPageSelected
+                                ? Events()
+                                : isNearestPageSelected
+                                    ? NearestFacilities()
+                                    : isActiveRequestPageSelected
+                                        ? ActiveRequest()
+                                        : "")
+                  ],
                 ),
               ),
             ],

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -16,8 +18,10 @@ class NearestFacilities extends StatefulWidget {
 }
 
 class _NearestFacilitiesState extends State<NearestFacilities> {
+  Completer<GoogleMapController> _controller = Completer();
   LocationData locationData;
   Future<void> _getCurrentUserLocation() async {
+    locationData = null;
     try {
       final locData = await Location().getLocation();
       setState(() {
@@ -40,6 +44,16 @@ class _NearestFacilitiesState extends State<NearestFacilities> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                setState(() {
+                  _getCurrentUserLocation();
+                });
+              })
+        ],
+        leading: new Container(),
         centerTitle: true,
         iconTheme: IconThemeData.lerp(
             IconThemeData(color: Colors.grey), IconThemeData(size: 25), .5),
@@ -76,12 +90,98 @@ class _NearestFacilitiesState extends State<NearestFacilities> {
                   ),
                 ),
               },
+              onMapCreated: (GoogleMapController controller) {
+                controller.setMapStyle(Utils.mapStyles);
+                _controller.complete(controller);
+              },
               zoomGesturesEnabled: true,
-              trafficEnabled: true,
+              trafficEnabled: false,
               scrollGesturesEnabled: true,
               myLocationEnabled: true,
               indoorViewEnabled: true,
             ),
     );
   }
+}
+
+class Utils {
+  static String mapStyles = '''[
+  {
+    "featureType": "poi.attraction",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.business",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.government",
+    "stylers": [
+      {
+        "visibility": "simplified"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.government",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "simplified"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.medical",
+    "stylers": [
+      {
+        "visibility": "on"
+      },
+      {
+        "weight": 8
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.place_of_worship",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.school",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.sports_complex",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  }
+]''';
 }

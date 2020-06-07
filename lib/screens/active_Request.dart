@@ -38,6 +38,7 @@ class _ActiveRequestState extends State<ActiveRequest> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: new Container(),
         centerTitle: true,
         actions: <Widget>[],
         iconTheme: IconThemeData.lerp(

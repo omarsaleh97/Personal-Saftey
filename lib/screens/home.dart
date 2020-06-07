@@ -310,6 +310,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: grey2.withOpacity(0.5),
       appBar: AppBar(
+        leading: new Container(),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.person),

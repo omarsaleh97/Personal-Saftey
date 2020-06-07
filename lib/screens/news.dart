@@ -87,6 +87,7 @@ class _EventsState extends State<Events> with SingleTickerProviderStateMixin {
         ),
       ),
       appBar: AppBar(
+        leading: new Container(),
         centerTitle: true,
         actions: <Widget>[
           IconButton(

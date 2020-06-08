@@ -12,6 +12,7 @@ import 'package:personal_safety/models/device_token_update.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/profilePage.dart';
+import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/services/get_profile_service.dart';
 import 'package:personal_safety/services/update_device_token.dart';
 import 'package:personal_safety/widgets/drawer.dart';
@@ -25,7 +26,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   UpdateDeviceTokenService get userService =>
       GetIt.instance<UpdateDeviceTokenService>();
   void updateRegistrationToken() async {
@@ -47,6 +47,7 @@ class _HomeState extends State<Home> {
   GetProfileService get profileService => GetIt.instance<GetProfileService>();
   @override
   void initState() {
+    SocketHandler.StartSendingLocation();
     profileService.getProfile();
     _fcm.autoInitEnabled();
     updateRegistrationToken();
@@ -316,8 +317,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: grey2.withOpacity(0.5),
-      drawer: AppDrawer(),
       appBar: AppBar(
+        leading: new Container(),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.person),

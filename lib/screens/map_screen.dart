@@ -175,7 +175,7 @@ class _MapScreenState extends State<MapScreen> {
       ),
       body: GoogleMap(
         // ignore: sdk_version_ui_as_code
-        zoomGesturesEnabled: false,
+        zoomGesturesEnabled: true,
         mapType: MapType.normal,
         myLocationButtonEnabled: true,
         initialCameraPosition: CameraPosition(

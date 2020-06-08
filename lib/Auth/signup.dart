@@ -203,7 +203,7 @@ class _SignUpState extends State<SignUp> {
                                       : 'Registration Successful!';
                                   final text = result.hasErrors
                                       ? 'Make sure that Email, Phone Number and National ID are not taken.'
-                                      : 'Account Created Successfully!';
+                                      : 'Account Created Successfully! An E-mail was sent to you to activate your account.';
                                   final svg1 = result.hasErrors
                                       ? SvgPicture.asset(
                                           'assets/images/close.svg',

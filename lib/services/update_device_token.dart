@@ -21,6 +21,10 @@ class UpdateDeviceTokenService {
     print("PRINTING FCM TOKEN FROM SERVICE: " + item.deviceRegistrationKey);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     return http
         .post(
             StaticVariables.API +

@@ -12,24 +12,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class GetProfileService {
   static String token;
-  Future<String> getToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token');
-    print("TOKEN");
-    print(token.toString());
-    print("TOKEN");
-    return token;
-  }
+  static String email;
 
   static bool result = false;
-  static var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer $token'
-  };
+
   // Register
   Future<APIResponse<FirstLoginCredentials>> getProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token');
+    token = await prefs.getString('token');
+    email = prefs.getString("emailForQRCode");
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     return http
         .get(
       StaticVariables.API + '/api/Client/Registration/GetProfile',
@@ -37,30 +32,43 @@ class GetProfileService {
     )
         .then((data) {
       if (data.statusCode == 200) {
-        print("TEST SUCESSFUL!!!!!!! ");
+        print("FROM GET PROFILE SERVICE: " + token);
         Map userMap = jsonDecode(data.body);
-        print(userMap["result"]["currentAddress"]);
+        if (userMap["status"] == 0) {
+          print("RAW DATA FROM GET PROFILE: " + userMap["result"]["fullName"]);
+          print(
+              "RAW DATA FROM GET PROFILE: " + userMap["result"]["phoneNumber"]);
+          print("RAW DATA FROM GET PROFILE: " +
+              userMap["result"]["currentAddress"]);
+          print("RAW DATA FROM GET PROFILE: " +
+              userMap["result"]["medicalHistoryNotes"]);
+          print("RAW DATA FROM GET PROFILE: " + userMap["result"]["birthday"]);
 
-        List<EmergencyContacts> emergencyContactsList;
-        var rest = userMap["result"]["emergencyContacts"] as List;
-        emergencyContactsList = rest
-            .map<EmergencyContacts>((json) => EmergencyContacts.fromJson(json))
-            .toList();
+          List<EmergencyContacts> emergencyContactsList;
+          var rest = userMap["result"]["emergencyContacts"] as List;
+          emergencyContactsList = rest
+              .map<EmergencyContacts>(
+                  (json) => EmergencyContacts.fromJson(json))
+              .toList();
+          FirstLoginCredentials profileList = new FirstLoginCredentials();
+          profileList = FirstLoginCredentials(
+            fullName: userMap["result"]["fullName"],
+            phoneNumber: userMap["result"]["phoneNumber"],
+            currentAddress: userMap["result"]["currentAddress"],
+            bloodType: userMap["result"]["bloodType"],
+            medicalHistoryNotes: userMap["result"]["medicalHistoryNotes"],
+            birthday: userMap["result"]["birthday"],
+            emergencyContacts: emergencyContactsList,
+          );
+//        print("DEBUG PRINT FROM GET PROFILE SERVICE:  ${profileList.fullName}");
+//        print(
+//            "DEBUG PRINT FROM GET PROFILE SERVICE:  ${profileList.emergencyContacts[0].phoneNumber}");
 
-        FirstLoginCredentials profileList = FirstLoginCredentials(
-          fullName: userMap["result"]["fullName"],
-          phoneNumber: userMap["result"]["phoneNumber"],
-          currentAddress: userMap["result"]["currentAddress"],
-          bloodType: userMap["result"]["bloodType"],
-          medicalHistoryNotes: userMap["result"]["medicalHistoryNotes"],
-          birthday: userMap["result"]["birthday"],
-          emergencyContacts: emergencyContactsList,
-        );
-
-        print(
-            "DEBUG PRINT FROM GET PROFILE SERVICE:  ${profileList.emergencyContacts[0].phoneNumber}");
-
-        return APIResponse<FirstLoginCredentials>(result: profileList);
+          return APIResponse<FirstLoginCredentials>(result: profileList);
+        } else {
+          print(userMap["status"]);
+          print("shit happened");
+        }
       } else {
         print("BAD TEST");
         print(headers);

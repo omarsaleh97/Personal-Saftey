@@ -24,14 +24,15 @@ class EventCategoriesService {
 //  }
 
   static bool result = false;
-  static var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer $token'
-  };
+
   // Register
   Future<APIResponse<List<EventCategories>>> getEventCategories() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     return http
         .get(
       StaticVariables.API + '/api/Client/Events/GetEventsCategories',

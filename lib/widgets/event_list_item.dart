@@ -29,112 +29,69 @@ class _EventListItemState extends State<EventListItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: UniqueKey(),
-      background: Container(
-        color: Theme.of(context).errorColor,
-        child: Icon(
-          Icons.delete,
-          color: Colors.white,
-          size: 40,
-        ),
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: 20),
-        margin: EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 4,
-        ),
-      ),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) {
-        return showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('Are you sure?'),
-            content: Text(
-              'Do you want to remove the Event ?',
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('No'),
-                onPressed: () {
-                  Navigator.of(ctx).pop(false);
-                },
-              ),
-              FlatButton(
-                child: Text('Yes'),
-                onPressed: () {
-                  Navigator.of(ctx).pop(true);
-                },
+    return Column(children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.only(left: 20.0, right: 20),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(0.0, 2.0),
+                blurRadius: 6.0,
               ),
             ],
           ),
-        );
-      },
-      onDismissed: (direction) {},
-      child: Column(children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 20),
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  offset: Offset(0.0, 2.0),
-                  blurRadius: 6.0,
-                ),
-              ],
-            ),
-            height: 146,
-            child: Card(
-                child: InkWell(
-              onTap: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setInt('eventDetailsID', widget.eventGetter.id);
+          height: 146,
+          child: Card(
+              child: InkWell(
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setInt('eventDetailsID', widget.eventGetter.id);
 
-                var id = prefs.getInt("eventDetailsID");
-                print('EVENT DETAILS ID FOR SERVICE $id');
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EventDetailScreen(
-                              data: widget.eventGetter,
-                            )));
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      width: 70,
-                      height: 120,
-                      child: Card(
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Image(
-                          image: NetworkImage(
-                              "https://personalsafety.azurewebsites.net/${widget.eventGetter.thumbnailUrl}"),
-                          fit: BoxFit.cover,
-                        ),
-                        //margin: EdgeInsets.all(10),
+              var id = prefs.getInt("eventDetailsID");
+              print('EVENT DETAILS ID FOR SERVICE $id');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EventDetailScreen(
+                            data: widget.eventGetter,
+                          )));
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    width: 70,
+                    height: 120,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
+                      child: Image(
+                        image: NetworkImage(
+                            "https://personalsafety.azurewebsites.net/${widget.eventGetter.thumbnailUrl}"),
+                        fit: BoxFit.cover,
+                      ),
+                      //margin: EdgeInsets.all(10),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            widget.eventGetter.userName,
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          Container(
-                              width: 240,
-                              child:
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          widget.eventGetter.userName,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                        Container(
+                            width: 240,
+                            child:
 //                              widget.event.description.length > 80
 //                                  ? Text(
 //                                      widget.event.description
@@ -147,53 +104,107 @@ class _EventListItemState extends State<EventListItem> {
 //                                    color: primaryColor, fontSize: 13),
 //                                    )
 //                                  :
-                                  Text(
-                                widget.eventGetter.title,
-                                overflow: TextOverflow.fade,
-                                maxLines: 2,
-                                softWrap: false,
-                                style: TextStyle(
-                                    color: primaryColor, fontSize: 13),
-                              )),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Container(
-                                child: Container(
-                                    width: 60,
-                                    decoration: BoxDecoration(
-                                        color: Color(0xff006C8E),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5))),
-                                    child: Text(
-                                      widget.eventGetter.isPublicHelp == true
-                                          ? "Public Help"
-                                          : 'Nearby Help',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 10),
-                                    ))),
-                          ),
-                          Row(
+                                Text(
+                              widget.eventGetter.title,
+                              overflow: TextOverflow.fade,
+                              maxLines: 2,
+                              softWrap: false,
+                              style:
+                                  TextStyle(color: primaryColor, fontSize: 13),
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Text(
-                                DateFormat('dd/MM/yyyy').add_jm().format(
-                                    DateTime.parse(
-                                        widget.eventGetter.creationDate)),
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 13),
-                              ),
-                              SizedBox(
-                                width: 50,
-                              ),
                               Container(
-                                height: 50,
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      'Votes: ${widget.eventGetter.votes.toString()}',
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
+                                  child: widget.eventGetter.isPublicHelp ==
+                                          false
+                                      ? Container()
+                                      : Row(
+                                          children: <Widget>[
+                                            Container(
+                                                width: 60,
+                                                decoration: BoxDecoration(
+                                                    color: Color(0xff006C8E),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5))),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(2.5),
+                                                  child: Text(
+                                                    "Public Help",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 10),
+                                                  ),
+                                                )),
+                                            SizedBox(
+                                              width: 3.5,
+                                            ),
+                                          ],
+                                        )),
+                              Container(
+                                  child: widget.eventGetter.isValidated == false
+                                      ? Container()
+                                      : Container(
+                                          width: 65,
+                                          decoration: BoxDecoration(
+                                              color: Color(0xff388EA9),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5))),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(2.5),
+                                            child: Row(
+                                              children: <Widget>[
+                                                SizedBox(
+                                                  width: 3,
+                                                ),
+                                                Text(
+                                                  "Validated",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10),
+                                                ),
+                                                SizedBox(
+                                                  width: 3,
+                                                ),
+                                                Icon(
+                                                  Icons.check,
+                                                  size: 10,
+                                                  color: Colors.white,
+                                                ),
+                                              ],
+                                            ),
+                                          )))
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              DateFormat('dd/MM/yyyy').add_jm().format(
+                                  DateTime.parse(
+                                      widget.eventGetter.creationDate)),
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 13),
+                            ),
+                            SizedBox(
+                              width: 50,
+                            ),
+                            Container(
+                              height: 50,
+                              child: Row(
+                                children: <Widget>[
+                                  Text(
+                                    'Votes: ${widget.eventGetter.votes.toString()}',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
 //                                    IconButton(
 //                                        icon: Icon(
 //                                          Icons.favorite_border,
@@ -207,21 +218,20 @@ class _EventListItemState extends State<EventListItem> {
 //                                                .toggleFavoriteStatus();
 //                                          });
 //                                        }),
-                                  ],
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            )),
-          ),
+            ),
+          )),
         ),
-      ]),
-    );
+      ),
+    ]);
   }
 }

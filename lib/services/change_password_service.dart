@@ -25,15 +25,16 @@ class ChangePasswordService {
 
   static bool result = false;
   //static const API = 'https://personalsafety.azurewebsites.net/';
-  static var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer $token'
-  };
+
   // Register
   Future<APIResponse<dynamic>> changePassword(
       ChangePasswordCredentials item) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     return http
         .post(StaticVariables.API + '/api/Account/ChangePassword',
             headers: headers, body: json.encode(item.toJson()))

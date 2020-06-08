@@ -159,9 +159,6 @@ class _LoginState extends State<Login> {
                                 _isLoading = true;
                               });
 
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.setString(key, value);
                               print("TOKEN IS SET! TOKEN IS SET!");
 
                               final login = LoginCredentials(

@@ -8,11 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class RateRescuerService {
   static String token;
 
-  static var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer $token'
-  };
-
 //  int requestID = StaticVariables.prefs.getInt("activerequestid");
 //  int rate = StaticVariables.prefs.getInt("rescuerRate");
 
@@ -20,6 +15,10 @@ class RateRescuerService {
   Future<APIResponse<dynamic>> rateRescuer(RateRescuerModel item) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     return http
         .post(
             StaticVariables.API +

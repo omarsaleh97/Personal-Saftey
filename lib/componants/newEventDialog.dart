@@ -36,12 +36,12 @@ class EventCategory {
   static List<EventCategory> getCategory(
       List<EventCategories> eventCategories) {
     List<EventCategory> eventCategoriesList = List<EventCategory>();
-    EventCategory eventCategoryElement = EventCategory(1, "Select Category");
+    EventCategory eventCategoryElement = EventCategory(null, "Select Category");
     eventCategoriesList.add(eventCategoryElement);
 
     for (int i = 0; i < eventCategories.length; i++) {
       if (eventCategories[i].title == "Your Stories" ||
-          eventCategories[i].title == "Nearby Stories") {
+          eventCategories[i].title == "All Stories") {
       } else {
         EventCategory eventCategoryElement =
             EventCategory(eventCategories[i].id, eventCategories[i].title);

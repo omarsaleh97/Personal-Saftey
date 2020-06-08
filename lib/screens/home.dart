@@ -1,15 +1,18 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:personal_safety/componants/authority_card.dart';
 import 'package:personal_safety/componants/authority_data.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/theme.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:personal_safety/componants/title_text.dart';
+import 'package:personal_safety/models/device_token_update.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/profilePage.dart';
+import 'package:personal_safety/services/update_device_token.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 
 class Home extends StatefulWidget {
@@ -21,6 +24,24 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  UpdateDeviceTokenService get userService =>
+      GetIt.instance<UpdateDeviceTokenService>();
+  void updateRegistrationToken() async {
+    _fcm.getToken().then((token) async {
+      DeviceToken deviceToken = new DeviceToken(deviceRegistrationKey: token);
+
+      print(token);
+      StaticVariables.prefs.setString("fcmToken", token);
+      StaticVariables.prefs.getString("fcmToken");
+
+      final result = await userService.updateDeviceToken(deviceToken);
+      debugPrint("from UPDATE TOKEN: " + result.status.toString());
+      debugPrint("from UPDATE TOKEN: " + result.result.toString());
+      debugPrint("from UPDATE TOKEN: " + result.hasErrors.toString());
+    });
+  }
+
   final FirebaseMessaging _fcm = FirebaseMessaging();
   @override
   void initState() {

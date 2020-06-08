@@ -10,8 +10,11 @@ import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/models/event_model.dart';
 import 'package:personal_safety/models/newEvent.dart';
 import 'package:personal_safety/others/GlobalVar.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/providers/event.dart';
 import 'package:personal_safety/screens/map_screen.dart';
+import 'package:personal_safety/screens/news.dart';
+import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 import 'package:personal_safety/widgets/image_viewer.dart';
 import 'package:provider/provider.dart';
@@ -22,11 +25,17 @@ class EventDetailScreen extends StatefulWidget {
 
   EventDetailScreen({this.data});
 
+
+
   @override
   _EventDetailScreenState createState() => _EventDetailScreenState();
 }
 
 class _EventDetailScreenState extends State<EventDetailScreen> {
+
+  bool helpUserButtonVisibility;
+  static EventGetterModel active_event;
+
   String addressToUse;
   Future<void> getLocationAsText(double latitude, double longitude) async {
     final coordinates = new Coordinates(latitude, longitude);
@@ -48,9 +57,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   void initState() {
-    getLocationAsText(widget.data.latitude, widget.data.longitude);
     GlobalVar.Set("eventid", widget.data.id);
     print(GlobalVar.Get("eventid", 0).toString());
+    active_event = StaticVariables.eventsList.firstWhere((e) => e.id == GlobalVar.Get("eventid", 0));
+    helpUserButtonVisibility = active_event.userName != GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString();
+    getLocationAsText(widget.data.latitude, widget.data.longitude);
     super.initState();
   }
 
@@ -193,7 +204,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 Padding(
                                   padding: const EdgeInsets.all(10),
                                   child: Container(
-                                    height: 200,
+                                    height: 150,
                                     width: 300,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -229,6 +240,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                   color: primaryColor),
                               child: FlatButton(
                                   onPressed: () {
+                                    GlobalVar.Set("mapmode", "view");
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -261,7 +273,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                   ),
                                   onPressed: () {
                                     print('tapped');
-                                    showDialog(
+                                    GlobalVar.Set("mapmode", helpUserButtonVisibility? "help" : "track");
+                                    helpUserButtonVisibility? showDialog(
                                         context: context,
                                         builder: (_) => AlertDialog(
                                               shape: RoundedRectangleBorder(
@@ -326,7 +339,146 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                                             new BorderRadius
                                                                 .circular(20),
                                                       ),
-                                                      onPressed: () {},
+                                                      onPressed: () {
+
+                                                        if (helpUserButtonVisibility) {
+                                                          Navigator.pop(context);
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  fullscreenDialog: true,
+                                                                  builder: (
+                                                                      context) =>
+                                                                      MapScreen(
+                                                                        latitude:
+                                                                        widget
+                                                                            .data
+                                                                            .latitude,
+                                                                        longitude:
+                                                                        widget
+                                                                            .data
+                                                                            .longitude,
+                                                                        isSelecting: false,
+                                                                      )));
+                                                        }
+
+                                                      },
+                                                      color: Accent1,
+                                                      child: Text(
+                                                        'Proceed',
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 20),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            )) : Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            fullscreenDialog: true,
+                                            builder: (context) => MapScreen(
+                                              latitude:
+                                              widget.data.latitude,
+                                              longitude:
+                                              widget.data.longitude,
+                                              isSelecting: false,
+                                            )));
+                                  },
+                                  child: Text(
+                                    helpUserButtonVisibility? 'HELP USER' : 'TRACK VOLUNTEERS',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 15),
+                                  )),
+                            ),
+                          ),
+                          Visibility(
+                            visible: !helpUserButtonVisibility, //TODO: Remove the "!"
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Center(
+                                child: Container(
+                                  width: 220,
+                                  height: 50,
+                                  child: RaisedButton(
+                                      color: Colors.green,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: new BorderRadius.circular(8),
+                                      ),
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (_) => AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(20.0),
+                                              ),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Container(
+                                                    alignment:
+                                                    Alignment.topLeft,
+                                                    child: IconButton(
+                                                      icon: Icon(Icons.close),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    alignment:
+                                                    Alignment.topCenter,
+                                                    child: SvgPicture.asset(
+                                                      'assets/images/postalert.svg',
+                                                      width: 130,
+                                                      height: 130,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Text(
+                                                    'Are you sure?',
+                                                    style: TextStyle(
+                                                        color: Accent1,
+                                                        fontSize: 25,
+                                                        fontWeight:
+                                                        FontWeight.bold),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Text(
+                                                    'You are about to mark this event as solved.\n'
+                                                        'Event will disappear for all users.',
+                                                    style: TextStyle(
+                                                      color: grey,
+                                                      fontSize: 12,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 50,
+                                                  ),
+                                                  Container(
+                                                    width: 180,
+                                                    height: 45,
+                                                    child: RaisedButton(
+                                                      shape:
+                                                      RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        new BorderRadius
+                                                            .circular(20),
+                                                      ),
+                                                      onPressed: () {
+
+                                                        SocketHandler.SolveEventById(GlobalVar.Get("eventid", 0));
+                                                        Navigator.pop(context);
+                                                        Navigator.pop(context);
+
+                                                      },
                                                       color: Accent1,
                                                       child: Text(
                                                         'Proceed',
@@ -339,12 +491,14 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                                 ],
                                               ),
                                             ));
-                                  },
-                                  child: Text(
-                                    'HELP USER',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 15),
-                                  )),
+                                      },
+                                      child: Text(
+                                        'MARK AS SOLVED',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15),
+                                      )),
+                                ),
+                              ),
                             ),
                           )
                         ],

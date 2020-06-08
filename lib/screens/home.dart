@@ -12,6 +12,7 @@ import 'package:personal_safety/models/device_token_update.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/screens/profilePage.dart';
+import 'package:personal_safety/services/get_profile_service.dart';
 import 'package:personal_safety/services/update_device_token.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 
@@ -43,8 +44,10 @@ class _HomeState extends State<Home> {
   }
 
   final FirebaseMessaging _fcm = FirebaseMessaging();
+  GetProfileService get profileService => GetIt.instance<GetProfileService>();
   @override
   void initState() {
+    profileService.getProfile();
     _fcm.autoInitEnabled();
     updateRegistrationToken();
     _fcm.getToken().then((token) {

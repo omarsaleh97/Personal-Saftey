@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:personal_safety/componants/color.dart';
+import 'package:personal_safety/models/event_model.dart';
 import 'package:personal_safety/models/newEvent.dart';
 import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
@@ -22,24 +23,15 @@ class MapScreen extends StatefulWidget {
     this.isSelecting = false,
   });
 
-
-  static final _MapScreenState mss = _MapScreenState();
-
-  @override
-  _MapScreenState createState() => mss;
-
-
-  static void SetUserPin(String userEmail, LatLng position) {
-
-    mss.UpdatePin(userEmail, position);
-
-  }
+  State createState() => new _MapScreenState();
 
 }
 
 class _MapScreenState extends State<MapScreen> {
 
   LatLng _pickedLocation;
+
+  Timer timer, pinsTimer;
 
   void socketHandlerInit() async {
     await SocketHandler.ConnectToClientChannel();
@@ -48,37 +40,103 @@ class _MapScreenState extends State<MapScreen> {
         StaticVariables.prefs.getString("emailForQRCode"),
         GlobalVar.Get("eventid", 0));
 
-    Timer timer;
-
     timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       SocketHandler.SendLocationToServer(
           StaticVariables.prefs.getString("emailForQRCode"),
           GlobalVar.Get("eventid", 0));
     });
+
   }
 
   static Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
+  EventGetterModel active_event;
+
+  bool amIVoluteer;
+
   @override
   void initState() {
-    socketHandlerInit();
+
+    active_event = StaticVariables.eventsList.firstWhere((e) => e.id == GlobalVar.Get("eventid", 0));
+
+    amIVoluteer = active_event.userName != GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString();
+
+    print("Opened map screen with map mode: " + GlobalVar.Get("mapmode", "view"));
+
+    markers = new Map<MarkerId, Marker>();
+
+    pinsTimer = Timer.periodic(const Duration(seconds: 1), (pinsTimer) {
+
+      print("Looping over " + StaticVariables.pinsList.length.toString() + " pins to place on map");
+      print("count before for loop: " + markers.length.toString());
+      for (int i=0; i<StaticVariables.pinsList.length; i++) {
+        ServerPin sp = StaticVariables.pinsList.first;
+        StaticVariables.pinsList.remove(sp);
+        UpdatePin(sp.userEmail, sp.position, false);
+      }
+      print("count after for loop: " + markers.length.toString());
+
+    });
+
+    if (GlobalVar.Get("mapmode", "view") == "help" || GlobalVar.Get("mapmode", "view") == "track") {
+      socketHandlerInit();
+    }
+    else {
+
+      StaticVariables.pinsList.add(new ServerPin("default",
+          new LatLng(widget.longitude, widget.latitude)));
+
+      //UpdatePin("default", new LatLng(widget.longitude, widget.latitude), true);
+
+    }
+
     super.initState();
+
   }
 
   @override
   void dispose() {
     print("Disposing event page");
 
-    SocketHandler.LeaveEventRoom(
-        StaticVariables.prefs.getString("emailForQRCode"),
-        GlobalVar.Get("eventid", 0));
+    try {
+      print("Cancelling location sending timer..");
+      try {
+        timer.cancel();
+        print(
+            "Cancelled location sending timer successfully. Cancelling pins timer..");
+      }
+      catch(e)
+    {
+      print("Didn't cancel location timer.");
+    }
+    print("Cancelling pins timer..");
+      pinsTimer.cancel();
+      print("Cancelled pins timer.");
+    }
+    catch(e)
+    {
+      print("Couldn't stop timers. " + e.toString());
+    }
 
-    SocketHandler.Disconnect();
+    try {
+      if (GlobalVar.Get("mapmode", "help") == "help" ||
+          GlobalVar.Get("mapmode", "help") == "track") {
+        SocketHandler.LeaveEventRoom(
+            StaticVariables.prefs.getString("emailForQRCode"),
+            GlobalVar.Get("eventid", 0));
+      }
+
+      SocketHandler.Disconnect();
+    }
+    catch(e)
+    {
+      print("Couldn't leave event room properly. " + e.toString());
+    }
 
     super.dispose();
   }
 
-  void UpdatePin(String userEmail, LatLng position) async {
+  void UpdatePin(String userEmail, LatLng position, bool redMarker) async {
 
     MarkerId markerId = MarkerId(userEmail);
 
@@ -86,14 +144,18 @@ class _MapScreenState extends State<MapScreen> {
       (
       markerId: MarkerId(userEmail),
       position: position,
-      icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), 'assets/images/car.png'),
+      icon: !redMarker? await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), 'assets/images/car.png')
+      : BitmapDescriptor.defaultMarkerWithHue(0.5)
+    //icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), 'assets/images/car.png')
     );
 
     print("Trying to add a marker with ID " + userEmail);
+    print("Marker is red? " + (redMarker || userEmail == "default").toString());
 
     setState(() {
       bool exists = false;
-      if (userEmail != StaticVariables.prefs.getString("emailForQRCode")) {
+      if (userEmail != StaticVariables.prefs.getString("emailForQRCode") &&
+          !(redMarker || userEmail == "default")) {
         for (int i = 0; i < markers.length; i++) {
           if (markers.keys
               .elementAt(i)
@@ -103,20 +165,40 @@ class _MapScreenState extends State<MapScreen> {
           }
         }
       }
-      else
-        return;
+      else if (redMarker || userEmail == "default") {
+        print("Adding default red marker at " + position.longitude.toString() +
+            " and " + position.latitude.toString());
+        markers.putIfAbsent(markerId, () => marker);
+        print("markers count now: " + markers.length.toString());
+      }
 
-        if (!exists) {
-          print("Adding a new pin for a new user");
-          print("count before: " + markers.length.toString());
+      if (userEmail != StaticVariables.prefs.getString("emailForQRCode")) {
+        if (!exists && !(redMarker || userEmail == "default")) {
+          print("Adding a new pin for a new user " + userEmail);
+          print("markers before: " + markers.length.toString());
           markers.putIfAbsent(markerId, () => marker);
-          print("count after: " + markers.length.toString());
+          print("markers count after: " + markers.length.toString());
         }
         else {
-          print("Updating pin for an existing user");
+          print("Updating pin for an existing user " + userEmail);
           markers[markerId] = marker;
         }
       }
+    else {
+
+      if (redMarker)
+        {
+
+          print("Adding a red marker..");
+          markers.putIfAbsent(markerId, () => marker);
+          markers[markerId] = marker;
+
+        }
+
+
+      }
+
+    }
     );
 
   }
@@ -189,173 +271,197 @@ class _MapScreenState extends State<MapScreen> {
           _controller.complete(controller);
         },
         onTap: widget.isSelecting ? _selectLocation : null,
-        markers: Set<Marker>.of(markers.values),
+        markers: GlobalVar.Get("mapmode", "view") == "view" ?
+        (_pickedLocation == null && widget.isSelecting)
+            ? null
+            : {
+          Marker(
+            markerId: MarkerId('m1'),
+            position: _pickedLocation ??
+                LatLng(
+                  widget.latitude,
+                  widget.longitude,
+                ),
+          ),
+        }
+            :Set<Marker>.of(markers.values),
         trafficEnabled: true,
         scrollGesturesEnabled: true,
         myLocationEnabled: true,
         indoorViewEnabled: true,
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'btn',
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+      floatingActionButton: Visibility(
+        visible: !amIVoluteer,
+        child: FloatingActionButton.extended(
+          heroTag: 'btn',
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      child: IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: Column(
-                      children: <Widget>[
-                        CircleAvatar(
-                          child: Icon(
-                            Icons.camera_enhance,
-                            color: Colors.white,
-                            size: 40,
+                    Center(
+                      child: Column(
+                        children: <Widget>[
+                          CircleAvatar(
+                            child: Icon(
+                              Icons.camera_enhance,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                            radius: 30,
+                            backgroundColor: grey,
                           ),
-                          radius: 30,
-                          backgroundColor: grey,
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString(),
+                            style: TextStyle(color: primaryColor, fontSize: 20),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Email',
+                              style: TextStyle(fontSize: 15, color: primaryColor),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              StaticVariables.prefs.getString("emailForQRCode"),
+                              style: TextStyle(fontSize: 12, color: grey),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Phone Number',
+                              style: TextStyle(fontSize: 15, color: primaryColor),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              GlobalVar.Get("profilemap", new Map())["result"]["phoneNumber"].toString(),
+                              style: TextStyle(fontSize: 12, color: grey),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Blood Type',
+                              style: TextStyle(fontSize: 15, color: primaryColor),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              GlobalVar.Get("profilemap", new Map())["result"]["bloodType"].toString(),
+                              style: TextStyle(fontSize: 12, color: grey),
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          'Joan Doe',
-                          style: TextStyle(color: primaryColor, fontSize: 20),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Container(
+                              width: 70,
+                              child: Text(
+                                (DateTime.now().difference(DateTime.parse(GlobalVar.Get("profilemap", new Map())["result"]["birthday"].toString() )).inDays / 365 ).round().toString()
+                                      + ' Years',
+                                textAlign: TextAlign.center,
+                                style:
+                                    TextStyle(color: primaryColor, fontSize: 15),
+                              ),
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  border: Border.all(
+                                      width: 0.5, color: primaryColor)),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: Color(0xff16B68F),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5))),
+                              child: Icon(
+                                Icons.phone,
+                                color: Colors.white,
+                              ),
+                            )
+                          ],
                         )
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Email',
-                            style: TextStyle(fontSize: 15, color: primaryColor),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'alexa@test.com',
-                            style: TextStyle(fontSize: 12, color: grey),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Phone Number',
-                            style: TextStyle(fontSize: 15, color: primaryColor),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            '01000002252',
-                            style: TextStyle(fontSize: 12, color: grey),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Blood Type',
-                            style: TextStyle(fontSize: 15, color: primaryColor),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'A+',
-                            style: TextStyle(fontSize: 12, color: grey),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Container(
-                            width: 70,
-                            child: Text(
-                              '23 Years',
-                              textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(color: primaryColor, fontSize: 15),
-                            ),
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5)),
-                                border: Border.all(
-                                    width: 0.5, color: primaryColor)),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                color: Color(0xff16B68F),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5))),
-                            child: Icon(
-                              Icons.phone,
-                              color: Colors.white,
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Container(
-                    width: 120,
-                    height: 40,
-                    alignment: Alignment.center,
-                    child: RaisedButton(
-                      onPressed: () {},
-                      color: Accent2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        'Cancel Event',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                    SizedBox(
+                      height: 50,
                     ),
-                  )
-                ],
+                    Container(
+                      width: 120,
+                      height: 40,
+                      alignment: Alignment.center,
+                      child: Visibility(
+                        visible: !amIVoluteer,
+                        child: RaisedButton(
+                          onPressed: () {
+                            SocketHandler.CancelEventById(GlobalVar.Get("eventid", 0));
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          color: Accent2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30),
+                          ),
+                          child: Text(
+                            'Cancel Event',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20))),
-        label: Icon(
-          Icons.info_outline,
-          color: primaryColor,
-          size: 30,
+            );
+          },
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+          label: Icon(
+            Icons.info_outline,
+            color: primaryColor,
+            size: 30,
+          ),
         ),
       ),
     );

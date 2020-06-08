@@ -5,6 +5,7 @@ import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/models/emergency_contact.dart';
 import 'package:personal_safety/models/event_model.dart';
 import 'package:personal_safety/models/first_login.dart';
+import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'dart:developer';
 
@@ -34,6 +35,7 @@ class GetProfileService {
       if (data.statusCode == 200) {
         print("FROM GET PROFILE SERVICE: " + token);
         Map userMap = jsonDecode(data.body);
+        GlobalVar.Set("profilemap", userMap);
         if (userMap["status"] == 0) {
           print("RAW DATA FROM GET PROFILE: " + userMap["result"]["fullName"]);
           print(

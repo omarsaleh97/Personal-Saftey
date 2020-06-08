@@ -39,7 +39,6 @@ class GetEventsService {
     )
         .then((data) {
       if (data.statusCode == 200) {
-        print("TEST SUCESSFUL!!!!!!! ");
         final jsonData = json.decode(data.body);
         var rest = jsonData["result"] as List;
         List<EventGetterModel> eventList;
@@ -47,6 +46,8 @@ class GetEventsService {
         eventList = rest
             .map<EventGetterModel>((json) => EventGetterModel.fromJson(json))
             .toList();
+
+        StaticVariables.eventsList = eventList;
 
         return APIResponse<List<EventGetterModel>>(result: eventList);
       } else {

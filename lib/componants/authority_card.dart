@@ -21,10 +21,20 @@ class AuthorityCard extends StatefulWidget {
   AuthorityCard({Key key, this.authority}) : super(key: key);
 
   @override
-  _AuthorityCardState createState() => _AuthorityCardState();
+  _AuthorityCardState createState() => _AuthorityCardState(authority);
 }
 
 class _AuthorityCardState extends State<AuthorityCard> {
+
+  int authType;
+
+  _AuthorityCardState(Authority authority)
+  {
+
+    authType = authority.id;
+
+  }
+
   void _value1Changed(bool value) {
     setState(() => _value1 = value);
     print("result = $value");
@@ -69,6 +79,8 @@ class _AuthorityCardState extends State<AuthorityCard> {
                       borderRadius: new BorderRadius.circular(8),
                     ),
                     onPressed: () {
+                      GlobalVar.Set("sosrequesttype", authType);
+                      print("sosrequest type is now: " + GlobalVar.Get("sosrequesttype", authType).toString());
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -255,8 +267,7 @@ class _AlertState extends State<Alert> {
                             setState(() {
                               _isLoading = true;
                             });
-
-                            MakeSOSRequest(1);
+                            MakeSOSRequest(GlobalVar.Get("sosrequesttype", 1));
                           }),
                     ))
               ],
@@ -265,6 +276,7 @@ class _AlertState extends State<Alert> {
   }
 
   void MakeSOSRequest(int requestType) async {
+    print("About to make an SOS request with requestType " + requestType.toString());
     SocketHandler.SetActiveSOSRequestState("Searching");
     await SocketHandler.ConnectToClientChannel();
     SocketHandler.SendSOSRequest(requestType);

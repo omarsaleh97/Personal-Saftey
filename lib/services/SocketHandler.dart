@@ -76,14 +76,15 @@ class SocketHandler {
 
   static void GetVolunteerLocation(List<Object> args) {
     print("printing from Get Volunteer Location" + args[1].toString());
-    //GlobalVar.Set("location_" + args[0].toString(), new LatLng(double.parse( args[1].toString() ), double.parse(args[2].toString())));
 
-
-
-    MapScreen.SetUserPin(
-        args[0].toString(),
+    StaticVariables.pinsList.add(new ServerPin(args[0].toString(),
         new LatLng(double.parse(args[1].toString()),
-            double.parse(args[2].toString())));
+            double.parse(args[2].toString()))));
+
+//    MapScreen.SetUserPin(
+//        args[0].toString(),
+//        new LatLng(double.parse(args[1].toString()),
+//            double.parse(args[2].toString())));
   }
 
   //#region ClientSOSRequest
@@ -199,10 +200,106 @@ class SocketHandler {
 
   }
 
+  static Future<APIResponse<dynamic>> GetEventById(int eventId) async {
+
+    print("Calling API GetEventById with eventId " + eventId.toString());
+
+    token = StaticVariables.prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+
+    token = StaticVariables.prefs.getString('token');
+    return http
+        .put(StaticVariables.API + '/api/Client/Events/GetEventById?eventId=$eventId',
+        headers: headers)
+        .then((data) {
+      if (data.statusCode == 200) {
+        Map userMap = jsonDecode(data.body);
+        var APIresult = APIResponse.fromJson(userMap);
+        print(APIresult.toString());
+        print("Got event " + eventId.toString() + " successfully");
+        print(data.statusCode);
+        print(APIresult.result);
+        return APIresult;
+      } else {
+        print("Getting event " + eventId.toString() + " failed");
+        print(headers);
+        print(data.statusCode);
+        return null;
+      }
+
+    });
+
+  }
+
+  static void CancelEventById(int eventId) async {
+
+    print("Calling API CancelEventById with eventId " + eventId.toString());
+
+    token = StaticVariables.prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+
+    return http
+        .put(StaticVariables.API + '/api/Client/Events/CancelEventById?eventId=$eventId',
+        headers: headers)
+        .then((data) {
+      if (data.statusCode == 200) {
+        Map userMap = jsonDecode(data.body);
+        var APIresult = APIResponse.fromJson(userMap);
+        print(APIresult.toString());
+        print("Cancelled event " + eventId.toString() + " successfully");
+        print(data.statusCode);
+        print(APIresult.result);
+      } else {
+        print("Cancelling event " + eventId.toString() + " failed");
+        print(headers);
+        print(data.statusCode);
+      }
+
+    });
+
+  }
+
+  static void SolveEventById(int eventId) async {
+
+    print("Calling API SolveEventById with eventId " + eventId.toString());
+
+    token = StaticVariables.prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+
+    return http
+        .put(StaticVariables.API + '/api/Client/Events/SolveEventById?eventId=$eventId',
+        headers: headers)
+        .then((data) {
+      if (data.statusCode == 200) {
+        Map userMap = jsonDecode(data.body);
+        var APIresult = APIResponse.fromJson(userMap);
+        print(APIresult.toString());
+        print("Solved event " + eventId.toString() + " successfully");
+        print(data.statusCode);
+        print(APIresult.result);
+      } else {
+        print("Solving event " + eventId.toString() + " failed");
+        print(headers);
+        print(data.statusCode);
+      }
+
+    });
+
+  }
+
   static Future<APIResponse<dynamic>> SendSOSRequest(int requestType) async {
     String jsonRequest = await GetSOSRequestJson(requestType);
 
-    print("Calling API SendSOS with request " + jsonRequest + " ..");
+    print("Calling API SolveSOS with request " + jsonRequest + " ..");
 
     SetActiveSOSRequestState("Searching");
     token = StaticVariables.prefs.getString('token');

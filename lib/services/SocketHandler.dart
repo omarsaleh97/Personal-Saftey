@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong/latlong.dart' as DistanceLatLong;
 import 'package:personal_safety/models/api_response.dart';
 import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
@@ -43,6 +44,8 @@ class SocketHandler {
     }
   }
 
+  static int distanceThreshold = 10; //10 meters
+
   static void StartSendingLocation()
   {
 
@@ -53,9 +56,28 @@ class SocketHandler {
 
     Timer timer;
 
-    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
 
-      UpdateLastKnownLocation();
+      DistanceLatLong.Distance distance = new DistanceLatLong.Distance();
+
+      Position newestLocation = await Geolocator()
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+      Position emptyPosition = new Position(latitude: 0.0, longitude: 0.0);
+
+      Position lastSentLocation = GlobalVar.Get("lastsentlocation", emptyPosition);
+
+      int metersSinceLastUpdate = distance(
+          new DistanceLatLong.LatLng(newestLocation.latitude, newestLocation.longitude),
+        new DistanceLatLong.LatLng(lastSentLocation.latitude, lastSentLocation.longitude)
+      ).toInt();
+
+      if (metersSinceLastUpdate >= distanceThreshold) {
+        print("Sending new location because meters since last update are: " + metersSinceLastUpdate.toString());
+        UpdateLastKnownLocation(newestLocation);
+      }
+      else
+        print("Not sending new location because meters since last update are: " + metersSinceLastUpdate.toString());
 
       //timer.cancel();
 
@@ -173,8 +195,8 @@ class SocketHandler {
     });
   }
 
-  static void UpdateLastKnownLocation() async {
-    String jsonRequest = await GetLastKnownLocationJson();
+  static void UpdateLastKnownLocation(Position newestLocation) async {
+    String jsonRequest = await GetLastKnownLocationJson(newestLocation);
 
     print("Calling API UpdateLastKnownLocation with request " + jsonRequest + " ..");
 
@@ -390,14 +412,13 @@ class SocketHandler {
     return toReturn;
   }
 
-  static Future<String> GetLastKnownLocationJson() async {
+  static Future<String> GetLastKnownLocationJson(Position newestLocation) async {
 
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    GlobalVar.Set("lastsentlocation", newestLocation);
 
-    String toReturn = "{ \"latitude\": " + position.latitude.toString();
+    String toReturn = "{ \"latitude\": " + newestLocation.latitude.toString();
 
-    toReturn += ", \"longitude\": " + position.longitude.toString() + "}";
+    toReturn += ", \"longitude\": " + newestLocation.longitude.toString() + "}";
 
     return toReturn;
   }

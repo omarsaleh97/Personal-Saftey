@@ -112,6 +112,7 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
   // ignore: non_constant_identifier_names
   FeedbackDialog() {
     return showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) => WillPopScope(
               onWillPop: () {},

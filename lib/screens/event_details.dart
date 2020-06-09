@@ -267,142 +267,144 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             child: Container(
                               width: 220,
                               height: 50,
-                              child: RaisedButton(
-                                  color: Accent1,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(8),
-                                  ),
-                                  onPressed: () {
-                                    print('tapped');
-                                    GlobalVar.Set(
-                                        "mapmode",
+                              child: widget.data.isPublicHelp == true
+                                  ? RaisedButton(
+                                      color: Accent1,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(8),
+                                      ),
+                                      onPressed: () {
+                                        print('tapped');
+                                        GlobalVar.Set(
+                                            "mapmode",
+                                            helpUserButtonVisibility
+                                                ? "help"
+                                                : "track");
                                         helpUserButtonVisibility
-                                            ? "help"
-                                            : "track");
-                                    helpUserButtonVisibility
-                                        ? showDialog(
-                                            context: context,
-                                            builder: (_) => AlertDialog(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20.0),
-                                                  ),
-                                                  content: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Container(
-                                                        alignment:
-                                                            Alignment.topLeft,
-                                                        child: IconButton(
-                                                          icon:
-                                                              Icon(Icons.close),
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                        ),
+                                            ? showDialog(
+                                                context: context,
+                                                builder: (_) => AlertDialog(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20.0),
                                                       ),
-                                                      Container(
-                                                        alignment:
-                                                            Alignment.topCenter,
-                                                        child: SvgPicture.asset(
-                                                          'assets/images/postalert.svg',
-                                                          width: 130,
-                                                          height: 130,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      Text(
-                                                        'Are you sure?',
-                                                        style: TextStyle(
-                                                            color: Accent1,
-                                                            fontSize: 25,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      Text(
-                                                        'You are about to be involved in this event.\n'
-                                                        'All your data will be shared with the user and\n the system adminstartion in case something \n goes wrong. You will always have access to\n the user\'s data',
-                                                        style: TextStyle(
-                                                          color: grey,
-                                                          fontSize: 12,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      SizedBox(
-                                                        height: 50,
-                                                      ),
-                                                      Container(
-                                                        width: 180,
-                                                        height: 45,
-                                                        child: RaisedButton(
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                new BorderRadius
-                                                                    .circular(20),
+                                                      content: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: <Widget>[
+                                                          Container(
+                                                            alignment: Alignment
+                                                                .topLeft,
+                                                            child: IconButton(
+                                                              icon: Icon(
+                                                                  Icons.close),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
                                                           ),
-                                                          onPressed: () {
-                                                            if (helpUserButtonVisibility) {
-                                                              Navigator.pop(
-                                                                  context);
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      fullscreenDialog:
-                                                                          true,
-                                                                      builder: (context) =>
-                                                                          MapScreen(
-                                                                            latitude:
-                                                                                widget.data.latitude,
-                                                                            longitude:
-                                                                                widget.data.longitude,
-                                                                            isSelecting:
-                                                                                false,
-                                                                          )));
-                                                            }
-                                                          },
-                                                          color: Accent1,
-                                                          child: Text(
-                                                            'Proceed',
+                                                          Container(
+                                                            alignment: Alignment
+                                                                .topCenter,
+                                                            child: SvgPicture
+                                                                .asset(
+                                                              'assets/images/postalert.svg',
+                                                              width: 130,
+                                                              height: 130,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          Text(
+                                                            'Are you sure?',
                                                             style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 20),
+                                                                color: Accent1,
+                                                                fontSize: 25,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
                                                           ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ))
-                                        : Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                fullscreenDialog: true,
-                                                builder: (context) => MapScreen(
-                                                      latitude:
-                                                          widget.data.latitude,
-                                                      longitude:
-                                                          widget.data.longitude,
-                                                      isSelecting: false,
-                                                    )));
-                                  },
-                                  child: Text(
-                                    helpUserButtonVisibility
-                                        ? 'HELP USER'
-                                        : 'TRACK VOLUNTEERS',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 15),
-                                  )),
+                                                          SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          Text(
+                                                            'You are about to be involved in this event.\n'
+                                                            'All your data will be shared with the user and\n the system adminstartion in case something \n goes wrong. You will always have access to\n the user\'s data',
+                                                            style: TextStyle(
+                                                              color: grey,
+                                                              fontSize: 12,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                          SizedBox(
+                                                            height: 50,
+                                                          ),
+                                                          Container(
+                                                            width: 180,
+                                                            height: 45,
+                                                            child: RaisedButton(
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    new BorderRadius
+                                                                        .circular(20),
+                                                              ),
+                                                              onPressed: () {
+                                                                if (helpUserButtonVisibility) {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          fullscreenDialog: true,
+                                                                          builder: (context) => MapScreen(
+                                                                                latitude: widget.data.latitude,
+                                                                                longitude: widget.data.longitude,
+                                                                                isSelecting: false,
+                                                                              )));
+                                                                }
+                                                              },
+                                                              color: Accent1,
+                                                              child: Text(
+                                                                'Proceed',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        20),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ))
+                                            : Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    fullscreenDialog: true,
+                                                    builder: (context) =>
+                                                        MapScreen(
+                                                          latitude: widget
+                                                              .data.latitude,
+                                                          longitude: widget
+                                                              .data.longitude,
+                                                          isSelecting: false,
+                                                        )));
+                                      },
+                                      child: Text(
+                                        helpUserButtonVisibility
+                                            ? 'HELP USER'
+                                            : 'TRACK VOLUNTEERS',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15),
+                                      ))
+                                  : Container(),
                             ),
                           ),
                           Visibility(

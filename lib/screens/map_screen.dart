@@ -12,6 +12,7 @@ import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'main_page.dart';
 
@@ -53,6 +54,56 @@ class _MapScreenState extends State<MapScreen> {
   EventGetterModel active_event;
 
   bool amIVoluteer;
+  ShowDialog(String title, String text, String iconToShow, Color color) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => WillPopScope(
+              onWillPop: () {},
+              child: AlertDialog(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                title: Text(
+                  title,
+                  style: TextStyle(color: primaryColor),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Center(
+                      child: SvgPicture.asset(
+                        iconToShow,
+                        color: color,
+                        width: 70,
+                        height: 70,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(text, style: TextStyle(color: primaryColor)),
+                  ],
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                      child: Text('OK', style: TextStyle(color: primaryColor)),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MainPage(),
+                            ));
+                      })
+                ],
+              ),
+            ));
+  }
 
   @override
   void initState() {
@@ -76,6 +127,22 @@ class _MapScreenState extends State<MapScreen> {
         ServerPin sp = StaticVariables.pinsList.first;
         StaticVariables.pinsList.remove(sp);
         UpdatePin(sp.userEmail, sp.position, false);
+        if ((sp.position.latitude == -2 && sp.position.longitude == -2) ||
+            (sp.position.latitude == -1 && sp.position.longitude == -1)) {
+          String text = "";
+          String iconToShow = "";
+          Color color;
+          if (sp.position.latitude == -2 && sp.position.longitude == -2) {
+            text = "The Victim has marked the event as Solved.";
+            iconToShow = 'assets/images/check.svg';
+            color = Colors.green;
+          } else {
+            text = "The Victim has cancelled the event.";
+            iconToShow = 'assets/images/close.svg';
+            color = Colors.red;
+          }
+          ShowDialog("Event has been Terminated.", text, iconToShow, color);
+        }
       }
       print("count after for loop: " + markers.length.toString());
     });

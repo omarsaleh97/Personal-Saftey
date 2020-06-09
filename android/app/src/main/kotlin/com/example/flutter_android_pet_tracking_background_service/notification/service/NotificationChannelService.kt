@@ -1,4 +1,4 @@
-package com.example.flutter_android_pet_tracking_background_service.notification.service
+package com.example.personal_safety.notification.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

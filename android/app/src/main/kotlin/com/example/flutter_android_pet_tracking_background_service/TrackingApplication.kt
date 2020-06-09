@@ -1,8 +1,8 @@
-package com.example.flutter_android_pet_tracking_background_service
+package com.example.personal_safety
 
 import android.util.Log
-import com.example.flutter_android_pet_tracking_background_service.notification.service.NotificationChannelService
-import com.example.flutter_android_pet_tracking_background_service.utils.VersionChecker
+import com.example.personal_safety.notification.service.NotificationChannelService
+import com.example.personal_safety.utils.VersionChecker
 import io.flutter.app.FlutterApplication
 
 class TrackingApplication : FlutterApplication() {

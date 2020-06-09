@@ -1,4 +1,4 @@
-package com.example.flutter_android_pet_tracking_background_service.utils
+package com.example.personal_safety.utils
 
 import android.os.Build
 

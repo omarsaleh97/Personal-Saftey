@@ -1,6 +1,6 @@
-package com.example.flutter_android_pet_tracking_background_service.tracking.service
+package com.example.personal_safety.tracking.service
 
-import com.example.flutter_android_pet_tracking_background_service.tracking.model.PathLocation
+import com.example.personal_safety.tracking.model.PathLocation
 
 interface PetTrackingListener {
     fun onNewLocation(location: PathLocation)

@@ -1,4 +1,4 @@
-package com.example.flutter_android_pet_tracking_background_service.tracking.service
+package com.example.personal_safety.tracking.service
 
 interface TrackingService {
     fun start()

@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:personal_safety/communication/android_communication.dart';
 import 'package:personal_safety/componants/authority_card.dart';
 import 'package:personal_safety/componants/authority_data.dart';
 import 'package:personal_safety/componants/color.dart';
@@ -15,6 +20,8 @@ import 'package:personal_safety/screens/profilePage.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/services/get_profile_service.dart';
 import 'package:personal_safety/services/update_device_token.dart';
+import 'package:personal_safety/utils/AndroidCall.dart';
+import 'package:personal_safety/utils/LatLngWrapper.dart';
 import 'package:personal_safety/widgets/drawer.dart';
 
 class Home extends StatefulWidget {
@@ -43,10 +50,25 @@ class _HomeState extends State<Home> {
     });
   }
 
+  static const methodChannel = const MethodChannel(METHOD_CHANNEL);
+  bool isTrackingEnabled = false;
+  bool isServiceBounded = false;
+  List<LatLng> latLngList = [];
+  final Set<Polyline> _polylines = {};
+  AndroidCommunication androidCommunication = AndroidCommunication();
+
+  GoogleMapController googleMapController;
+
+  LatLng _center = const LatLng(45.521563, -122.677433);
+
   final FirebaseMessaging _fcm = FirebaseMessaging();
   GetProfileService get profileService => GetIt.instance<GetProfileService>();
   @override
   void initState() {
+
+    _setAndroidMethodCallHandler();
+    _invokeServiceInAndroid();
+
     SocketHandler.StartSendingLocation();
     profileService.getProfile();
     _fcm.autoInitEnabled();
@@ -91,6 +113,50 @@ class _HomeState extends State<Home> {
       onResume: (Map<String, dynamic> message) async {},
     );
     super.initState();
+  }
+
+  void _setAndroidMethodCallHandler() {
+    methodChannel.setMethodCallHandler(_androidMethodCallHandler);
+  }
+
+  Future<dynamic> _androidMethodCallHandler(MethodCall call) async {
+    switch (call.method) {
+      case AndroidCall.PATH_LOCATION:
+        var pathLocation = jsonDecode(call.arguments);
+        LatLng latLng = LatLngWrapper.fromAndroidJson(pathLocation);
+        latLngList.add(latLng);
+        if (latLngList.isNotEmpty) {
+          setState(() {
+            if (latLngList.length > 2) {
+              var bounds = LatLngBounds(
+                  southwest: latLngList.first, northeast: latLngList.last);
+              var cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 25.0);
+              googleMapController.animateCamera(cameraUpdate);
+            }
+            _polylines.add(Polyline(
+              polylineId: PolylineId(latLngList.first.toString()),
+              visible: true,
+              points: latLngList,
+              color: Colors.green,
+              width: 2,
+            ));
+            _center = latLngList.last;
+          });
+        }
+        debugPrint("Wrapper here --> $latLng");
+        SocketHandler.TrySendingLocation();
+        break;
+
+    }
+  }
+
+
+  void _invokeServiceInAndroid() {
+    androidCommunication.invokeServiceInAndroid().then((onValue) {
+      setState(() {
+        isTrackingEnabled = true;
+      });
+    });
   }
 
   @override

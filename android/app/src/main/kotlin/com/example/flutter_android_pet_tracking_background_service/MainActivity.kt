@@ -1,4 +1,4 @@
-package com.example.flutter_android_pet_tracking_background_service
+package com.example.personal_safety
 
 import android.Manifest
 import android.content.ComponentName
@@ -9,12 +9,12 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import com.example.flutter_android_pet_tracking_background_service.tracking.model.PathLocation
-import com.example.flutter_android_pet_tracking_background_service.tracking.model.toJson
-import com.example.flutter_android_pet_tracking_background_service.tracking.service.PetTrackingListener
-import com.example.flutter_android_pet_tracking_background_service.tracking.service.PetTrackingService
-import com.example.flutter_android_pet_tracking_background_service.tracking.service.TrackingService
-import com.example.flutter_android_pet_tracking_background_service.utils.DartCall
+import com.example.personal_safety.tracking.model.PathLocation
+import com.example.personal_safety.tracking.model.toJson
+import com.example.personal_safety.tracking.service.PetTrackingListener
+import com.example.personal_safety.tracking.service.PetTrackingService
+import com.example.personal_safety.tracking.service.TrackingService
+import com.example.personal_safety.utils.DartCall
 import io.flutter.app.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
@@ -118,7 +118,7 @@ class MainActivity : FlutterActivity(), PetTrackingListener {
                 }
                 methodCall.method == DartCall.STOP_PET_TRACKING -> {
                     stopPetTrackingService()
-                    result.success("Rescuer location tracking stopped")
+                    result.success("User location tracking stopped")
                 }
                 methodCall.method == DartCall.IS_PET_TRACKING_ENABLED -> result.success(isTrackingPet())
                 methodCall.method == DartCall.SERVICE_BOUND -> {

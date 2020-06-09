@@ -1,4 +1,4 @@
-package com.example.flutter_android_pet_tracking_background_service.tracking.service
+package com.example.personal_safety.tracking.service
 
 import android.Manifest
 import android.app.Notification
@@ -15,9 +15,9 @@ import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import com.example.flutter_android_pet_tracking_background_service.R
-import com.example.flutter_android_pet_tracking_background_service.tracking.model.PathLocation
-import com.example.flutter_android_pet_tracking_background_service.utils.VersionChecker
+import com.example.personal_safety.R
+import com.example.personal_safety.tracking.model.PathLocation
+import com.example.personal_safety.utils.VersionChecker
 
 private const val GPS_TRACKING_IN_MILLIS: Long = 0
 private const val GPS_TRACKING_IN_DISTANCE_METERS: Float = 1f
@@ -52,7 +52,7 @@ class PetTrackingService : Service(), TrackingService, LocationListener {
     override fun isTracking() = isTracking
 
     override fun onLocationChanged(location: Location) {
-        Log.e("RescuerLocation: ", "latitude-${location.latitude} && longitude-${location.longitude}")
+        Log.e("UserLocation: ", "latitude-${location.latitude} && longitude-${location.longitude}")
         listener?.onNewLocation(PathLocation.fromLocation(location))
         updateNotification(PathLocation.fromLocation(location).toString())
     }
@@ -73,7 +73,7 @@ class PetTrackingService : Service(), TrackingService, LocationListener {
         if (VersionChecker.isGreaterThanOrEqualToOreo()) {
             val builder: Notification.Builder =
                     Notification.Builder(this, "sriharsha")
-                            .setContentText("Pet tracking mode")
+                            .setContentText("User tracking mode")
                             .setContentTitle("Background service")
                             .setSmallIcon(R.drawable.launch_background)
             startForeground(143, builder.build())

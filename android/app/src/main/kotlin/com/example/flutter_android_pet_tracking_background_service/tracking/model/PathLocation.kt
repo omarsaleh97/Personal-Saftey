@@ -1,4 +1,4 @@
-package com.example.flutter_android_pet_tracking_background_service.tracking.model
+package com.example.personal_safety.tracking.model
 
 import android.location.Location
 import com.google.gson.Gson

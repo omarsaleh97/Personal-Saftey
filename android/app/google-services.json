@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:419323074824:android:54d2cf49e24427935ef4bd",
         "android_client_info": {
-          "package_name": "com.example.flutter_android_pet_tracking_background_service"
+          "package_name": "com.example.personal_safety"
         }
       },
       "oauth_client": [

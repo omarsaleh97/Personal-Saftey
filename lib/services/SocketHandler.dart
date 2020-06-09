@@ -58,34 +58,37 @@ class SocketHandler {
 
     timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
 
-      DistanceLatLong.Distance distance = new DistanceLatLong.Distance();
-
-      Position newestLocation = await Geolocator()
-          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-
-      Position emptyPosition = new Position(latitude: 0.0, longitude: 0.0);
-
-      Position lastSentLocation = GlobalVar.Get("lastsentlocation", emptyPosition);
-
-      int metersSinceLastUpdate = distance(
-          new DistanceLatLong.LatLng(newestLocation.latitude, newestLocation.longitude),
-        new DistanceLatLong.LatLng(lastSentLocation.latitude, lastSentLocation.longitude)
-      ).toInt();
-
-      if (metersSinceLastUpdate >= distanceThreshold) {
-        print("Sending new location because meters since last update are: " + metersSinceLastUpdate.toString());
-        UpdateLastKnownLocation(newestLocation);
-      }
-      else
-        print("Not sending new location because meters since last update are: " + metersSinceLastUpdate.toString());
-
-      //timer.cancel();
+      TrySendingLocation();
 
     });
 
   }
 
+  static void TrySendingLocation() async
+  {
 
+    DistanceLatLong.Distance distance = new DistanceLatLong.Distance();
+
+    Position newestLocation = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    Position emptyPosition = new Position(latitude: 0.0, longitude: 0.0);
+
+    Position lastSentLocation = GlobalVar.Get("lastsentlocation", emptyPosition);
+
+    int metersSinceLastUpdate = distance(
+        new DistanceLatLong.LatLng(newestLocation.latitude, newestLocation.longitude),
+        new DistanceLatLong.LatLng(lastSentLocation.latitude, lastSentLocation.longitude)
+    ).toInt();
+
+    if (metersSinceLastUpdate >= distanceThreshold) {
+      print("Sending new location because meters since last update are: " + metersSinceLastUpdate.toString());
+      UpdateLastKnownLocation(newestLocation);
+    }
+    else
+      print("Not sending new location because meters since last update are: " + metersSinceLastUpdate.toString());
+
+  }
 
   static void Disconnect() {
     try {

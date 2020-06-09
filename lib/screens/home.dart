@@ -26,7 +26,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   UpdateDeviceTokenService get userService =>
       GetIt.instance<UpdateDeviceTokenService>();
   void updateRegistrationToken() async {
@@ -318,8 +317,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: grey2.withOpacity(0.5),
-      drawer: AppDrawer(),
       appBar: AppBar(
+        leading: new Container(),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.person),

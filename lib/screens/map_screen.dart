@@ -11,6 +11,9 @@ import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
 import 'package:personal_safety/widgets/drawer.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'main_page.dart';
 
 class MapScreen extends StatefulWidget {
   final double latitude;
@@ -24,11 +27,9 @@ class MapScreen extends StatefulWidget {
   });
 
   State createState() => new _MapScreenState();
-
 }
 
 class _MapScreenState extends State<MapScreen> {
-
   LatLng _pickedLocation;
 
   Timer timer, pinsTimer;
@@ -45,7 +46,6 @@ class _MapScreenState extends State<MapScreen> {
           StaticVariables.prefs.getString("emailForQRCode"),
           GlobalVar.Get("eventid", 0));
     });
-
   }
 
   static Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
@@ -56,42 +56,42 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
+    active_event = StaticVariables.eventsList
+        .firstWhere((e) => e.id == GlobalVar.Get("eventid", 0));
 
-    active_event = StaticVariables.eventsList.firstWhere((e) => e.id == GlobalVar.Get("eventid", 0));
+    amIVoluteer = active_event.userName !=
+        GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString();
 
-    amIVoluteer = active_event.userName != GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString();
-
-    print("Opened map screen with map mode: " + GlobalVar.Get("mapmode", "view"));
+    print(
+        "Opened map screen with map mode: " + GlobalVar.Get("mapmode", "view"));
 
     markers = new Map<MarkerId, Marker>();
 
     pinsTimer = Timer.periodic(const Duration(seconds: 1), (pinsTimer) {
-
-      print("Looping over " + StaticVariables.pinsList.length.toString() + " pins to place on map");
+      print("Looping over " +
+          StaticVariables.pinsList.length.toString() +
+          " pins to place on map");
       print("count before for loop: " + markers.length.toString());
-      for (int i=0; i<StaticVariables.pinsList.length; i++) {
+      for (int i = 0; i < StaticVariables.pinsList.length; i++) {
         ServerPin sp = StaticVariables.pinsList.first;
         StaticVariables.pinsList.remove(sp);
         UpdatePin(sp.userEmail, sp.position, false);
       }
       print("count after for loop: " + markers.length.toString());
-
     });
 
-    if (GlobalVar.Get("mapmode", "view") == "help" || GlobalVar.Get("mapmode", "view") == "track") {
+    if (GlobalVar.Get("mapmode", "view") == "help" ||
+        GlobalVar.Get("mapmode", "view") == "track") {
       socketHandlerInit();
-    }
-    else {
-
-      StaticVariables.pinsList.add(new ServerPin("default",
-          new LatLng(widget.longitude, widget.latitude)));
+    } else {
+      StaticVariables.pinsList.add(new ServerPin(
+          "default", new LatLng(widget.longitude, widget.latitude)));
 
       //UpdatePin("default", new LatLng(widget.longitude, widget.latitude), true);
 
     }
 
     super.initState();
-
   }
 
   @override
@@ -104,17 +104,13 @@ class _MapScreenState extends State<MapScreen> {
         timer.cancel();
         print(
             "Cancelled location sending timer successfully. Cancelling pins timer..");
+      } catch (e) {
+        print("Didn't cancel location timer.");
       }
-      catch(e)
-    {
-      print("Didn't cancel location timer.");
-    }
-    print("Cancelling pins timer..");
+      print("Cancelling pins timer..");
       pinsTimer.cancel();
       print("Cancelled pins timer.");
-    }
-    catch(e)
-    {
+    } catch (e) {
       print("Couldn't stop timers. " + e.toString());
     }
 
@@ -127,9 +123,7 @@ class _MapScreenState extends State<MapScreen> {
       }
 
       SocketHandler.Disconnect();
-    }
-    catch(e)
-    {
+    } catch (e) {
       print("Couldn't leave event room properly. " + e.toString());
     }
 
@@ -137,17 +131,18 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void UpdatePin(String userEmail, LatLng position, bool redMarker) async {
-
     MarkerId markerId = MarkerId(userEmail);
 
-    final Marker marker = Marker
-      (
-      markerId: MarkerId(userEmail),
-      position: position,
-      icon: !redMarker? await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), 'assets/images/car.png')
-      : BitmapDescriptor.defaultMarkerWithHue(0.5)
-    //icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), 'assets/images/car.png')
-    );
+    final Marker marker = Marker(
+        markerId: MarkerId(userEmail),
+        position: position,
+        icon: !redMarker
+            ? await BitmapDescriptor.fromAssetImage(
+                ImageConfiguration(devicePixelRatio: 2.5),
+                'assets/images/car.png')
+            : BitmapDescriptor.defaultMarkerWithHue(0.5)
+        //icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), 'assets/images/car.png')
+        );
 
     print("Trying to add a marker with ID " + userEmail);
     print("Marker is red? " + (redMarker || userEmail == "default").toString());
@@ -157,17 +152,16 @@ class _MapScreenState extends State<MapScreen> {
       if (userEmail != StaticVariables.prefs.getString("emailForQRCode") &&
           !(redMarker || userEmail == "default")) {
         for (int i = 0; i < markers.length; i++) {
-          if (markers.keys
-              .elementAt(i)
-              .value == userEmail) {
+          if (markers.keys.elementAt(i).value == userEmail) {
             exists = true;
             continue;
           }
         }
-      }
-      else if (redMarker || userEmail == "default") {
-        print("Adding default red marker at " + position.longitude.toString() +
-            " and " + position.latitude.toString());
+      } else if (redMarker || userEmail == "default") {
+        print("Adding default red marker at " +
+            position.longitude.toString() +
+            " and " +
+            position.latitude.toString());
         markers.putIfAbsent(markerId, () => marker);
         print("markers count now: " + markers.length.toString());
       }
@@ -178,29 +172,18 @@ class _MapScreenState extends State<MapScreen> {
           print("markers before: " + markers.length.toString());
           markers.putIfAbsent(markerId, () => marker);
           print("markers count after: " + markers.length.toString());
-        }
-        else {
+        } else {
           print("Updating pin for an existing user " + userEmail);
           markers[markerId] = marker;
         }
-      }
-    else {
-
-      if (redMarker)
-        {
-
+      } else {
+        if (redMarker) {
           print("Adding a red marker..");
           markers.putIfAbsent(markerId, () => marker);
           markers[markerId] = marker;
-
         }
-
-
       }
-
-    }
-    );
-
+    });
   }
 
   void _selectLocation(LatLng position) {
@@ -232,8 +215,9 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: AppDrawer(),
       appBar: AppBar(
+        leading: new Container(),
+        centerTitle: true,
         iconTheme: IconThemeData.lerp(
             IconThemeData(color: Colors.grey), IconThemeData(size: 25), .5),
         elevation: 0.0,
@@ -271,20 +255,20 @@ class _MapScreenState extends State<MapScreen> {
           _controller.complete(controller);
         },
         onTap: widget.isSelecting ? _selectLocation : null,
-        markers: GlobalVar.Get("mapmode", "view") == "view" ?
-        (_pickedLocation == null && widget.isSelecting)
-            ? null
-            : {
-          Marker(
-            markerId: MarkerId('m1'),
-            position: _pickedLocation ??
-                LatLng(
-                  widget.latitude,
-                  widget.longitude,
-                ),
-          ),
-        }
-            :Set<Marker>.of(markers.values),
+        markers: GlobalVar.Get("mapmode", "view") == "view"
+            ? (_pickedLocation == null && widget.isSelecting)
+                ? null
+                : {
+                    Marker(
+                      markerId: MarkerId('m1'),
+                      position: _pickedLocation ??
+                          LatLng(
+                            widget.latitude,
+                            widget.longitude,
+                          ),
+                    ),
+                  }
+            : Set<Marker>.of(markers.values),
         trafficEnabled: true,
         scrollGesturesEnabled: true,
         myLocationEnabled: true,
@@ -329,7 +313,9 @@ class _MapScreenState extends State<MapScreen> {
                             height: 20,
                           ),
                           Text(
-                            GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString(),
+                            GlobalVar.Get("profilemap", new Map())["result"]
+                                    ["fullName"]
+                                .toString(),
                             style: TextStyle(color: primaryColor, fontSize: 20),
                           )
                         ],
@@ -347,7 +333,8 @@ class _MapScreenState extends State<MapScreen> {
                           children: <Widget>[
                             Text(
                               'Email',
-                              style: TextStyle(fontSize: 15, color: primaryColor),
+                              style:
+                                  TextStyle(fontSize: 15, color: primaryColor),
                             ),
                             SizedBox(
                               height: 10,
@@ -361,13 +348,16 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                             Text(
                               'Phone Number',
-                              style: TextStyle(fontSize: 15, color: primaryColor),
+                              style:
+                                  TextStyle(fontSize: 15, color: primaryColor),
                             ),
                             SizedBox(
                               height: 10,
                             ),
                             Text(
-                              GlobalVar.Get("profilemap", new Map())["result"]["phoneNumber"].toString(),
+                              GlobalVar.Get("profilemap", new Map())["result"]
+                                      ["phoneNumber"]
+                                  .toString(),
                               style: TextStyle(fontSize: 12, color: grey),
                             ),
                             SizedBox(
@@ -375,13 +365,16 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                             Text(
                               'Blood Type',
-                              style: TextStyle(fontSize: 15, color: primaryColor),
+                              style:
+                                  TextStyle(fontSize: 15, color: primaryColor),
                             ),
                             SizedBox(
                               height: 10,
                             ),
                             Text(
-                              GlobalVar.Get("profilemap", new Map())["result"]["bloodType"].toString(),
+                              GlobalVar.Get("profilemap", new Map())["result"]
+                                      ["bloodType"]
+                                  .toString(),
                               style: TextStyle(fontSize: 12, color: grey),
                             ),
                           ],
@@ -393,11 +386,21 @@ class _MapScreenState extends State<MapScreen> {
                             Container(
                               width: 70,
                               child: Text(
-                                (DateTime.now().difference(DateTime.parse(GlobalVar.Get("profilemap", new Map())["result"]["birthday"].toString() )).inDays / 365 ).round().toString()
-                                      + ' Years',
+                                (DateTime.now()
+                                                .difference(DateTime.parse(
+                                                    GlobalVar.Get("profilemap",
+                                                                    new Map())[
+                                                                "result"]
+                                                            ["birthday"]
+                                                        .toString()))
+                                                .inDays /
+                                            365)
+                                        .round()
+                                        .toString() +
+                                    ' Years',
                                 textAlign: TextAlign.center,
-                                style:
-                                    TextStyle(color: primaryColor, fontSize: 15),
+                                style: TextStyle(
+                                    color: primaryColor, fontSize: 15),
                               ),
                               decoration: BoxDecoration(
                                   borderRadius:
@@ -434,9 +437,17 @@ class _MapScreenState extends State<MapScreen> {
                         visible: !amIVoluteer,
                         child: RaisedButton(
                           onPressed: () {
-                            SocketHandler.CancelEventById(GlobalVar.Get("eventid", 0));
+                            SocketHandler.CancelEventById(
+                                GlobalVar.Get("eventid", 0));
                             Navigator.pop(context);
                             Navigator.pop(context);
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MainPage(),
+                              ),
+                            );
                           },
                           color: Accent2,
                           shape: RoundedRectangleBorder(

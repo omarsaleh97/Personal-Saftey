@@ -12,6 +12,8 @@ import 'package:personal_safety/models/newEvent.dart';
 import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/providers/event.dart';
+import 'package:personal_safety/screens/home.dart';
+import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/screens/map_screen.dart';
 import 'package:personal_safety/screens/news.dart';
 import 'package:personal_safety/services/SocketHandler.dart';
@@ -25,14 +27,11 @@ class EventDetailScreen extends StatefulWidget {
 
   EventDetailScreen({this.data});
 
-
-
   @override
   _EventDetailScreenState createState() => _EventDetailScreenState();
 }
 
 class _EventDetailScreenState extends State<EventDetailScreen> {
-
   bool helpUserButtonVisibility;
   static EventGetterModel active_event;
 
@@ -59,8 +58,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   void initState() {
     GlobalVar.Set("eventid", widget.data.id);
     print(GlobalVar.Get("eventid", 0).toString());
-    active_event = StaticVariables.eventsList.firstWhere((e) => e.id == GlobalVar.Get("eventid", 0));
-    helpUserButtonVisibility = active_event.userName != GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString();
+    active_event = StaticVariables.eventsList
+        .firstWhere((e) => e.id == GlobalVar.Get("eventid", 0));
+    helpUserButtonVisibility = active_event.userName !=
+        GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString();
     getLocationAsText(widget.data.latitude, widget.data.longitude);
     super.initState();
   }
@@ -273,128 +274,140 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                   ),
                                   onPressed: () {
                                     print('tapped');
-                                    GlobalVar.Set("mapmode", helpUserButtonVisibility? "help" : "track");
-                                    helpUserButtonVisibility? showDialog(
-                                        context: context,
-                                        builder: (_) => AlertDialog(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                              ),
-                                              content: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  Container(
-                                                    alignment:
-                                                        Alignment.topLeft,
-                                                    child: IconButton(
-                                                      icon: Icon(Icons.close),
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
+                                    GlobalVar.Set(
+                                        "mapmode",
+                                        helpUserButtonVisibility
+                                            ? "help"
+                                            : "track");
+                                    helpUserButtonVisibility
+                                        ? showDialog(
+                                            context: context,
+                                            builder: (_) => AlertDialog(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
                                                   ),
-                                                  Container(
-                                                    alignment:
-                                                        Alignment.topCenter,
-                                                    child: SvgPicture.asset(
-                                                      'assets/images/postalert.svg',
-                                                      width: 130,
-                                                      height: 130,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Text(
-                                                    'Are you sure?',
-                                                    style: TextStyle(
-                                                        color: Accent1,
-                                                        fontSize: 25,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Text(
-                                                    'You are about to be involved in this event.\n'
-                                                    'All your data will be shared with the user and\n the system adminstartion in case something \n goes wrong. You will always have access to\n the user\'s data',
-                                                    style: TextStyle(
-                                                      color: grey,
-                                                      fontSize: 12,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 50,
-                                                  ),
-                                                  Container(
-                                                    width: 180,
-                                                    height: 45,
-                                                    child: RaisedButton(
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            new BorderRadius
-                                                                .circular(20),
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: IconButton(
+                                                          icon:
+                                                              Icon(Icons.close),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
                                                       ),
-                                                      onPressed: () {
-
-                                                        if (helpUserButtonVisibility) {
-                                                          Navigator.pop(context);
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  fullscreenDialog: true,
-                                                                  builder: (
-                                                                      context) =>
-                                                                      MapScreen(
-                                                                        latitude:
-                                                                        widget
-                                                                            .data
-                                                                            .latitude,
-                                                                        longitude:
-                                                                        widget
-                                                                            .data
-                                                                            .longitude,
-                                                                        isSelecting: false,
-                                                                      )));
-                                                        }
-
-                                                      },
-                                                      color: Accent1,
-                                                      child: Text(
-                                                        'Proceed',
+                                                      Container(
+                                                        alignment:
+                                                            Alignment.topCenter,
+                                                        child: SvgPicture.asset(
+                                                          'assets/images/postalert.svg',
+                                                          width: 130,
+                                                          height: 130,
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Text(
+                                                        'Are you sure?',
                                                         style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 20),
+                                                            color: Accent1,
+                                                            fontSize: 25,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                       ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            )) : Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            fullscreenDialog: true,
-                                            builder: (context) => MapScreen(
-                                              latitude:
-                                              widget.data.latitude,
-                                              longitude:
-                                              widget.data.longitude,
-                                              isSelecting: false,
-                                            )));
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Text(
+                                                        'You are about to be involved in this event.\n'
+                                                        'All your data will be shared with the user and\n the system adminstartion in case something \n goes wrong. You will always have access to\n the user\'s data',
+                                                        style: TextStyle(
+                                                          color: grey,
+                                                          fontSize: 12,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 50,
+                                                      ),
+                                                      Container(
+                                                        width: 180,
+                                                        height: 45,
+                                                        child: RaisedButton(
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                new BorderRadius
+                                                                    .circular(20),
+                                                          ),
+                                                          onPressed: () {
+                                                            if (helpUserButtonVisibility) {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      fullscreenDialog:
+                                                                          true,
+                                                                      builder: (context) =>
+                                                                          MapScreen(
+                                                                            latitude:
+                                                                                widget.data.latitude,
+                                                                            longitude:
+                                                                                widget.data.longitude,
+                                                                            isSelecting:
+                                                                                false,
+                                                                          )));
+                                                            }
+                                                          },
+                                                          color: Accent1,
+                                                          child: Text(
+                                                            'Proceed',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 20),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ))
+                                        : Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                fullscreenDialog: true,
+                                                builder: (context) => MapScreen(
+                                                      latitude:
+                                                          widget.data.latitude,
+                                                      longitude:
+                                                          widget.data.longitude,
+                                                      isSelecting: false,
+                                                    )));
                                   },
                                   child: Text(
-                                    helpUserButtonVisibility? 'HELP USER' : 'TRACK VOLUNTEERS',
+                                    helpUserButtonVisibility
+                                        ? 'HELP USER'
+                                        : 'TRACK VOLUNTEERS',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 15),
                                   )),
                             ),
                           ),
                           Visibility(
-                            visible: !helpUserButtonVisibility, //TODO: Remove the "!"
+                            visible:
+                                !helpUserButtonVisibility, //TODO: Remove the "!"
                             child: Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: Center(
@@ -404,93 +417,115 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                   child: RaisedButton(
                                       color: Colors.green,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: new BorderRadius.circular(8),
+                                        borderRadius:
+                                            new BorderRadius.circular(8),
                                       ),
                                       onPressed: () {
                                         showDialog(
                                             context: context,
                                             builder: (_) => AlertDialog(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(20.0),
-                                              ),
-                                              content: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  Container(
-                                                    alignment:
-                                                    Alignment.topLeft,
-                                                    child: IconButton(
-                                                      icon: Icon(Icons.close),
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
                                                   ),
-                                                  Container(
-                                                    alignment:
-                                                    Alignment.topCenter,
-                                                    child: SvgPicture.asset(
-                                                      'assets/images/postalert.svg',
-                                                      width: 130,
-                                                      height: 130,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Text(
-                                                    'Are you sure?',
-                                                    style: TextStyle(
-                                                        color: Accent1,
-                                                        fontSize: 25,
-                                                        fontWeight:
-                                                        FontWeight.bold),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Text(
-                                                    'You are about to mark this event as solved.\n'
-                                                        'Event will disappear for all users.',
-                                                    style: TextStyle(
-                                                      color: grey,
-                                                      fontSize: 12,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 50,
-                                                  ),
-                                                  Container(
-                                                    width: 180,
-                                                    height: 45,
-                                                    child: RaisedButton(
-                                                      shape:
-                                                      RoundedRectangleBorder(
-                                                        borderRadius:
-                                                        new BorderRadius
-                                                            .circular(20),
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: IconButton(
+                                                          icon:
+                                                              Icon(Icons.close),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
                                                       ),
-                                                      onPressed: () {
-
-                                                        SocketHandler.SolveEventById(GlobalVar.Get("eventid", 0));
-                                                        Navigator.pop(context);
-                                                        Navigator.pop(context);
-
-                                                      },
-                                                      color: Accent1,
-                                                      child: Text(
-                                                        'Proceed',
+                                                      Container(
+                                                        alignment:
+                                                            Alignment.topCenter,
+                                                        child: SvgPicture.asset(
+                                                          'assets/images/postalert.svg',
+                                                          width: 130,
+                                                          height: 130,
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Text(
+                                                        'Are you sure?',
                                                         style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 20),
+                                                            color: Accent1,
+                                                            fontSize: 25,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                       ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ));
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Text(
+                                                        'You are about to mark this event as solved.\n'
+                                                        'Event will disappear for all users.',
+                                                        style: TextStyle(
+                                                          color: grey,
+                                                          fontSize: 12,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 50,
+                                                      ),
+                                                      Container(
+                                                        width: 180,
+                                                        height: 45,
+                                                        child: RaisedButton(
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                new BorderRadius
+                                                                    .circular(20),
+                                                          ),
+                                                          onPressed: () {
+                                                            SocketHandler
+                                                                .SolveEventById(
+                                                                    GlobalVar.Get(
+                                                                        "eventid",
+                                                                        0));
+                                                            Navigator.pop(
+                                                                context);
+                                                            Navigator.pop(
+                                                                context);
+                                                            Navigator.pop(
+                                                                context);
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        MainPage(),
+                                                              ),
+                                                            );
+                                                          },
+                                                          color: Accent1,
+                                                          child: Text(
+                                                            'Proceed',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 20),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ));
                                       },
                                       child: Text(
                                         'MARK AS SOLVED',

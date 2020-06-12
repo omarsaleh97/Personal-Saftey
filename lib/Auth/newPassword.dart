@@ -335,6 +335,10 @@ class _NewPasswordState extends State<NewPassword> {
                                               ],
                                             )).then((data) {
                                       if (result.status == 0) {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(

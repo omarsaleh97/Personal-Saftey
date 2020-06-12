@@ -4,6 +4,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_safety/Auth/change_email.dart';
 import 'package:personal_safety/Auth/newPassword.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
@@ -537,7 +538,13 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                   alignment: Alignment.centerLeft,
                                   child: FlatButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChangeEmail()));
+                                    },
                                     child: Row(
                                       children: <Widget>[
                                         Icon(

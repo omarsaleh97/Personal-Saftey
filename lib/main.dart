@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_safety/providers/event.dart';
 import 'package:personal_safety/screens/main_page.dart';
+import 'package:personal_safety/services/change_email_service.dart';
 import 'package:personal_safety/services/change_password_service.dart';
 import 'package:personal_safety/services/event_categories_service.dart';
 import 'package:personal_safety/services/getEvent_service.dart';
@@ -122,5 +123,5 @@ void setupLocator() {
   GetIt.instance.registerLazySingleton(() => RateRescuerService());
   GetIt.instance.registerLazySingleton(() => UpdateDeviceTokenService());
   GetIt.instance.registerLazySingleton(() => SOSHistoryService());
-
+  GetIt.instance.registerLazySingleton(() => ChangeEmailService());
 }

@@ -53,7 +53,7 @@ class _MapScreenState extends State<MapScreen> {
 
   EventGetterModel active_event;
 
-  bool amIVoluteer;
+  bool amIVoluteer = true;
   ShowDialog(String title, String text, String iconToShow, Color color) {
     showDialog(
         barrierDismissible: false,
@@ -107,54 +107,60 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
-    active_event = StaticVariables.eventsList
-        .firstWhere((e) => e.id == GlobalVar.Get("eventid", 0));
 
-    amIVoluteer = active_event.userName !=
-        GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString();
+    if (GlobalVar.Get("mapmode", "view") != "select")
+    {
 
-    print(
-        "Opened map screen with map mode: " + GlobalVar.Get("mapmode", "view"));
+      active_event = StaticVariables.eventsList
+          .firstWhere((e) => e.id == GlobalVar.Get("eventid", 0));
 
-    markers = new Map<MarkerId, Marker>();
+      amIVoluteer = active_event.userName !=
+          GlobalVar.Get("profilemap", new Map())["result"]["fullName"].toString();
 
-    pinsTimer = Timer.periodic(const Duration(seconds: 1), (pinsTimer) {
-      print("Looping over " +
-          StaticVariables.pinsList.length.toString() +
-          " pins to place on map");
-      print("count before for loop: " + markers.length.toString());
-      for (int i = 0; i < StaticVariables.pinsList.length; i++) {
-        ServerPin sp = StaticVariables.pinsList.first;
-        StaticVariables.pinsList.remove(sp);
-        UpdatePin(sp.userEmail, sp.position, false);
-        if ((sp.position.latitude == -2 && sp.position.longitude == -2) ||
-            (sp.position.latitude == -1 && sp.position.longitude == -1)) {
-          String text = "";
-          String iconToShow = "";
-          Color color;
-          if (sp.position.latitude == -2 && sp.position.longitude == -2) {
-            text = "The Victim has marked the event as Solved.";
-            iconToShow = 'assets/images/check.svg';
-            color = Colors.green;
-          } else {
-            text = "The Victim has cancelled the event.";
-            iconToShow = 'assets/images/close.svg';
-            color = Colors.red;
+      print(
+          "Opened map screen with map mode: " + GlobalVar.Get("mapmode", "view"));
+
+      markers = new Map<MarkerId, Marker>();
+
+      pinsTimer = Timer.periodic(const Duration(seconds: 1), (pinsTimer) {
+        print("Looping over " +
+            StaticVariables.pinsList.length.toString() +
+            " pins to place on map");
+        print("count before for loop: " + markers.length.toString());
+        for (int i = 0; i < StaticVariables.pinsList.length; i++) {
+          ServerPin sp = StaticVariables.pinsList.first;
+          StaticVariables.pinsList.remove(sp);
+          UpdatePin(sp.userEmail, sp.position, false);
+          if ((sp.position.latitude == -2 && sp.position.longitude == -2) ||
+              (sp.position.latitude == -1 && sp.position.longitude == -1)) {
+            String text = "";
+            String iconToShow = "";
+            Color color;
+            if (sp.position.latitude == -2 && sp.position.longitude == -2) {
+              text = "The Victim has marked the event as Solved.";
+              iconToShow = 'assets/images/check.svg';
+              color = Colors.green;
+            } else {
+              text = "The Victim has cancelled the event.";
+              iconToShow = 'assets/images/close.svg';
+              color = Colors.red;
+            }
+            ShowDialog("Event has been Terminated.", text, iconToShow, color);
           }
-          ShowDialog("Event has been Terminated.", text, iconToShow, color);
         }
+        print("count after for loop: " + markers.length.toString());
+      });
+
+      if (GlobalVar.Get("mapmode", "view") == "help" ||
+          GlobalVar.Get("mapmode", "view") == "track") {
+        socketHandlerInit();
+      } else {
+        StaticVariables.pinsList.add(new ServerPin(
+            "default", new LatLng(widget.longitude, widget.latitude)));
+
+        //UpdatePin("default", new LatLng(widget.longitude, widget.latitude), true);
+
       }
-      print("count after for loop: " + markers.length.toString());
-    });
-
-    if (GlobalVar.Get("mapmode", "view") == "help" ||
-        GlobalVar.Get("mapmode", "view") == "track") {
-      socketHandlerInit();
-    } else {
-      StaticVariables.pinsList.add(new ServerPin(
-          "default", new LatLng(widget.longitude, widget.latitude)));
-
-      //UpdatePin("default", new LatLng(widget.longitude, widget.latitude), true);
 
     }
 

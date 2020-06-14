@@ -37,9 +37,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:419323074824:android:50717b1a21ffac2e5ef4bd",
+        "mobilesdk_app_id": "1:419323074824:android:f7379896f3faa4515ef4bd",
         "android_client_info": {
-          "package_name": "com.example.testing"
+          "package_name": "com.example.personal_safety"
         }
       },
       "oauth_client": [

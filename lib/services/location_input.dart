@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:personal_safety/others/GlobalVar.dart';
 import 'package:personal_safety/services/location_helper.dart';
 
 import '../screens/map_screen.dart';
@@ -40,6 +41,7 @@ class _LocationInputState extends State<LocationInput> {
   }
 
   Future<void> _selectOnMap() async {
+    GlobalVar.Set("mapmode", "select");
     final locData = await Location().getLocation();
     final selectedLocation = await Navigator.of(context).push<LatLng>(
       MaterialPageRoute(

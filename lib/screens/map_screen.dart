@@ -328,7 +328,7 @@ class _MapScreenState extends State<MapScreen> {
           _controller.complete(controller);
         },
         onTap: widget.isSelecting ? _selectLocation : null,
-        markers: GlobalVar.Get("mapmode", "view") == "view"
+        markers: (GlobalVar.Get("mapmode", "view") == "view" || GlobalVar.Get("mapmode", "view") == "select" )
             ? (_pickedLocation == null && widget.isSelecting)
                 ? null
                 : {

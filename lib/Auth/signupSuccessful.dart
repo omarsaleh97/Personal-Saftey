@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/test.dart';
 import 'package:personal_safety/models/first_login.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
+import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/services/service_firstLogin.dart';
 import 'package:personal_safety/models/emergency_contact.dart';
 import 'dart:core';
@@ -25,6 +30,7 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   FirstLoginCredentials firstLogin;
   EmergencyContacts contacts;
   List<EmergencyContacts> contactList;
+  DateTime birthDate;
 
   List<BloodType> _bloodtype = BloodType.getBloodType();
   List<DropdownMenuItem<BloodType>> _dropdownMenuItem;
@@ -36,6 +42,14 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   bool contactNeedsPhone = false;
   bool phoneValid = false;
   bool bloodTypeValid = false;
+  bool birthDateFlag = false;
+
+  dateValidation() {
+    if (birthDate == null) {
+      birthDateFlag = false;
+    } else
+      birthDateFlag = true;
+  }
 
   adressValidation() {
     if (_currentAddressController.text.isEmpty) {
@@ -54,6 +68,8 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
 
   contactWithPhoneValidation() {
     if (_emergencyName.text.isNotEmpty && _emergencyPhone.text.isEmpty)
+      contactNeedsPhone = false;
+    else if (_emergencyName.text.isEmpty && _emergencyPhone.text.isNotEmpty)
       contactNeedsPhone = false;
     else
       contactNeedsPhone = true;
@@ -106,13 +122,22 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text(title),
-              content: Text(text),
+              backgroundColor: primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              title: Text(
+                title,
+                style: TextStyle(color: grey),
+              ),
+              content: Text(text, style: TextStyle(color: grey)),
               actions: <Widget>[
                 FlatButton(
-                    child: Text('OK'),
+                    child: Text('OK', style: TextStyle(color: grey)),
                     onPressed: () {
-                      setState(() {});
+                      setState(() {
+                        _isLoading = false;
+                      });
                       Navigator.of(context).pop();
                     })
               ],
@@ -123,271 +148,309 @@ class _SignUpSuccessfulState extends State<SignUpSuccessful> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Complete your profile",
+            style: TextStyle(fontSize: 20, color: primaryColor),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          iconTheme: IconThemeData(
+            color: primaryColor, //change your color here
+          ),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: () async {
+                  dateValidation();
+                  adressValidation();
+                  medicalHistoryValidation();
+                  contactWithPhoneValidation();
+                  phoneValidation();
+                  bloodTypeValidation();
+                  if (birthDateFlag == true &&
+                      medicalHistoryFlag == true &&
+                      addressFlag == true &&
+                      contactNeedsPhone == true &&
+                      phoneValid == true &&
+                      bloodTypeValid == true) {
+                    print("PRESSED");
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+                    setState(() async {
+                      final contacts = EmergencyContacts(
+                          name: _emergencyName.text,
+                          phoneNumber: _emergencyPhone.text);
+                      final firstLogin = FirstLoginCredentials(
+                          birthday: DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(birthDate.toString())),
+                          currentAddress: _currentAddressController.text,
+                          bloodType: _selectedBloodType.id,
+                          medicalHistoryNotes: _medicalHistory.text,
+                          emergencyContacts: [
+                            contacts,
+                          ]);
+
+                      final result = await userService.firstLogin(firstLogin);
+
+                      final title = result.status == 0
+                          ? 'Your Profile is updated!'
+                          : 'Error';
+                      final text = result.status == 0
+                          ? 'Your info will be shown as updated.'
+                          : "There seems to be a problem. Try again. Your Phone number may be taken.";
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                backgroundColor: primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                title: Text(
+                                  title,
+                                  style: TextStyle(color: grey),
+                                ),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    SizedBox(height: 20),
+                                    Container(
+                                      width: 60,
+                                      height: 60,
+                                      child: SvgPicture.asset(
+                                        'assets/images/shine.svg',
+                                        color: grey,
+                                      ),
+                                    ),
+                                    Center(
+                                      child: SvgPicture.asset(
+                                        'assets/images/shield.svg',
+                                        color: grey,
+                                        height: 100,
+                                      ),
+                                    ),
+                                    SizedBox(height: 30),
+                                    Text(
+                                      text,
+                                      style: TextStyle(color: grey),
+                                    ),
+                                  ],
+                                ),
+                                actions: <Widget>[
+                                  FlatButton(
+                                      child: Text('OK',
+                                          style: TextStyle(color: grey)),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Navigator.of(context).pop();
+                                      })
+                                ],
+                              )).then((data) {
+                        if (result.status == 0) {
+                          StaticVariables.prefs.setBool("firstlogin", false);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainPage()));
+                        }
+                      });
+                    });
+                  } else if (addressFlag == false) {
+                    ShowDialog("Error", "Address cannot be empty.");
+                  } else if (medicalHistoryFlag == false) {
+                    ShowDialog("Error", "Medical History cannot be empty.");
+                  } else if (contactNeedsPhone == false) {
+                    ShowDialog("Error",
+                        "A Contact name requires a Phone number. Either provide both, or leave both empty.");
+                  } else if (phoneValid == false) {
+                    ShowDialog("Error", "Phone Number must be 11 digits.");
+                  } else if (bloodTypeValid == false)
+                    ShowDialog("Error", "Must select a blood type.");
+                  else if (birthDateFlag == false) {
+                    ShowDialog("Error", "Please select your date of birth.");
+                  }
+                },
+                child: Text(
+                  "Done",
+                  style: TextStyle(color: primaryColor),
+                )),
+          ],
+        ),
         resizeToAvoidBottomPadding: false,
         resizeToAvoidBottomInset: true,
         backgroundColor: Colors.white,
         body: Center(child: Builder(
           builder: (_) {
             if (_isLoading) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CustomLoadingIndicator(
+                customColor: primaryColor,
+              ));
             }
-            return SingleChildScrollView(
-              child: Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 80.0, left: 20),
-                    child: Text(
-                      "Complete your profile",
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: primaryColor),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 150, left: 120),
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                          color: grey,
-                          borderRadius: BorderRadius.circular(150)),
-                      child: CircleAvatar(
-                        radius: 50,
-                        child: IconButton(
-                            icon: Icon(Icons.camera_enhance),
-                            iconSize: 70,
-                            color: Colors.white,
-                            onPressed: null),
-                        backgroundColor: Colors.transparent,
+            return GestureDetector(
+              onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+              child: SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        width: 130,
+                        height: 130,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image:
+                                    AssetImage('assets/images/ProfilePic.png')),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(100)),
+                            border: Border.all(
+                                width: 5,
+                                color: grey,
+                                style: BorderStyle.solid)),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 330.0, left: 20, right: 20),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            decoration: kBoxDecorationStyle2,
-                            child: TextField(
-                              controller: _currentAddressController,
-                              decoration: InputDecoration(
-                                errorBorder: InputBorder.none,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                contentPadding: const EdgeInsets.all(20),
-                                hintText: "Address",
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            decoration: kBoxDecorationStyle2,
-                            child: TextField(
-                              controller: _medicalHistory,
-                              decoration: InputDecoration(
-                                errorBorder: InputBorder.none,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                contentPadding: const EdgeInsets.all(20),
-//                        icon: Icon(
-//                          Icons.contact_phone,
-//                          color: grey,
-//                        ),
-                                hintText: "Medical History",
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            decoration: kBoxDecorationStyle2,
-                            child: TextField(
-                              controller: _emergencyName,
-                              decoration: InputDecoration(
-                                errorBorder: InputBorder.none,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                contentPadding: const EdgeInsets.all(20),
-//                        icon: Icon(
-//                          Icons.contact_phone,
-//                          color: grey,
-//                        ),
-                                hintText: "Emergency Contact (Optional)",
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            decoration: kBoxDecorationStyle2,
-                            child: TextField(
-                              controller: _emergencyPhone,
-                              decoration: InputDecoration(
-                                errorBorder: InputBorder.none,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                contentPadding: const EdgeInsets.all(20),
-//                        icon: Icon(
-//                          Icons.contact_phone,
-//                          color: grey,
-//                        ),
-                                hintText: "Phone Number (Optional)",
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Container(
-                              decoration: kBoxDecorationStyle,
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Select Blood Type: ",
-                                    style: kLabelStyle,
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15.0, right: 15),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                decoration: kBoxDecorationStyle2,
+                                child: TextField(
+                                  controller: _currentAddressController,
+                                  decoration: InputDecoration(
+                                    errorBorder: InputBorder.none,
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    contentPadding: const EdgeInsets.all(20),
+                                    hintText: "Address",
+                                    hintStyle: kHintStyle,
                                   ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  DropdownButton(
-                                    itemHeight: 50,
-                                    items: _dropdownMenuItem,
-                                    onChanged: onChangeDropdownItem,
-                                    value: _selectedBloodType,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 30, left: 70.0, bottom: 10, right: 70),
-                            child: Container(
-                              height: 50.0,
-                              width: 300,
-                              child: RaisedButton(
-                                color: primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: new BorderRadius.circular(30),
                                 ),
-                                onPressed: () async {
-                                  adressValidation();
-                                  medicalHistoryValidation();
-                                  contactWithPhoneValidation();
-                                  phoneValidation();
-                                  bloodTypeValidation();
-                                  if (medicalHistoryFlag == true &&
-                                      addressFlag == true &&
-                                      contactNeedsPhone == true &&
-                                      phoneValid == true &&
-                                      bloodTypeValid == true) {
-                                    print("PRESSED");
-                                    setState(() {
-                                      _isLoading = true;
-                                    });
-
-                                    setState(() async {
-                                      final contacts = EmergencyContacts(
-                                          name: _emergencyName.text,
-                                          phoneNumber: _emergencyPhone.text);
-                                      final firstLogin = FirstLoginCredentials(
-                                          currentAddress:
-                                              _currentAddressController.text,
-                                          bloodType: _selectedBloodType.id,
-                                          medicalHistoryNotes:
-                                              _medicalHistory.text,
-                                          emergencyContacts: [
-                                            contacts,
-                                          ]);
-
-                                      final result = await userService
-                                          .firstLogin(firstLogin);
-                                      debugPrint("BLOOD TYPE IS " +
-                                          _selectedBloodType.id.toString());
-                                      debugPrint("from FIRST STATUS LOGIN: " +
-                                          result.status.toString());
-                                      debugPrint("from FIRST RESULT LOGIN: " +
-                                          result.result.toString());
-                                      debugPrint("from FIRST ERROR LOGIN: " +
-                                          result.hasErrors.toString());
-                                      final title = result.status == 0
-                                          ? 'Your Information is saved!'
-                                          : 'Error';
-                                      final text = result.status == 0
-                                          ? 'You will be forwarded to the next page!'
-                                          : "Make sure the Phone number is 11 digits.";
-                                      showDialog(
-                                          context: context,
-                                          builder: (_) => AlertDialog(
-                                                title: Text(title),
-                                                content: Text(text),
-                                                actions: <Widget>[
-                                                  FlatButton(
-                                                      child: Text('OK'),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _isLoading = false;
-                                                        });
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      })
-                                                ],
-                                              )).then((data) {
-                                        if (result.status == 0) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Test()));
-                                        }
-                                      });
-                                    });
-                                  } else if (addressFlag == false) {
-                                    ShowDialog(
-                                        "Error", "Address cannot be empty.");
-                                  } else if (medicalHistoryFlag == false) {
-                                    ShowDialog("Error",
-                                        "Medical History cannot be empty.");
-                                  } else if (contactNeedsPhone == false) {
-                                    ShowDialog("Error",
-                                        "A Contact name requires a Phone number. Either provide both, or leave both empty.");
-                                  } else if (phoneValid == false) {
-                                    ShowDialog("Error",
-                                        "Phone Number must be 11 digits.");
-                                  } else if (bloodTypeValid == false)
-                                    ShowDialog(
-                                        "Error", "Must select a blood type.");
-                                },
-                                child: Center(
-                                  child: Text(
-                                    'Continue',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                decoration: kBoxDecorationStyle2,
+                                child: CustomTextField(
+                                  customController: _medicalHistory,
+                                  customHint: "Medical History",
+                                  hintStyle: kHintStyle,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                decoration: kBoxDecorationStyle2,
+                                child: CustomTextField(
+                                  customController: _emergencyName,
+                                  customHint: "Emergency Contact (Optional)",
+                                  hintStyle: kHintStyle,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                decoration: kBoxDecorationStyle2,
+                                child: CustomTextField(
+                                  customController: _emergencyPhone,
+                                  customHint: "Contact Number (Optional)",
+                                  hintStyle: kHintStyle,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15)),
+                                    border: Border.all(
+                                        width: 0.5, color: greyIcon)),
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Text(
+                                        "Select Blood Type: ",
+                                        style: kHintStyle,
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(
+                                      width: 90,
+                                    ),
+                                    DropdownButton(
+                                      style: TextStyle(
+                                          fontSize: 13, color: primaryColor),
+                                      itemHeight: 50,
+                                      items: _dropdownMenuItem,
+                                      onChanged: onChangeDropdownItem,
+                                      value: _selectedBloodType,
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15)),
+                                    border: Border.all(
+                                        width: 0.5, color: greyIcon)),
+                                alignment: Alignment.centerLeft,
+                                child: FlatButton(
+                                    onPressed: () {
+                                      DatePicker.showDatePicker(context,
+                                          showTitleActions: true,
+                                          minTime: DateTime(1960, 1, 1),
+                                          maxTime: DateTime(2022, 12, 31),
+                                          onChanged: (date) {
+                                        print('change $date');
+                                      }, onConfirm: (date) {
+                                        print('confirm $date');
+                                        setState(() {
+                                          birthDate = date;
+                                        });
+                                      },
+                                          currentTime: DateTime.now(),
+                                          locale: LocaleType.en);
+                                    },
+                                    child: Text(
+                                      birthDate == null
+                                          ? "Select your date of birth"
+                                          : DateFormat('yyyy-MM-dd').format(
+                                              DateTime.parse(
+                                                  birthDate.toString())),
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 13),
+                                    )),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    ],
+                  ),
+                ),
               ),
             );
           },

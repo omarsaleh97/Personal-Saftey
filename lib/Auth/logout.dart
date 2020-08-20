@@ -4,9 +4,9 @@ import 'package:personal_safety/Auth/login.dart';
 import 'package:personal_safety/Auth/signup.dart';
 import 'package:personal_safety/componants/color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:personal_safety/componants/mediaQuery.dart';
-import 'package:personal_safety/componants/paint.dart';
-import 'package:personal_safety/componants/test.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as JSON;
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Logout extends StatefulWidget {
@@ -15,6 +15,46 @@ class Logout extends StatefulWidget {
 }
 
 class _LogoutState extends State<Logout> {
+  bool _isloggedin = false;
+  Map userProfile;
+  // final facebookLogin = FacebookLogin();
+
+//  _loginWithFacebook()async{
+//
+//    final result = await facebookLogin.logInWithReadPermissions(['email']);
+//
+//    switch (result.status) {
+//      case FacebookLoginStatus.loggedIn:
+//        final token = result.accessToken.token;
+//        final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}');
+//        final profile = JSON.jsonDecode(graphResponse.body);
+//        print(profile+'******************');
+//        setState(() {
+//          userProfile = profile;
+//          _isloggedin = true;
+//        });
+//        break;
+//
+//      case FacebookLoginStatus.cancelledByUser:
+//        setState(() => _isloggedin = false );
+//        break;
+//      case FacebookLoginStatus.error:
+//        setState(() => _isloggedin = false );
+//        break;
+//    }
+//
+//  }
+//  _logout(){
+//    facebookLogin.logOut();
+//    setState(() {
+//      _isloggedin = false;
+//    });
+//  }
+  void clearSharedPerfs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -25,18 +65,24 @@ class _LogoutState extends State<Logout> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Are you sure?'),
-            content: Text('You are going to exit the application.'),
+            backgroundColor: primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            title: Text('Exit Application?', style: TextStyle(color: grey)),
+            content: Text('You are going to exit the application.',
+                style: TextStyle(color: grey)),
             actions: <Widget>[
               FlatButton(
-                child: Text('NO'),
+                child: Text('NO', style: TextStyle(color: grey)),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
               ),
               FlatButton(
-                child: Text('YES'),
+                child: Text('YES', style: TextStyle(color: grey)),
                 onPressed: () {
+                  SystemNavigator.pop();
                   SystemNavigator.pop();
                 },
               ),
@@ -133,7 +179,7 @@ class _LogoutState extends State<Logout> {
                       borderRadius: new BorderRadius.circular(30),
                     ),
                     onPressed: () {
-                      print('tapped');
+                      //_loginWithFacebook;
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

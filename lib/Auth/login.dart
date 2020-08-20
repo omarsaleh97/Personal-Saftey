@@ -9,6 +9,8 @@ import 'package:personal_safety/componants/constant.dart';
 import 'package:personal_safety/componants/mediaQuery.dart';
 import 'package:personal_safety/componants/test.dart';
 import 'package:personal_safety/models/login.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
+import 'package:personal_safety/screens/main_page.dart';
 import 'package:personal_safety/services/service_login.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:developer';
@@ -39,16 +41,6 @@ class _LoginState extends State<Login> {
     saveTokenPreference(resultToken);
   }
 
-  read() async {
-    final prefs = await SharedPreferences.getInstance();
-    value = prefs.get(key);
-    if (value != '0' && value != null) {
-      Navigator.of(context).push(new MaterialPageRoute(
-        builder: (BuildContext context) => new Test(),
-      ));
-    }
-  }
-
   LoginService get userService => GetIt.instance<LoginService>();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -77,7 +69,6 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    read();
     _isLoading = false;
     super.initState();
   }
@@ -86,11 +77,18 @@ class _LoginState extends State<Login> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text(title),
-              content: Text(text),
+              backgroundColor: primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              title: Text(
+                title,
+                style: TextStyle(color: grey),
+              ),
+              content: Text(text, style: TextStyle(color: grey)),
               actions: <Widget>[
                 FlatButton(
-                    child: Text('OK'),
+                    child: Text('OK', style: TextStyle(color: grey)),
                     onPressed: () {
                       setState(() {
                         _isLoading = false;
@@ -106,128 +104,145 @@ class _LoginState extends State<Login> {
     return Scaffold(
         backgroundColor: primaryColor,
         resizeToAvoidBottomInset: true,
-        body: Center(
-          child: Builder(builder: (_) {
-            if (_isLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 50),
-                  child: Container(
-                    height: displaySize(context).height * .4,
-                    width: displaySize(context).width * .8,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        bottomLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                        bottomRight: Radius.circular(30),
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+          child: Center(
+            child: Builder(builder: (_) {
+              if (_isLoading) {
+                return Center(
+                    child: CustomLoadingIndicator(
+                  customColor: grey,
+                ));
+              }
+              return SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: Container(
+                      height: displaySize(context).height * .4,
+                      width: displaySize(context).width * .8,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          bottomLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
                       ),
-                    ),
-                    child: SvgPicture.asset(
-                      'assets/images/location.svg',
-                      height: 250.0,
-                      width: 50.0,
+                      child: SvgPicture.asset(
+                        'assets/images/location.svg',
+                        height: 250.0,
+                        width: 50.0,
+                      ),
                     ),
                   ),
-                ),
-                Form(key: _formKey, child: LoginForm()),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20, left: 70.0, bottom: 10, right: 70),
-                  child: Container(
-                    height: 50.0,
-                    width: 300,
-                    child: RaisedButton(
-                      color: Accent1,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(30),
-                      ),
-                      onPressed: () async {
-                        emailValidation();
-                        passwordValidation();
-                        if (emailFlag == true && passwordFlag == true) {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          prefs.setString(key, value);
-                          print("TOKEN IS SET! TOKEN IS SET!");
-                          //read();
+                  Form(key: _formKey, child: LoginForm()),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20, left: 70.0, bottom: 10, right: 70),
+                    child: Container(
+                      height: 50.0,
+                      width: 300,
+                      child: RaisedButton(
+                        color: Accent1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30),
+                        ),
+                        onPressed: () async {
+                          emailValidation();
+                          passwordValidation();
+                          if (emailFlag == true && passwordFlag == true) {
+                            setState(() async {
+                              setState(() {
+                                _isLoading = true;
+                              });
 
-                          setState(() async {
-                            setState(() {
-                              _isLoading = true;
-                            });
+                              print("TOKEN IS SET! TOKEN IS SET!");
 
-                            final login = LoginCredentials(
-                              email: _loginController.text,
-                              password: _passwordController.text,
-                            );
-                            final result = await userService.Login(login);
-                            debugPrint(
-                                "from login: " + result.status.toString());
-                            debugPrint(
-                                "from login: " + result.result.toString());
-                            debugPrint(
-                                "from login: " + result.hasErrors.toString());
-                            final title =
-                                result.status == 0 ? 'Logged In!' : 'Error';
-                            final text = result.status == 0
-                                ? 'You will be forwarded to the next page!'
-                                : "Wrong Username or Password.\n\nIf you haven't confirmed your email address, please check your inbox for a Confirmation email.";
-                            showDialog(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                      title: Text(title),
-                                      content: Text(text),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                            child: Text('OK'),
-                                            onPressed: () {
-                                              setState(() {
-                                                _isLoading = false;
-                                              });
-                                              Navigator.of(context).pop();
-                                              saveToken(result.result);
-                                            })
-                                      ],
-                                    )).then((data) {
+                              final login = LoginCredentials(
+                                email: _loginController.text,
+                                password: _passwordController.text,
+                              );
+                              final result = await userService.Login(login);
+                              debugPrint(
+                                  "from login: " + result.status.toString());
+                              debugPrint(
+                                  "from login: " + result.result.toString());
+                              debugPrint(
+                                  "from login: " + result.hasErrors.toString());
+                              final title =
+                                  result.status == 0 ? 'Logged In!' : 'Error';
+                              final text = result.status == 0
+                                  ? 'You will be forwarded to the next page!'
+                                  : "Wrong Username or Password.\n\nIf you haven't confirmed your email address, please check your inbox for a Confirmation email.";
+
                               if (result.status == 0) {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.setString(
+                                    'emailForQRCode', _loginController.text);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            SignUpSuccessful()));
+                                        builder: (context) => StaticVariables
+                                                .prefs
+                                                .getBool("firstlogin")
+                                            ? SignUpSuccessful()
+                                            : MainPage()));
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                          backgroundColor: primaryColor,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                          title: Text(
+                                            title,
+                                            style: TextStyle(color: grey),
+                                          ),
+                                          content: Text(text,
+                                              style: TextStyle(color: grey)),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                                child: Text('OK',
+                                                    style:
+                                                        TextStyle(color: grey)),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _isLoading = false;
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                })
+                                          ],
+                                        ));
                               }
                             });
-                          });
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        } else {
-                          ShowDialog(
-                              "Error", "Email and Password cannot be empty.");
-                        }
-                      },
-                      child: Center(
-                        child: Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                          } else {
+                            ShowDialog(
+                                "Error", "Email and Password cannot be empty.");
+                          }
+                        },
+                        child: Center(
+                          child: Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ]),
-            );
-          }),
+                ]),
+              );
+            }),
+          ),
         ));
   }
 
@@ -272,10 +287,11 @@ class _LoginState extends State<Login> {
                 contentPadding: const EdgeInsets.all(20),
                 hintText: "Password",
                 errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                prefixIcon: Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
                     // Based on passwordVisible state choose the icon
-                    passwordVisible ? Icons.visibility : Icons.visibility_off,
+                    passwordVisible ? Icons.visibility_off : Icons.visibility,
                     color: Theme.of(context).primaryColorDark,
                   ),
                   onPressed: () {

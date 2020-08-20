@@ -33,7 +33,10 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
         resizeToAvoidBottomInset: true,
         body: Center(child: Builder(builder: (_) {
           if (_isLoading) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+                child: CustomLoadingIndicator(
+              customColor: primaryColor,
+            ));
           }
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -61,7 +64,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                   padding: const EdgeInsets.only(top: 165, left: 30),
                   child: Container(
                     child: Text(
-                      "then tap verify",
+                      "then tap Send",
                       style: TextStyle(fontSize: 17, color: Accent1),
                     ),
                   ),
@@ -131,11 +134,20 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                           showDialog(
                               context: context,
                               builder: (_) => AlertDialog(
-                                    title: Text(title),
-                                    content: Text(text),
+                                    backgroundColor: primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    title: Text(
+                                      title,
+                                      style: TextStyle(color: grey),
+                                    ),
+                                    content: Text(text,
+                                        style: TextStyle(color: grey)),
                                     actions: <Widget>[
                                       FlatButton(
-                                          child: Text('OK'),
+                                          child: Text('OK',
+                                              style: TextStyle(color: grey)),
                                           onPressed: () {
                                             setState(() {
                                               _isLoading = false;
@@ -145,20 +157,14 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                                     ],
                                   )).then((data) {
                             if (result.status == 0) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Login()));
+                              Navigator.of(context).pop();
                             }
                           });
-                        });
-                        setState(() {
-                          _isLoading = false;
                         });
                       },
                       child: Center(
                         child: Text(
-                          'Verify',
+                          'Send',
                           style: TextStyle(
                             fontSize: 20,
                             color: Colors.white,

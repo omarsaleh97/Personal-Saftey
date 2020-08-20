@@ -1,12 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:personal_safety/models/api_response.dart';
-import 'package:personal_safety/models/confirm_mail.dart';
+import 'package:personal_safety/others/StaticVariables.dart';
 import 'package:personal_safety/models/forget_password.dart';
 
 class ForgetPasswordService {
   static var result = '';
-  static const API = 'https://personalsafety.azurewebsites.net/';
+//  static const API = 'https://personalsafety.azurewebsites.net/';
   static const headers = {'Content-Type': 'application/json'};
 
   // Logging In
@@ -14,7 +14,11 @@ class ForgetPasswordService {
     print('*****************');
 
     return http
-        .get(API + '/api/Account/ForgotPassword' + '?mail=' + item.email,
+        .get(
+            StaticVariables.API +
+                '/api/Account/ForgotPassword' +
+                '?mail=' +
+                item.email,
             headers: headers)
         .then((data) {
       print('??????????????????????');

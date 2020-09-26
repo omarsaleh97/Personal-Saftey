@@ -18,7 +18,7 @@ The whole idea is to automate the current Emergency System and allow other users
 
 # Screenshots:
 
-![alt text](https://drive.google.com/file/d/1xv2miez7LfV-0xz1sLG5_FRJAouQtxrS/view?usp=sharing)
+![](/Overview-Images/logout.jpg)
 
 
 ## To Install this project:

@@ -18,7 +18,13 @@ The whole idea is to automate the current Emergency System and allow other users
 
 # Screenshots:
 
-<img src="/Overview-Images/logout.jpg" width="300"/> <img src="/Overview-Images/logout.jpg" width="300"/>
+<img src="/Overview-Images/logout.jpg" width="300"/> <img src="/Overview-Images/home.jpg" width="300"/> <img src="Overview-Images/profile.jpg" width="300"/>
+
+<img src="/Overview-Images/events.jpg" width="900"/>
+
+<img src="Overview-Images/history1.jpg" width="300"/> <img src="Overview-Images/history2.jpg" width="300"/>  <img src="Overview-Images/map.jpg" width="300"/>
+
+<img src="Overview-Images/search.jpg" width="300"/> <img src="Overview-Images/accept.jpg" width="300"/>  <img src="Overview-Images/rate.jpg" width="300"/>
 
 
 

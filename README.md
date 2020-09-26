@@ -16,6 +16,10 @@ The whole project is a Location-based Emergency System, where a user makes an SO
 
 The whole idea is to automate the current Emergency System and allow other users to help each other when possible.
 
+# Screenshots:
+
+![alt text](https://drive.google.com/file/d/1xv2miez7LfV-0xz1sLG5_FRJAouQtxrS/view?usp=sharing)
+
 
 ## To Install this project:
 

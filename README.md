@@ -18,8 +18,7 @@ The whole idea is to automate the current Emergency System and allow other users
 
 # Screenshots:
 
-![](/Overview-Images/logout.jpg)
-
+<img src="/Overview-Images/logout.jpg" width="100"/>
 
 ## To Install this project:
 

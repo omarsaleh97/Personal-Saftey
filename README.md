@@ -18,9 +18,9 @@ The whole idea is to automate the current Emergency System and allow other users
 
 # Screenshots:
 
+<img src="/Overview-Images/logout.jpg" width="300"/> 
 <img src="/Overview-Images/logout.jpg" width="300"/>
 
-<img src="/Overview-Images/logout.jpg" width="300"/>
 
 
 ## To Install this project:
